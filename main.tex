@@ -13,6 +13,8 @@
 \usepackage{subcaption}
 \usepackage{multicol}
 \usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{multirow}
 \usepackage{color,soul}
 \usepackage{bm}
 \usepackage[russian]{babel}
@@ -27,6 +29,7 @@
 \widowpenalty10000
 \clubpenalty10000
 \hyphenpenalty100
+
 
 
 \setcitestyle{authoryear,open={(},close={)}}
@@ -295,39 +298,349 @@ Second, our findings hold implications for the practice of election monitoring i
 \newpage
 
 \section*{Appendix}
+\renewcommand*{\thepage}{A\arabic{page}}
+\renewcommand*{\thesubsection}{\Alph{subsection}.}
+\renewcommand*{\thesubsubsection}{\alph{subsubsection}.}
+\renewcommand\thefigure{A\arabic{figure}}   
+\renewcommand\thetable{A\arabic{table}}  
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{page}{1}
+\subsection*{Cross-National Evidence: Matching Analysis}
 
-\subsection*{Cross-National Evidence: Descriptive Statistics}
+\subsubsection*{Descriptive Statistics}
+Table \ref{descr:matching} contains the summary statistics for complete cases in WVS data merged with the V-Dem Project data. 
 
 \begin{table}[!htbp] \centering 
   \caption{Summary Statistics of Key Variables, World Values Survey Wave 7 (2017-2020).} 
-  \label{} 
+  \label{descr:matching} 
 \begin{tabular}{@{\extracolsep{5pt}}lccccccc} 
 \\[-1.8ex]\hline 
 \hline \\[-1.8ex] 
-Statistic & \multicolumn{1}{c}{N} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Pctl(25)} & \multicolumn{1}{c}{Pctl(75)} & \multicolumn{1}{c}{Max} \\ 
+ & \multicolumn{1}{c}{N} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{25\%} & \multicolumn{1}{c}{75\%} & \multicolumn{1}{c}{Max} \\ 
 \hline \\[-1.8ex] 
-Confidence in Armed Forces & 48,953 & 2.876 & 0.951 & 1 & 2 & 4 & 4 \\ 
-Confidence in the Press & 48,953 & 2.320 & 0.880 & 1 & 2 & 3 & 4 \\ 
-Confidence in the Police & 48,953 & 2.619 & 0.959 & 1 & 2 & 3 & 4 \\ 
-Confidence in Courts & 48,953 & 2.558 & 0.962 & 1 & 2 & 3 & 4 \\ 
-Confidence in Government & 48,953 & 2.385 & 0.996 & 1 & 2 & 3 & 4 \\ 
-Confidence in Parliament & 48,953 & 2.182 & 0.948 & 1 & 1 & 3 & 4 \\ 
-Confidence in Parties & 48,953 & 2.017 & 0.895 & 1 & 1 & 3 & 4 \\ 
-Fraud Perception & 48,953 & 0.364 & 0.481 & 0 & 0 & 1 & 1 \\ 
-Political Interest & 48,953 & 2.682 & 0.963 & 1 & 2 & 3 & 4 \\ 
-Generalized Trust & 48,953 & 1.818 & 0.386 & 1 & 2 & 2 & 2 \\ 
-Voting in National Elections & 48,953 & 1.557 & 0.822 & 1 & 1 & 2 & 4 \\ 
-Sex & 48,953 & 1.512 & 0.500 & 1 & 1 & 2 & 2 \\ 
-Age & 48,953 & 42.313 & 16.020 & 16 & 29 & 54 & 103 \\ 
-Education & 48,953 & 4.043 & 1.479 & 1 & 3 & 5 & 6 \\ 
-Employment Status & 48,953 & 3.192 & 2.044 & 1 & 1 & 5 & 8 \\ 
-Household Income & 48,953 & 4.782 & 2.101 & 1 & 3 & 6 & 10 \\ 
-Rural & 48,953 & 1.355 & 0.479 & 1 & 1 & 2 & 2 \\ 
-Political Discussion & 48,953 & 2.220 & 0.647 & 1 & 2 & 3 & 3 \\ 
-Perceived Political Corruption & 48,953 & 7.813 & 2.428 & 1 & 6 & 10 & 10 \\ 
+% Confidence in Armed Forces & 48,953 & 2.876 & 0.951 & 1 & 2 & 4 & 4 \\ 
+% Confidence in the Police & 48,953 & 2.619 & 0.959 & 1 & 2 & 3 & 4 \\ 
+% Confidence in Courts & 48,953 & 2.558 & 0.962 & 1 & 2 & 3 & 4 \\ 
+% Confidence in Government & 48,953 & 2.385 & 0.996 & 1 & 2 & 3 & 4 \\ 
+% Confidence in Parliament & 48,953 & 2.182 & 0.948 & 1 & 1 & 3 & 4 \\ 
+% Confidence in Parties & 48,953 & 2.017 & 0.895 & 1 & 1 & 3 & 4 \\ 
+% Fraud Perception & 48,953 & 0.364 & 0.481 & 0 & 0 & 1 & 1 \\ 
+% Political Interest & 48,953 & 2.682 & 0.963 & 1 & 2 & 3 & 4 \\ 
+% Generalized Trust & 48,953 & 1.818 & 0.386 & 1 & 2 & 2 & 2 \\ 
+% Voting in National Elections & 48,953 & 1.557 & 0.822 & 1 & 1 & 2 & 4 \\ 
+% Sex & 48,953 & 1.512 & 0.500 & 1 & 1 & 2 & 2 \\ 
+% Age & 48,953 & 42.313 & 16.020 & 16 & 29 & 54 & 103 \\ 
+% Education & 48,953 & 4.043 & 1.479 & 1 & 3 & 5 & 6 \\ 
+% Employment Status & 48,953 & 3.192 & 2.044 & 1 & 1 & 5 & 8 \\ 
+% Household Income & 48,953 & 4.782 & 2.101 & 1 & 3 & 6 & 10 \\ 
+% Rural & 48,953 & 1.355 & 0.479 & 1 & 1 & 2 & 2 \\ 
+% Political Discussion & 48,953 & 2.220 & 0.647 & 1 & 2 & 3 & 3 \\ 
+Confidence in Armed Forces & 42,586 & 2.865 & 0.945 & 1 & 2 & 4 & 4 \\ 
+Confidence in the Police & 42,586 & 2.629 & 0.943 & 1 & 2 & 3 & 4 \\ 
+Confidence in Courts & 42,586 & 2.568 & 0.941 & 1 & 2 & 3 & 4 \\ 
+Confidence in Parliament & 42,586 & 2.187 & 0.926 & 1 & 1 & 3 & 4 \\ 
+Confidence in Government & 42,586 & 2.384 & 0.984 & 1 & 2 & 3 & 4 \\ 
+Confidence in Parties & 42,586 & 2.034 & 0.874 & 1 & 1 & 3 & 4 \\ 
+Confidence in Companies & 42,586 & 2.398 & 0.851 & 1 & 2 & 3 & 4 \\ 
+Confidence in UN & 42,586 & 2.445 & 0.943 & 1 & 2 & 3 & 4 \\ 
+Confidence in Banks & 42,586 & 2.563 & 0.930 & 1 & 2 & 3 & 4 \\ 
+Confidence in WTO & 42,586 & 2.439 & 0.911 & 1 & 2 & 3 & 4 \\ 
+Confidence in World Bank & 42,586 & 2.419 & 0.948 & 1 & 2 & 3 & 4 \\ 
+Fraud Perception & 42,246 & 2.841 & 1.028 & 1 & 2 & 4 & 4 \\ 
+Fraud Perception (binary) & 42,586 & 0.651 & 0.477 & 0 & 0 & 1 & 1 \\ 
+% Fraud Perception (Alternative) & 42,586 & 0.865 & 0.342 & 0 & 1 & 1 & 1 \\ 
+% fraud1d2 & 42,586 & 0.326 & 0.469 & 0 & 0 & 1 & 1 \\ 
+Political Interest  & 42,586 & 2.390 & 0.955 & 1 & 2 & 3 & 4 \\ 
+Generalized Trust  & 42,246 & 0.202 & 0.401 & 0 & 0 & 0 & 1 \\ 
+Female & 42,246 & 0.495 & 0.500 & 0 & 0 & 1 & 1 \\ 
+Age & 42,586 & 41.634 & 15.832 & 16 & 28 & 54 & 103 \\ 
+Family Savings & 42,586 & 2.049 & 0.902 & 1 & 1 & 2 & 4 \\ 
+Rural & 42,246 & 0.339 & 0.473 & 0 & 0 & 1 & 1 \\ 
+Perceived Political Corruption & 42,586 & 7.736 & 2.423 & 1 & 6 & 10 & 10 \\ 
+V-Dem Election Integrity & 42,586 & 0.618 & 0.255 & 0.053 & 0.435 & 0.856 & 0.969 \\ 
 \hline \\[-1.8ex] 
 \end{tabular} 
 \end{table} 
+
+\begin{itemize}
+    \item Confidence in political institutions is measured on a 1 to 4 scale, with 1 meaning \textit{None at all} and 4 depicting \textit{A great deal}.
+    \item Political interest is measured on a 1 to 4 scale, with 1 meaning \textit{Not at all interested} and 4 depicting \textit{Very interested}.
+    \item Generalized trust is a binary indicator, with 0 meaning \textit{Need to be very careful} and 1 depicting \textit{Most people can be trusted}.
+    \item Fraud perception is measured in WVS on a 1 to 4 scale based on the agreement with the following statement: "How often in country's elections: Votes are counted fairly", with 1 meaning \textit{Not at all often} and 4 depicting \textit{Very often}. 
+    \item Fraud perception (binary) is the variable used in our matching analysis and is a binary indicator, with 0 being comprised of \textit{Not at all often} and \textit{Not often} and 1 of \textit{Fairly often} and \textit{Very often} answers to the respective WVS question. 
+    \item Family savings during past year is measured on a 1 to 4 scale, with 1 indicating \tetxit{Save money}, 2\textemdash\textit{Just get by}, 3\textemdash\textit{Spent some savings and borrowed money}, and 4\textemdash\textit{Spent savings and borrowed money}.  
+    \item Perceived Political Corruption is measured on a 1 to 10 scale, with 1 meaning \textit{There is no corruption in my country} and 10 depicting \textit{There is abundant corruption in my country}.
+    \item V-Dem Election Integrity is the clean elections index scaled to range from 0 (lowest score) to 1 (highest score).
+
+\end{itemize}
+
+
+\subsubsection*{Covariate Balance for Exact Matching}
+
+\begin{figure}[H]
+    \caption{Covariate Balance Before and After Sample Adjustment Using Exact Matching.}
+    \centering
+    \includegraphics[width=0.9\linewidth]{covbalance_exact.pdf}
+    \label{fig:balance}
+\end{figure}
+
+\newpage
+
+\subsection*{Survey Experiment} 
+\subsubsection*{Descriptive Statistics}
+
+Table \ref{descr:russia} contains summary statistics for the survey responses in Russia for the finished interviews. As per the pre-registration analysis plan, we exclude cases where the interviews were finished in under 3 minutes to control for data quality as well as exclude the cases where respondents showed meaningful engagement with the treatment text.\footnote{Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text were excluded. Additionally, the cases with summaries of a scenario different to the one given to the respondent are treated as lack of meaningful engagement. For further details, please consult Data quality subsection.}
+
+\begin{table}[!htbp] \centering 
+  \caption{Summary Statistics of Key Variables, Survey Data for Russia.} 
+  \label{descr:russia} 
+\centering
+\resizebox{\columnwidth}{!}{\begin{tabular}[t]{llcccccccc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Fraud (N=290)} & \multicolumn{2}{c}{Control (N=307)} & \multicolumn{2}{c}{Punishment (N=307)} & \multicolumn{2}{c}{Judicial Punishment (N=293)} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8} \cmidrule(l{3pt}r{3pt}){9-10}
+  &    & Mean & Std. Dev. & Mean  & Std. Dev.  & Mean   & Std. Dev.   & Mean    & Std. Dev.   \\
+\midrule
+\multicolumn{2}{l}{Confidence in Armed Forces} & 2.7 & 0.9 & 2.8 & 1.0 & 2.8 & 1.0 & 2.9 & 0.9\\
+\multicolumn{2}{l}{Confidence in Police } & 2.3 & 0.9 & 2.3 & 0.9 & 2.3 & 0.9 & 2.4 & 0.9\\
+\multicolumn{2}{l}{Confidence in  CEC }  & 1.9 & 0.9 & 2.2 & 1.0 & 1.9 & 0.9 & 2.0 & 1.0\\
+\multicolumn{2}{l}{Confidence in Government}  & 2.1 & 0.9 & 2.2 & 0.9 & 2.1 & 0.9 & 2.3 & 1.0\\
+\multicolumn{2}{l}{Confidence in Parties}  & 1.9 & 0.8 & 2.1 & 0.8 & 2.0 & 0.9 & 2.1 & 0.9\\
+\multicolumn{2}{l}{Confidence in Parliament}  & 2.0 & 0.8 & 2.1 & 0.8 & 2.0 & 0.9 & 2.2 & 0.9\\
+\multicolumn{2}{l}{Confidence in Courts}  & 2.2 & 0.9 & 2.3 & 0.9 & 2.2 & 0.8 & 2.4 & 1.0\\
+\multicolumn{2}{l}{Confidence in President}  & 2.4 & 1.1 & 2.5 & 1.1 & 2.4 & 1.0 & 2.6 & 1.1\\
+\multicolumn{2}{l}{Confidence in Elections }& 1.9 & 0.9 & 2.3 & 0.9 & 1.9 & 0.9 & 2.2 & 1.0\\
+\multicolumn{2}{l}{Confidence in Companies }  & 2.2 & 0.9 & 2.2 & 0.8 & 2.2 & 0.8 & 2.3 & 0.9\\
+\multicolumn{2}{l}{Confidence in Banks }  & 2.1 & 0.9 & 2.2 & 0.9 & 2.2 & 0.9 & 2.2 & 0.9\\
+\multicolumn{2}{l}{Confidence in Environmental Organizations }  & 2.5 & 0.9 & 2.6 & 0.9 & 2.5 & 0.9 & 2.6 & 1.0\\
+\multicolumn{2}{l}{Confidence in UN }  & 2.4 & 0.9 & 2.4 & 0.9 & 2.3 & 0.9 & 2.4 & 1.0\\
+\multicolumn{2}{l}{Confidence in World Bank}  & 2.2 & 0.9 & 2.2 & 0.9 & 2.2 & 0.9 & 2.3 & 0.9\\
+\multicolumn{2}{l}{Confidence in WTO} & 2.2 & 0.9 & 2.3 & 0.9 & 2.2 & 0.8 & 2.4 & 0.9\\
+\multicolumn{2}{l}{Political Interest }   & 2.4 & 0.8 & 2.4 & 0.8 & 2.3 & 0.8 & 2.4 & 0.8\\
+\multicolumn{2}{l}{Generalized Trust }  & 1.8 & 0.4 & 1.8 & 0.4 & 1.8 & 0.4 & 1.8 & 0.4\\
+\multicolumn{2}{l}{Age }  & 36.2 & 10.6 & 36.2 & 10.7 & 36.6 & 10.7 & 36.2 & 10.4\\
+% \multicolumn{2}{l}{Education }   & 7.8 & 2.1 & 7.9 & 2.3 & 7.7 & 2.1 & 7.9 & 2.2\\
+\multicolumn{2}{l}{Political Corruption Perception }   & 7.9 & 2.1 & 8.2 & 1.9 & 8.1 & 1.9 & 8.0 & 1.9\\
+\multicolumn{2}{l}{Officials Involvement }   & 2.7 & 0.7 & 2.7 & 0.8 & 2.8 & 0.7 & 2.7 & 0.7\\
+\midrule
+ &  & N & \% & N & \% & N & \% & N & \%\\
+\cmidrule(l{1pt}r{3pt}){3-10}
+Sex & Female & 120 & 41.4 & 156 & 50.8 & 153 & 49.8 & 143 & 48.8\\
+ & Male & 170 & 58.6 & 151 & 49.2 & 154 & 50.2 & 150 & 51.2\\
+Education & Lower & 6 & 2.1 & 10 & 3.3 & 6 & 2.0 & 7 & 2.4\\
+ & Middle & 55 & 19.0 & 50 & 16.3 & 53 & 17.3 & 54 & 18.4\\
+ & Higher & 225 & 77.6 & 245 & 79.8 & 245 & 79.8 & 230 & 78.5\\
+Empl. Status & Paid employment & 179 & 61.7 & 165 & 53.7 & 165 & 53.7 & 173 & 59.0\\
+ & Retired/pensioned & 14 & 4.8 & 17 & 5.5 & 17 & 5.5 & 16 & 5.5\\
+ & Housewife & 33 & 11.4 & 45 & 14.7 & 41 & 13.4 & 29 & 9.9\\
+ & Student & 13 & 4.5 & 23 & 7.5 & 19 & 6.2 & 22 & 7.5\\
+ & Unemployed & 36 & 12.4 & 41 & 13.4 & 47 & 15.3 & 32 & 10.9\\
+ & Other & 15 & 5.2 & 16 & 5.2 & 18 & 5.9 & 20 & 6.8\\
+Empl. Sector & Government or public inst. & 55 & 19.0 & 74 & 24.1 & 78 & 25.4 & 59 & 20.1\\
+ & Private business or industry & 178 & 61.4 & 177 & 57.7 & 181 & 59.0 & 175 & 59.7\\
+ & Private non-profit org. & 24 & 8.3 & 25 & 8.1 & 20 & 6.5 & 23 & 7.8\\
+Last year & Saved money & 46 & 15.9 & 54 & 17.6 & 47 & 15.3 & 63 & 21.5\\
+ & Just got by & 145 & 50.0 & 148 & 48.2 & 163 & 53.1 & 147 & 50.2\\
+ & Spent some savings & 56 & 19.3 & 64 & 20.8 & 56 & 18.2 & 52 & 17.7\\
+ & Spent savings and
+borrowed & 43 & 14.8 & 41 & 13.4 & 41 & 13.4 & 31 & 10.6\\
+Set. Type & Rural & 24 & 8.3 & 27 & 8.8 & 20 & 6.5 & 17 & 5.8\\
+ & Urban & 266 & 91.7 & 280 & 91.2 & 287 & 93.5 & 276 & 94.2\\
+Opponent & No & 120 & 41.4 & 123 & 40.1 & 128 & 41.7 & 119 & 40.6\\
+ & Yes & 170 & 58.6 & 184 & 59.9 & 179 & 58.3 & 174 & 59.4\\
+\bottomrule
+\end{tabular}}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[!htbp] \centering 
+  \caption{Summary Statistics of Key Variables, Survey Data for Latin America.} 
+  \label{descr:la} 
+\centering
+\resizebox{\columnwidth}{!}{\begin{tabular}[t]{llcccccccc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Fraud (N=222)} & \multicolumn{2}{c}{Control (N=206)} & \multicolumn{2}{c}{Punishment (N=214)} & \multicolumn{2}{c}{Judicial Punishment (N=212)} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8} \cmidrule(l{3pt}r{3pt}){9-10}
+  &    & Mean & Std. Dev. & Mean  & Std. Dev.  & Mean   & Std. Dev.   & Mean    & Std. Dev.   \\
+\midrule
+\multicolumn{2}{l}{Confidence in Armed Forces} & 2.3 & 0.9 & 2.5 & 0.9 & 2.2 & 0.9 & 2.3 & 0.9\\
+\multicolumn{2}{l}{Confidence in Police } & 1.8 & 0.7 & 1.9 & 0.7 & 1.8 & 0.8 & 1.9 & 0.8\\
+\multicolumn{2}{l}{Confidence in  CEC }  & 1.8 & 0.8 & 2.3 & 0.8 & 1.9 & 0.8 & 1.9 & 0.8\\
+\multicolumn{2}{l}{Confidence in Government}  & 1.7 & 0.8 & 2.0 & 0.8 & 1.7 & 0.7 & 1.7 & 0.8\\
+\multicolumn{2}{l}{Confidence in Parties}  & 1.6 & 0.7 & 1.8 & 0.7 & 1.6 & 0.6 & 1.6 & 0.6\\
+\multicolumn{2}{l}{Confidence in Parliament}  & 1.7 & 0.7 & 2.0 & 0.8 & 1.7 & 0.7 & 1.8 & 0.8\\
+\multicolumn{2}{l}{Confidence in Courts} & 2.0 & 0.8 & 2.2 & 0.8 & 1.9 & 0.7 & 2.1 & 0.9\\
+\multicolumn{2}{l}{Confidence in President} & 1.7 & 0.8 & 2.0 & 1.0 & 1.7 & 0.9 & 1.8 & 0.9\\
+\multicolumn{2}{l}{Confidence in Elections } & 1.9 & 0.8 & 2.3 & 0.8 & 1.9 & 0.8 & 2.0 & 0.8\\
+\multicolumn{2}{l}{Confidence in Companies }  & 2.2 & 0.8 & 2.3 & 0.9 & 2.2 & 0.8 & 2.3 & 0.8\\
+\multicolumn{2}{l}{Confidence in Banks }  & 2.3 & 0.9 & 2.2 & 0.9 & 2.1 & 0.8 & 2.3 & 0.9\\
+\multicolumn{2}{l}{Confidence in Environmental Organizations }  & 3.0 & 0.8 & 3.1 & 0.8 & 2.9 & 0.8 & 2.8 & 0.9\\
+\multicolumn{2}{l}{Confidence in UN }  & 2.8 & 0.9 & 3.0 & 0.8 & 2.8 & 0.9 & 2.9 & 1.0\\
+\multicolumn{2}{l}{Confidence in World Bank}  & 2.5 & 0.9 & 2.6 & 0.9 & 2.5 & 0.9 & 2.5 & 0.9\\
+\multicolumn{2}{l}{Confidence in WTO} & 2.6 & 0.8 & 2.7 & 0.8 & 2.5 & 0.8 & 2.5 & 0.8\\
+\multicolumn{2}{l}{Political Interest }   & 2.1 & 0.7 & 2.1 & 0.8 & 2.0 & 0.8 & 2.0 & 0.8\\
+\multicolumn{2}{l}{Generalized Trust }  & 1.9 & 0.3 & 1.9 & 0.3 & 1.9 & 0.3 & 1.9 & 0.3\\
+\multicolumn{2}{l}{Age }  & 26.3 & 7.5 & 27.2 & 8.1 & 27.6 & 8.8 & 27.2 & 8.0\\
+\multicolumn{2}{l}{Political Corruption Perception }   & 9.1 & 1.4 & 9.2 & 1.4 & 9.2 & 1.4 & 9.3 & 1.1\\
+\multicolumn{2}{l}{Officials Involvement }   & 2.8 & 0.6 & 2.9 & 0.5 & 2.9 & 0.6 & 2.8 & 0.5\\
+\midrule
+ &  & N & \% & N & \% & N & \% & N & \%\\
+\cmidrule(l{1pt}r{3pt}){3-10}
+Sex & Female & 99 & 44.6 & 88 & 42.7 & 105 & 49.1 & 95 & 44.8\\
+ & Male & 123 & 55.4 & 118 & 57.3 & 109 & 50.9 & 117 & 55.2\\
+Education & Lower & 3 & 1.4 & 1 & 0.5 & 5 & 2.3 & 7 & 3.3\\
+ & Middle & 152 & 68.5 & 134 & 65.0 & 128 & 59.8 & 134 & 63.2\\
+ & Higher & 65 & 29.3 & 67 & 32.5 & 73 & 34.1 & 67 & 31.6\\
+Empl. Status & Paid employment & 70 & 31.5 & 94 & 45.6 & 83 & 38.8 & 74 & 34.9\\
+ & Retired/pensioned & 0 & 0.0 & 1 & 0.5 & 2 & 0.9 & 2 & 0.9\\
+ & Housewife & 13 & 5.9 & 13 & 6.3 & 15 & 7.0 & 19 & 9.0\\
+ & Student & 79 & 35.6 & 65 & 31.6 & 69 & 32.2 & 66 & 31.1\\
+ & Unemployed & 50 & 22.5 & 26 & 12.6 & 31 & 14.5 & 39 & 18.4\\
+ & Other & 10 & 4.5 & 7 & 3.4 & 14 & 6.5 & 11 & 5.2\\
+Empl. Sector & Government or public inst. & 12 & 5.4 & 17 & 8.3 & 14 & 6.5 & 19 & 9.0\\
+ & Private business or industry & 119 & 53.6 & 115 & 55.8 & 118 & 55.1 & 107 & 50.5\\
+ & Private non-profit organization & 16 & 7.2 & 13 & 6.3 & 15 & 7.0 & 14 & 6.6\\
+Last year & Saved money & 38 & 17.1 & 33 & 16.0 & 33 & 15.4 & 40 & 18.9\\
+ & Just got by & 91 & 41.0 & 84 & 40.8 & 95 & 44.4 & 94 & 44.3\\
+ & Spent some savings & 43 & 19.4 & 41 & 19.9 & 46 & 21.5 & 38 & 17.9\\
+ & Spent savings and
+borrowed money & 49 & 22.1 & 47 & 22.8 & 39 & 18.2 & 40 & 18.9\\
+Set. Type & Rural & 17 & 7.7 & 15 & 7.3 & 9 & 4.2 & 13 & 6.1\\
+ & Urban & 205 & 92.3 & 191 & 92.7 & 205 & 95.8 & 199 & 93.9\\
+Opponent & No & 57 & 25.7 & 51 & 24.8 & 51 & 23.8 & 56 & 26.4\\
+ & Yes & 165 & 74.3 & 155 & 75.2 & 163 & 76.2 & 156 & 73.6\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\newpage
+
+\subsubsection*{Data Quality}
+
+We have relied on the crowd-sourcing platforms for participant recruitment, which implies that participants are paid for completing the survey. Given that participants only received the payment upon completion of the survey, we have a 95\% completion rate in Russia and 92\% in Latin American countries. There seem to be no systematic differences in the dropout rates across the experimental conditions, as evidenced by the tables below. We are limiting the analysis to complete cases only. 
+
+\begin{table}[!htbp]
+\centering
+\caption{Dropout Rates across Experimental Conditions, Survey Data in Russia.} 
+\begin{tabular}[t]{llrrr}
+\toprule
+Condition &   & Dropped Out & Finished & All\\
+\midrule
+Fraud & N & 8 & 313 & 321\\
+ & \% row & 2.49 & 97.51 & 100.00\\
+Control & N & 16 & 331 & 347\\
+ & \% row & 4.61 & 95.39 & 100.00\\
+Punishment & N & 11 & 319 & 330\\
+ & \% row & 3.33 & 96.67 & 100.00\\
+Judicial Punishment & N & 12 & 315 & 327\\
+ & \% row & 3.67 & 96.33 & 100.00\\
+All & N & 64 & 1278 & 1342\\
+ & \% row & 4.77 & 95.23 & 100.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption{Dropout Rates across Experimental Conditions, Survey Data in Latin America.} 
+\begin{tabular}[t]{llrrr}
+\toprule
+Condition &   & Dropped Out & Finished & All\\
+\midrule
+Fraud & N & 15 & 231 & 246\\
+ & \% row & 6.10 & 93.90 & 100.00\\
+Control & N & 9 & 230 & 239\\
+ & \% row & 3.77 & 96.23 & 100.00\\
+Punishment & N & 8 & 227 & 235\\
+ & \% row & 3.40 & 96.60 & 100.00\\
+Judicial Punishment & N & 17 & 234 & 251\\
+ & \% row & 6.77 & 93.23 & 100.00\\
+All & N & 76 & 922 & 998\\
+ & \% row & 7.62 & 92.38 & 100.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{1cm}
+
+Furthermore, we have excluded the cases where the interview was completed in under 3 minutes, as reading and answering all the questions in the shorter amount of time seems to be unrealistic.
+
+\begin{landscape}
+
+\begin{table}
+\centering
+\caption{Time required for completion in seconds (finished interviews), Survey Data for Russia.} 
+\begin{tabular}[t]{lllllllll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Fraud (N=313)} & \multicolumn{2}{c}{Control (N=331)} & \multicolumn{2}{c}{Punishment (N=319)} & \multicolumn{2}{c}{Judicial Punishment (N=315)} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
+  & Mean & Std. Dev. & Mean  & Std. Dev.  & Mean   & Std. Dev.   & Mean    & Std. Dev.   \\
+\midrule
+Total & 501.95 & 224.01 & 431.62 & 173.50 & 502.98 & 212.27 & 462.65 & 171.63\\
+Treatment page & 168.29 & 132.42 & 131.28 & 89.48 & 187.94 & 148.09 & 178.44 & 187.10\\
+Summary page & 85.35 & 49.28 & 82.53 & 52.95 & 89.58 & 50.19 & 85.07 & 82.72\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Time required for completion in seconds (finished interviews), Survey Data for Latin America.} 
+\begin{tabular}[t]{lllllllll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Fraud (N=231)} & \multicolumn{2}{c}{Control (N=230)} & \multicolumn{2}{c}{Punishment (N=227)} & \multicolumn{2}{c}{Judicial Punishment (N=234)} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
+  & Mean & Std. Dev. & Mean  & Std. Dev.  & Mean   & Std. Dev.   & Mean    & Std. Dev.   \\
+\midrule
+Total & 482.29 & 211.27 & 501.05 & 242.38 & 504.22 & 204.63 & 520.68 & 247.58\\
+Treatment page & 153.46 & 159.90 & 157.40 & 151.35 & 157.21 & 104.88 & 185.70 & 211.06\\
+Summary page & 80.29 & 41.60 & 92.77 & 92.15 & 96.41 & 138.06 & 93.03 & 121.45\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{landscape}
+
+Additionally, to evaluate the quality of our data, we have included a question asking to summarize the text of the experimental condition. We have then used these responses to this question to filter the cases where the respondents failed to show meaningful engagement with the treatment text. Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text but rather some random characters were excluded. Similarly, the cases with summaries of a scenario different to the one given to the respondent in the current questionnaire, likely to arise due to the fact that people have multiple accounts on the platform, are treated as lack of meaningful engagement.  While the crowd-sourcing platforms aim to prevent users to have multiple accounts, eliminating such practices completely is not yet possible. 
+
+We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between correct summaries of the condition (\textit{0}), responses to the conditions which allowed us to concluded that the treatment text was read (\textit{1}), copy-paste of one or multiple paragraphs from the treatment text in the questionnaire (\textit{2}), and unacceptable answer (\textit{3}), indicating lack of meaningful engagement with the treatment. In the main analysis, we are only removing the cases that were assigned into the last category.  In Russia, that lead to exclusion of 23 completed in longer than 3 minutes interviews, which is less than 2\% of the cases. In our Latin American sample, such an approach led to exclusion of 27 cases, comprising 3\% of the cases where the interview was finished in 3 minutes or more. 
+
+Lastly, we excluded all the cases where the reported age of the respondent was below 18 years old. 
+
+
+% \subsection*{Cross-National Evidence: Descriptive Statistics}
+
+% \begin{table}[!htbp] \centering 
+%   \caption{Summary Statistics of Key Variables, World Values Survey Wave 7 (2017-2020).} 
+%   \label{} 
+% \begin{tabular}{@{\extracolsep{5pt}}lccccccc} 
+% \\[-1.8ex]\hline 
+% \hline \\[-1.8ex] 
+% Statistic & \multicolumn{1}{c}{N} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Pctl(25)} & \multicolumn{1}{c}{Pctl(75)} & \multicolumn{1}{c}{Max} \\ 
+% \hline \\[-1.8ex] 
+% Confidence in Armed Forces & 48,953 & 2.876 & 0.951 & 1 & 2 & 4 & 4 \\ 
+% Confidence in the Press & 48,953 & 2.320 & 0.880 & 1 & 2 & 3 & 4 \\ 
+% Confidence in the Police & 48,953 & 2.619 & 0.959 & 1 & 2 & 3 & 4 \\ 
+% Confidence in Courts & 48,953 & 2.558 & 0.962 & 1 & 2 & 3 & 4 \\ 
+% Confidence in Government & 48,953 & 2.385 & 0.996 & 1 & 2 & 3 & 4 \\ 
+% Confidence in Parliament & 48,953 & 2.182 & 0.948 & 1 & 1 & 3 & 4 \\ 
+% Confidence in Parties & 48,953 & 2.017 & 0.895 & 1 & 1 & 3 & 4 \\ 
+% Fraud Perception & 48,953 & 0.364 & 0.481 & 0 & 0 & 1 & 1 \\ 
+% Political Interest & 48,953 & 2.682 & 0.963 & 1 & 2 & 3 & 4 \\ 
+% Generalized Trust & 48,953 & 1.818 & 0.386 & 1 & 2 & 2 & 2 \\ 
+% Voting in National Elections & 48,953 & 1.557 & 0.822 & 1 & 1 & 2 & 4 \\ 
+% Sex & 48,953 & 1.512 & 0.500 & 1 & 1 & 2 & 2 \\ 
+% Age & 48,953 & 42.313 & 16.020 & 16 & 29 & 54 & 103 \\ 
+% Education & 48,953 & 4.043 & 1.479 & 1 & 3 & 5 & 6 \\ 
+% Employment Status & 48,953 & 3.192 & 2.044 & 1 & 1 & 5 & 8 \\ 
+% Household Income & 48,953 & 4.782 & 2.101 & 1 & 3 & 6 & 10 \\ 
+% Rural & 48,953 & 1.355 & 0.479 & 1 & 1 & 2 & 2 \\ 
+% Political Discussion & 48,953 & 2.220 & 0.647 & 1 & 2 & 3 & 3 \\ 
+% Perceived Political Corruption & 48,953 & 7.813 & 2.428 & 1 & 6 & 10 & 10 \\ 
+% \hline \\[-1.8ex] 
+% \end{tabular} 
+% \end{table} 
+
 
 \subsection*{Covariate Balance for Exact Matching}
 
