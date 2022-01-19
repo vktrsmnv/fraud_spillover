@@ -29,7 +29,8 @@
 \widowpenalty10000
 \clubpenalty10000
 \hyphenpenalty100
-
+\usepackage[page,header]{appendix}
+\usepackage{titletoc}
 
 
 \setcitestyle{authoryear,open={(},close={)}}
@@ -296,19 +297,29 @@ Second, our findings hold implications for the practice of election monitoring i
 \bibliography{fraud_experiment}
 
 \newpage
-
-\section*{Appendix}
+\appendix
+\thispagestyle{empty}
+\appendixpage
+\startcontents[sections]
+\printcontents[sections]{l}{1}{\setcounter{tocdepth}{2}}
+\newpage
 \renewcommand*{\thepage}{A\arabic{page}}
-\renewcommand*{\thesubsection}{\Alph{subsection}.}
-\renewcommand*{\thesubsubsection}{\alph{subsubsection}.}
+\renewcommand*{\thesection}{\Alph{section}.}
+\renewcommand*{\thesubsection}{\alph{subsection}.}
+% \renewcommand*{\thesubsubsection}{\alph{subsubsection}.}
 \renewcommand\thefigure{A\arabic{figure}}   
 \renewcommand\thetable{A\arabic{table}}  
 \setcounter{figure}{0}
 \setcounter{table}{0}
 \setcounter{page}{1}
-\subsection*{Cross-National Evidence: Matching Analysis}
 
-\subsubsection*{Descriptive Statistics}
+
+
+
+
+\section{Cross-National Evidence: Matching Analysis}
+
+\subsection*{Descriptive Statistics}
 Table \ref{descr:matching} contains the summary statistics for complete cases in WVS data merged with the V-Dem Project data. 
 
 \begin{table}[!htbp] \centering 
@@ -376,7 +387,7 @@ V-Dem Election Integrity & 42,586 & 0.618 & 0.255 & 0.053 & 0.435 & 0.856 & 0.96
 \end{itemize}
 
 
-\subsubsection*{Covariate Balance for Exact Matching}
+\subsection*{Covariate Balance for Exact Matching}
 
 \begin{figure}[H]
     \caption{Covariate Balance Before and After Sample Adjustment Using Exact Matching.}
@@ -387,8 +398,8 @@ V-Dem Election Integrity & 42,586 & 0.618 & 0.255 & 0.053 & 0.435 & 0.856 & 0.96
 
 \newpage
 
-\subsection*{Survey Experiment} 
-\subsubsection*{Descriptive Statistics}
+\section{Survey Experiment} 
+\subsection*{Descriptive Statistics}
 
 Table \ref{descr:russia} contains summary statistics for the survey responses in Russia for the finished interviews. As per the pre-registration analysis plan, we exclude cases where the interviews were finished in under 3 minutes to control for data quality as well as exclude the cases where respondents showed meaningful engagement with the treatment text.\footnote{Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text were excluded. Additionally, the cases with summaries of a scenario different to the one given to the respondent are treated as lack of meaningful engagement. For further details, please consult Data quality subsection.}
 
@@ -515,7 +526,7 @@ Opponent & No & 57 & 25.7 & 51 & 24.8 & 51 & 23.8 & 56 & 26.4\\
 
 \newpage
 
-\subsubsection*{Data Quality}
+\subsection*{Data Quality}
 
 We have relied on the crowd-sourcing platforms for participant recruitment, which implies that participants are paid for completing the survey. Given that participants only received the payment upon completion of the survey, we have a 95\% completion rate in Russia and 92\% in Latin American countries. There seem to be no systematic differences in the dropout rates across the experimental conditions, as evidenced by the tables below. We are limiting the analysis to complete cases only. 
 
@@ -653,7 +664,7 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 
 \newpage
 
-\subsection*{Survey Experiment: Preliminary Results} 
+\section{Survey Experiment: Preliminary Results} 
 
 \subsubsection*{The Effect of Fraud on Political Trust}
 \begin{figure}[H]
