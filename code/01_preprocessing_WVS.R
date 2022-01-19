@@ -1,6 +1,6 @@
 # Perceptions of Election Fraud, Judicial Rulings and Diffuse Political Support
-# Lion Behrens and Viktoriia Semenova 
-# Reproduction File 
+# Lion Behrens and Viktoriia Semenova
+# Reproduction File
 
 # 1. Setup #########################################################
 
@@ -12,7 +12,8 @@ setup <- function() {
     "magrittr",
     "sjlabelled",
     "conflicted",
-    "here"
+    "here",
+    "stargazer"
   )
   packages <- rownames(installed.packages())
   p_to_install <- p_needed[!(p_needed %in% packages)]
@@ -23,7 +24,7 @@ setup <- function() {
 
   conflict_prefer("select", "dplyr")
 
-  setwd(dirname(getActiveDocumentContext()$path)) # set directory to the document
+  # setwd(dirname(getActiveDocumentContext()$path)) # set directory to the document
 }
 setup()
 
@@ -53,7 +54,7 @@ wvs <- wvs7 %>%
     edu_nine = highest_educational_level_respondent_a_s_father_isced_2011,
     emplstat = employment_status,
     sector = sector_of_employment,
-    hhinc = scale_of_incomes, 
+    hhinc = scale_of_incomes,
     savings = family_savings_during_past_year,
     rural = urban_rural,
     poldiscu = how_often_discusses_political_matters_with_friends,
@@ -98,4 +99,28 @@ wvs <- wvs7 %>%
 
 # write_rds(match_data, here("data/match_data.rds"))
 write_rds(wvs, here("data/wvs7.rds"))
+
+# 3. Summary Statistics #########################################################
+
+wvs_vdem <- readRDS(here("data/wvs7.rds"))
+
+x <- "fraud1d"
+contr <- c(
+  "polint", "gentrust", "sex", "log(age)", "edu_three", "emplstat",
+  "savings", "rural", "polcorup", "vdem_elections", "year", "(1|cntry)"
+)
+
+# summary statistics
+wvs_vdem %>%
+  select(starts_with("inst_"), "fraud1", "fraud1d", "polint", "gentrust", "sex", "age", "edu_three", "emplstat",
+              "savings", "rural", "polcorup", "vdem_elections") %>%
+  drop_na() %>%
+  mutate(female = ifelse(sex == 2, 1, 0),
+         gentrust = ifelse(gentrust == 2, 1, 0),
+         rural = ifelse(rural == 2, 1, 0)
+         ) %>%
+  stargazer(as.data.frame(.),
+                      summary = T
+         )
+
 

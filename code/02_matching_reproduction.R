@@ -27,8 +27,8 @@ setup <- function() {
     install.packages(p_to_install)
   }
   lapply(p_needed, require, character.only = TRUE)
-  
-  setwd(dirname(getActiveDocumentContext()$path)) # set directory to the document
+
+  # setwd(dirname(getActiveDocumentContext()$path)) # set directory to the document
 }
 setup()
 
