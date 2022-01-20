@@ -1,8 +1,9 @@
-# Plot for OL analysis 
+# Plot for OL analysis
 
 # LA: Full Sample ####
-
-mpol <- read_rds("output/ol_la_condition.rds")
+remotes::install_github("rensa/stickylabeller")
+library(stickylabeller)
+mpol <- read_rds("output/ol_condition_la.rds")
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
@@ -24,13 +25,13 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition == cond, 1:3] <- 
+                        plot_categories$condition == cond, 1:3] <-
         median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
                                        esoph_plot$Trust == num
                                      ] -
@@ -44,18 +45,28 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
+                   institution == "pol_inst_police" ~ "Police",
+                   institution == "pol_inst_CEC" ~ "Central Electoral Commission",
+                   institution == "pol_inst_gov" ~ "Government",
+                   institution == "pol_inst_part" ~ "Political Parties",
+                   institution == "pol_inst_parl" ~ "Parliament",
+                   institution == "pol_inst_courts" ~ "Courts",
+                   institution == "pol_inst_armed" ~ "Armed Forces",
+                   ),
+         Condition = condition) %>%
   # filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
-                group = condition)) +
+                group = Condition)) +
   geom_pointrange(aes(xmin = lower,
                       xmax = upper,
-                      color = condition),
+                      color = Condition),
                   position = position_dodge(0.4)) +
   theme_bw() +
   theme(legend.position = "bottom") +
-  labs(title = "Change in Probabilities for Trust Ranking Categories",
-       subtitle = paste0("Sample: LA, depicted are 89% HDI, no copy-paste or incomplete cases"),
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+       subtitle = paste0("89% HDIs for differences in draws from expectation of the posterior predictive distributions for categories (baseline: Fraud condition)"),
        x = "Pr(Category|Fraud) - Pr(Category|Condition)",
        y = "") +
   scale_y_continuous(
@@ -66,14 +77,14 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 4,
-             labeller = label_glue('{pol}, N = {n_cases}')) +
+             labeller = label_glue('{institution}, N = {n_cases}')) +
   viridis::scale_color_viridis(discrete = T, option = "C") -> plot
 
-
-ggsave(plot, 
-       filename = "figs/la_hdi89_full.png",
+plot
+ggsave(plot,
+       filename = "figs/la_hdi89.png",
        height = 8,
        width = 10)
 
@@ -102,13 +113,13 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition == cond, 1:3] <- 
+                        plot_categories$condition == cond, 1:3] <-
       median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
                                       esoph_plot$Trust == num
       ] -
@@ -120,7 +131,7 @@ for (inst in pol){
   }
   plotting <- bind_rows(plot_categories, plotting)
 }
-# 
+#
 # plotting <- plotting %>%
 #   mutate(
 #     institution =
@@ -149,7 +160,7 @@ for (inst in pol){
 
 plotting %>%
   # filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                      x = median,
                      group = condition)) +
   geom_pointrange(aes(xmin = lower,
@@ -170,19 +181,19 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 4,
              labeller = label_glue('{pol}, N = {n_cases}')) +
   viridis::scale_color_viridis(discrete = T, option = "C") -> plot
 
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/la_hdi89_no_copy_paste_incomplete.png",
        height = 8,
        width = 10)
 
 # LA: No Copy Paste ######
-# 
+#
 mpol <- read_rds("output/ol_la_condition_2.rds")
 n_cases <- c()
 pol <- names(mpol)
@@ -205,13 +216,13 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition == cond, 1:3] <- 
+                        plot_categories$condition == cond, 1:3] <-
         median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
                                        esoph_plot$Trust == num
                                      ] -
@@ -226,7 +237,7 @@ for (inst in pol){
 
 plotting %>%
   # filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition)) +
   geom_pointrange(aes(xmin = lower,
@@ -247,19 +258,19 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 4,
              labeller = label_glue('{pol}, N = {n_cases}')) +
   viridis::scale_color_viridis(discrete = T, option = "C") -> plot
 
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/la_hdi89_no_copy_paste.png",
        height = 8,
        width = 10)
 
 # RU: No Copy Paste & Incomplete ####
-# 
+#
 mpol <- read_rds("output/ol_ru_condition_234.rds")
 n_cases <- c()
 pol <- names(mpol)
@@ -282,13 +293,13 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition == cond, 1:3] <- 
+                        plot_categories$condition == cond, 1:3] <-
         median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
                                        esoph_plot$Trust == num
                                      ] -
@@ -304,7 +315,7 @@ for (inst in pol){
 
 plotting %>%
   # filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition)) +
   geom_pointrange(aes(xmin = lower,
@@ -325,20 +336,20 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 4,
              labeller = label_glue('{pol}, N = {n_cases}')) +
   viridis::scale_color_viridis(discrete = T, option = "C") -> plot
 
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/ru_hdi89_no_copy_paste_incomplete.png",
        height = 8,
        width = 10)
 
 # RU: Full Sample ####
 
-mpol <- read_rds("output/ol_rus_condition.rds")
+mpol <- read_rds("output/ol_condition_ru.rds")
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
@@ -360,19 +371,19 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition == cond, 1:3] <- 
+                        plot_categories$condition == cond, 1:3] <-
         median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
                                        esoph_plot$Trust == num
-                                     ] -
-                     esoph_plot$.value[esoph_plot$condition == cond &
-                                         esoph_plot$Trust == num
-                                       ], .width = 0.89)[1:3]
+        ] -
+          esoph_plot$.value[esoph_plot$condition == cond &
+                              esoph_plot$Trust == num
+          ], .width = 0.89)[1:3]
       plot_categories$institution <- inst
     }
   }
@@ -380,18 +391,28 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
+                                 institution == "pol_inst_police" ~ "Police",
+                                 institution == "pol_inst_CEC" ~ "Central Electoral Commission",
+                                 institution == "pol_inst_gov" ~ "Government",
+                                 institution == "pol_inst_part" ~ "Political Parties",
+                                 institution == "pol_inst_parl" ~ "Parliament",
+                                 institution == "pol_inst_courts" ~ "Courts",
+                                 institution == "pol_inst_armed" ~ "Armed Forces",
+  ),
+  Condition = condition) %>%
   # filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
-                group = condition)) +
+                group = Condition)) +
   geom_pointrange(aes(xmin = lower,
                       xmax = upper,
-                      color = condition),
+                      color = Condition),
                   position = position_dodge(0.4)) +
   theme_bw() +
   theme(legend.position = "bottom") +
-  labs(title = "Change in Probabilities for Trust Ranking Categories",
-       subtitle = paste0("Sample: RU, depicted are 89% HDI"),
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Russia",
+       subtitle = paste0("89% HDIs for differences in draws from expectation of the posterior predictive distributions for categories (baseline: Fraud condition)"),
        x = "Pr(Category|Fraud) - Pr(Category|Condition)",
        y = "") +
   scale_y_continuous(
@@ -402,14 +423,14 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 4,
-             labeller = label_glue('{pol}, N = {n_cases}')) +
+             labeller = label_glue('{institution}, N = {n_cases}')) +
   viridis::scale_color_viridis(discrete = T, option = "C") -> plot
 
-
-ggsave(plot, 
-       filename = "figs/ru_hdi89_full.png",
+plot
+ggsave(plot,
+       filename = "figs/ru_hdi89.png",
        height = 8,
        width = 10)
 
@@ -438,13 +459,13 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition == cond, 1:3] <- 
+                        plot_categories$condition == cond, 1:3] <-
         median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
                                        esoph_plot$Trust == num
                                      ] -
@@ -459,7 +480,7 @@ for (inst in pol){
 
 plotting %>%
   # filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition)) +
   geom_pointrange(aes(xmin = lower,
@@ -480,13 +501,13 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 4,
              labeller = label_glue('{pol}, N = {n_cases}')) +
   viridis::scale_color_viridis(discrete = T, option = "C") -> plot
 
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/ru_hdi89_no_copy_paste.png",
        height = 8,
        width = 10)
@@ -500,7 +521,7 @@ ggsave(plot,
 
 plotting %>%
   filter(str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition)) +
   geom_pointrange(aes(xmin = lower,
@@ -521,16 +542,16 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 3) +
   viridis::scale_color_viridis(discrete = T) -> plot
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/la_npol_hdi89.png",
        height = 6,
        width = 10)
 
-#### RUS##### 
+#### RUS#####
 
 mpol <- read_rds("output/ol_rus_condition.rds")
 pol <- names(mpol)
@@ -553,17 +574,17 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition == cond, 1:3] <- 
+                        plot_categories$condition == cond, 1:3] <-
         # quantile(esoph_plot$.value[esoph_plot$condition == "Fraud" &
-        #                              esoph_plot$Trust == num 
+        #                              esoph_plot$Trust == num
         # ] -
         #   esoph_plot$.value[esoph_plot$condition == cond &
-        #                       esoph_plot$Trust == num 
-        #   ], 
+        #                       esoph_plot$Trust == num
+        #   ],
         # c(0.05, 0.5, 0.95))
         # hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
         #                              esoph_plot$Trust == num
@@ -582,7 +603,7 @@ for (inst in pol){
   }
   plotting <- bind_rows(plot_categories, plotting)
 }
-# 
+#
 # plotting <- plotting %>%
 #   mutate(
 #     institution =
@@ -612,7 +633,7 @@ for (inst in pol){
 plotting
 plotting %>%
   filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition)) +
   geom_pointrange(aes(xmin = lower,
@@ -633,18 +654,18 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 4) +
   viridis::scale_color_viridis(discrete = T) -> plot
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/ru_pol_hdi89.png",
        height = 6,
        width = 10)
 
 plotting %>%
   filter(str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition)) +
   geom_pointrange(aes(xmin = lower,
@@ -665,11 +686,11 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 3) +
   viridis::scale_color_viridis(discrete = T) -> plot
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/ru_npol_hdi89.png",
        height = 6,
        width = 10)
@@ -696,17 +717,17 @@ for (inst in pol){
     each = 4)
   ) %>%
     as.data.frame()
-  
+
   for (cond in levels(mpol$pol_inst_armed$data$condition1)[2:3]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
-                        plot_categories$condition1 == cond, 1:3] <- 
+                        plot_categories$condition1 == cond, 1:3] <-
         # quantile(esoph_plot$.value[esoph_plot$condition == "Fraud" &
-        #                              esoph_plot$Trust == num 
+        #                              esoph_plot$Trust == num
         # ] -
         #   esoph_plot$.value[esoph_plot$condition == cond &
-        #                       esoph_plot$Trust == num 
-        #   ], 
+        #                       esoph_plot$Trust == num
+        #   ],
         # c(0.05, 0.5, 0.95))
         # hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
         #                              esoph_plot$Trust == num
@@ -725,7 +746,7 @@ for (inst in pol){
   }
   plotting <- bind_rows(plot_categories, plotting)
 }
-# 
+#
 # plotting <- plotting %>%
 #   mutate(
 #     institution =
@@ -755,7 +776,7 @@ for (inst in pol){
 plotting
 plotting %>%
   # filter(!str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition1)) +
   geom_pointrange(aes(xmin = lower,
@@ -776,18 +797,18 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 3) +
   viridis::scale_color_viridis(discrete = T) -> plot
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/la_hdi89.png",
        height = 8,
        width = 10)
 
 plotting %>%
   filter(str_detect(institution, "npol"))%>%
-  ggplot(., aes(y = category, 
+  ggplot(., aes(y = category,
                 x = median,
                 group = condition1)) +
   geom_pointrange(aes(xmin = lower,
@@ -808,11 +829,11 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap(~ institution, 
+  facet_wrap(~ institution,
              ncol = 3) +
   viridis::scale_color_viridis(discrete = T) -> plot
 
-ggsave(plot, 
+ggsave(plot,
        filename = "figs/la_npol1_hdi89.png",
        height = 6,
        width = 10)
