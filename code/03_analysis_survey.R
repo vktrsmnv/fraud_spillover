@@ -123,7 +123,6 @@ model_calc(
   name = "main_ru_pol"
 )
 
-
 model_calc(
   data = data_la,
   inst = pol,
@@ -203,6 +202,21 @@ model_calc(
   name = "conditional_ru_npol"
 )
 
+model_calc(
+  data = data_la,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = "conditional_la_pol"
+)
+
+model_calc(
+  data = data_la,
+  inst = npol,
+  IVs = IVs,
+  model = "ol",
+  name = "conditional_la_npol"
+)
 
 ## 2.3. With Controls ####
 

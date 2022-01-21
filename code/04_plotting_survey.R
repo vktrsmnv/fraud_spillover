@@ -31,7 +31,9 @@ setup()
 
 # LA: Full Sample ####
 
-mpol <- read_rds("output/ol_condition_la.rds")
+### Political Institutions #####
+
+mpol <- read_rds("output/ol_main_la_pol.rds")
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
@@ -82,7 +84,11 @@ plotting %>%
                    institution == "pol_inst_courts" ~ "Courts",
                    institution == "pol_inst_armed" ~ "Armed Forces",
                    ),
-         Condition = condition) %>%
+         # Condition = condition,
+         Condition = condition %>%
+           factor(., levels = c(
+             "Control", "Punishment", "Judicial Punishment"
+           ))) %>%
   # filter(!str_detect(institution, "npol"))%>%
   ggplot(., aes(y = category,
                 x = median,
@@ -118,10 +124,99 @@ ggsave(plot,
        height = 8,
        width = 10)
 
+### Non-political Institutions #####
+mpol <- read_rds("output/ol_main_la_npol.rds")
+n_cases <- c()
+pol <- names(mpol)
+plotting <- tibble()
+for (inst in pol){
+  esoph_plot = mpol$npol_inst_comp$data %>%
+    data_grid(condition) %>%
+    add_fitted_draws(mpol[[inst]],
+                     category = "Trust")
+  plot_categories <- tibble(
+    median = rep(NA, 12),
+    lower = rep(NA, 12),
+    upper = rep(NA, 12),
+    category = rep(1:4, 3),
+    condition = rep(c(
+      "Control",
+      "Punishment",
+      "Judicial Punishment"
+    ),
+    each = 4)
+  ) %>%
+    as.data.frame()
+
+  n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
+
+  for (cond in levels(mpol$npol_inst_comp$data$condition)[2:4]){
+    for (num in 1:4){
+      plot_categories[plot_categories$category == num &
+                        plot_categories$condition == cond, 1:3] <-
+        median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
+                                       esoph_plot$Trust == num
+        ] -
+          esoph_plot$.value[esoph_plot$condition == cond &
+                              esoph_plot$Trust == num
+          ], .width = 0.89)[1:3]
+      plot_categories$institution <- inst
+    }
+  }
+  plotting <- bind_rows(plot_categories, plotting)
+}
+
+plotting %>%
+  mutate(institution = case_when(institution == "npol_inst_comp" ~ "Companies",
+                                 institution == "npol_inst_banks" ~ "Banks",
+                                 institution == "npol_inst_env" ~ "Environmental Organizations",
+                                 institution == "npol_inst_UN" ~ "United Nations",
+                                 institution == "npol_inst_WB" ~ "World Bank",
+                                 institution == "npol_inst_WTO" ~ "WTO",
+  ),
+  Condition = condition %>%
+    factor(., levels = c(
+      "Control", "Punishment", "Judicial Punishment"))
+) %>%
+  # filter(!str_detect(institution, "npol"))%>%
+  ggplot(., aes(y = category,
+                x = median,
+                group = Condition)) +
+  geom_pointrange(aes(xmin = lower,
+                      xmax = upper,
+                      color = Condition),
+                  position = position_dodge(0.4)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Non-political Institutions in Latin America",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
+       x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+       y = "") +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c("None\nat all",
+               "Not very\nmuch",
+               "Quite\na Lot",
+               "A Great\nDeal")
+  ) +
+  geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  facet_wrap(~ institution,
+             ncol = 3,
+             labeller = label_glue('{institution}, N = {n_cases}')) +
+  viridis::scale_color_viridis(discrete = T, option = "C") -> plot
+
+plot
+ggsave(plot,
+       filename = "figs/la_hdi89_npol.png",
+       height = 8,
+       width = 10)
 
 # RU: Full Sample ####
 
-mpol <- read_rds("output/ol_condition_ru.rds")
+### Political Institutions #####
+mpol <- read_rds("output/main_ru_pol.rds")
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
@@ -172,7 +267,9 @@ plotting %>%
                                  institution == "pol_inst_courts" ~ "Courts",
                                  institution == "pol_inst_armed" ~ "Armed Forces",
   ),
-  Condition = condition) %>%
+  Condition = condition %>%
+    factor(., levels = c(
+      "Control", "Punishment", "Judicial Punishment"))) %>%
   # filter(!str_detect(institution, "npol"))%>%
   ggplot(., aes(y = category,
                 x = median,
@@ -205,6 +302,94 @@ plotting %>%
 plot
 ggsave(plot,
        filename = "figs/ru_hdi89.png",
+       height = 8,
+       width = 10)
+
+### Non-political Institutions #####
+mpol <- read_rds("output/ol_main_ru_npol.rds")
+n_cases <- c()
+pol <- names(mpol)
+plotting <- tibble()
+for (inst in pol){
+  esoph_plot = mpol$npol_inst_comp$data %>%
+    data_grid(condition) %>%
+    add_fitted_draws(mpol[[inst]],
+                     category = "Trust")
+  plot_categories <- tibble(
+    median = rep(NA, 12),
+    lower = rep(NA, 12),
+    upper = rep(NA, 12),
+    category = rep(1:4, 3),
+    condition = rep(c(
+      "Control",
+      "Punishment",
+      "Judicial Punishment"
+    ),
+    each = 4)
+  ) %>%
+    as.data.frame()
+
+  n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
+
+  for (cond in levels(mpol$npol_inst_comp$data$condition)[2:4]){
+    for (num in 1:4){
+      plot_categories[plot_categories$category == num &
+                        plot_categories$condition == cond, 1:3] <-
+        median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
+                                       esoph_plot$Trust == num
+        ] -
+          esoph_plot$.value[esoph_plot$condition == cond &
+                              esoph_plot$Trust == num
+          ], .width = 0.89)[1:3]
+      plot_categories$institution <- inst
+    }
+  }
+  plotting <- bind_rows(plot_categories, plotting)
+}
+
+plotting %>%
+  mutate(institution = case_when(institution == "npol_inst_comp" ~ "Companies",
+                                 institution == "npol_inst_banks" ~ "Banks",
+                                 institution == "npol_inst_env" ~ "Environmental Organizations",
+                                 institution == "npol_inst_UN" ~ "United Nations",
+                                 institution == "npol_inst_WB" ~ "World Bank",
+                                 institution == "npol_inst_WTO" ~ "WTO",
+  ),
+  Condition = condition %>%
+    factor(., levels = c(
+      "Control", "Punishment", "Judicial Punishment"))) %>%
+  # filter(!str_detect(institution, "npol"))%>%
+  ggplot(., aes(y = category,
+                x = median,
+                group = Condition)) +
+  geom_pointrange(aes(xmin = lower,
+                      xmax = upper,
+                      color = Condition),
+                  position = position_dodge(0.4)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Non-political Institutions in Russia",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
+       x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+       y = "") +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c("None\nat all",
+               "Not very\nmuch",
+               "Quite\na Lot",
+               "A Great\nDeal")
+  ) +
+  geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  facet_wrap(~ institution,
+             ncol = 3,
+             labeller = label_glue('{institution}, N = {n_cases}')) +
+  viridis::scale_color_viridis(discrete = T, option = "C") -> plot
+
+plot
+ggsave(plot,
+       filename = "figs/ru_hdi89_npol.png",
        height = 8,
        width = 10)
 
