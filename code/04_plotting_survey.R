@@ -216,7 +216,7 @@ ggsave(plot,
 # RU: Full Sample ####
 
 ### Political Institutions #####
-mpol <- read_rds("output/main_ru_pol.rds")
+mpol <- read_rds("output/ol_main_ru_pol.rds")
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
