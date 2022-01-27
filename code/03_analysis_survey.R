@@ -132,6 +132,23 @@ model_calc(
 )
 
 model_calc(
+  data = data_la[data_la$questnnr == "mexico",],
+  inst = pol,
+  IVs = "condition",
+  model = "ol",
+  name = "main_la_pol_mexico"
+)
+
+model_calc(
+  data = data_la[data_la$questnnr == "colombia",],
+  inst = pol,
+  IVs = "condition",
+  model = "ol",
+  name = "main_la_pol_colombia"
+)
+
+
+model_calc(
   data = data_rus,
   inst = npol,
   IVs = "condition",
@@ -216,6 +233,17 @@ model_calc(
   IVs = IVs,
   model = "ol",
   name = "conditional_la_npol"
+)
+
+## 2.3. With involvement ####
+
+IVs <- c("(fraud + punishment + judicial_punishment)*involvement")
+model_calc(
+  data = data_rus,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = "ru_pol_involvement"
 )
 
 ## 2.3. With Controls ####
