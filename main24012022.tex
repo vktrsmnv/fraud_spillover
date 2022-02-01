@@ -259,33 +259,37 @@ Changes in diffuse support among those respondents who do not expect party repre
 
 \subsection*{Statistical Modeling}
 
-In testing Hypothesis 1, we are interested in the mean difference between the control group (1) and treatment group (2) in Table 1, i.e. those individuals who have only received information about fraud.
+To test Hypothesis 1, we are interested in the mean difference between the control group (1) and treatment group (2) in Table 1, i.e. those individuals who have only received information about fraud.
 To evaluate Hypotheses 2a and 2b, we estimate the differences between group (2), which only received fraud information, and either group (3) or (4), which received a punishment information on top of that fraud information. 
-Furthermore, we use a pre-treatment party affiliation measure--in particular, being the opponent to the incumbent regime--as a moderator.   
+Furthermore, we use a pre-treatment party affiliation measure---opposition to the incumbent regime---as a moderator.
 
 % While the random assignment of respondents to treatment and the control groups allows for an unbiased estimate of our treatment effect, we present additional models alongside the raw effects and present adjusted mean differences which take into account a range of socio-demographic information which might influence responses to the outlined fraud treatments and political attitudes such as levels of diffuse support. 
 %Since research has provided consistent evidence that perceptions of electoral fairness are divided along partisan lines (c.f. \citealt{Cantu2015}), we include two measures of political support. 
 %We ask individuals to which extent they support the current incumbent government and request them to report their partisan identification. 
 %Since younger, urban and highly educated individuals have been found to show the highest protest propensities in new democracies and electoral authoritarian regimes, we include measures of age, urbanity and the \textit{ISCED-2011} scale as a measure for education in our models. 
-%As we know that individuals' levels of social and political trust are related and individuals' `generalized trust in the world' might well predict their responses to our fraud treatments and their levels of diffuse support, we include a measure of interpersonal trust asking \textit{“Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?”}. % this is a post-treatment moderator, and it may not be the best idea to include it after all... 
+%As we know that individuals' levels of social and political trust are related and individuals' `generalized trust in the world' might well predict their responses to our fraud treatments and their levels of diffuse support, we include a measure of interpersonal trust asking \textit{“Generally speaking, would you say that most people can be trusted or that you need to be very careful in dealing with people?”}. % this is a post-treatment moderator, too, and it may not be the best idea to include it after all... 
 %Since private sector workers and individuals employed by the state itself may hold different views towards the political system, we include a dummy indicating private sector workers. 
-Additional controls include measurements for gender, occupational status, household income and individuals' position on the left-right scale.  
+% Additional controls include measurements for gender, occupational status, household income and individuals' position on the left-right scale.  
 
 Since our dependent variables take on the form of ordered categorical vectors comprising four categories $j$ ($j=1,...,4$), we calculate a set of ordered logistic regressions which can be formalized as
 
 \begin{equation}
  \begin{split}
-log(\frac{p(y^{m}_i \leq j)}{p(y^{m}_i > j)}) & = \alpha_j - (\theta_1 T_i^{fraud} + \theta_2 T_i^{punish})  \\
-log(\frac{p(y^{m}_i \leq j)}{p(y^{m}_i > j)}) & = \alpha_j - (\theta_1 T_i^{fraud} + \theta_2 T_i^{punish} + \bm{\beta} \bm{X}) 
+log(\frac{p(y^{m}_i \leq j)}{p(y^{m}_i > j)}) & = \alpha_j - (\theta_1 T_i^{fraud} + \theta_2 T_i^{punishment}) + \theta_3 T_i^{judicial \, punishment}) \\
+% log(\frac{p(y^{m}_i \leq j)}{p(y^{m}_i > j)}) & = \alpha_j - (\theta_1 T_i^{fraud} + \theta_2 T_i^{punish} + \bm{\beta} \bm{X}) 
 \end{split}
 \end{equation}
 
-\noindent where $y^m_i$ is the level of diffuse support of an individual $i$ ($i=1,...,n$) for one particular institution $m$ ($m=1,...,4$), $T_i^{fraud}$ and $T_i^{punish}$ are binary variables denoting membership in the experimental groups (2) and (3)\footnote{Individuals in the control unit serve as the reference category in our analysis.}, $\bm{X}$ is an $i \times k$ vector of covariates ($k=1,...,k$), $\alpha_j$ are threshold parameters, $\bm{\beta}$ are the regression parameters for the covariates and $\theta_1, \theta_2$ are the main parameters of interest.
+\noindent where $y^m_i$ is the level of diffuse support of an individual $i$ ($i=1,...,n$) for one particular institution $m$ ($m=1,...,4$), $T_i^{fraud}$, $T_i^{punish}$, and $T_i^{judicial \, punishment}$ are binary variables denoting membership in the experimental groups (2),  (3), and (4)\footnote{Individuals in the control unit serve as the reference category in our analysis.},
+% $\bm{X}$ is an $i \times k$ vector of covariates ($k=1,...,k$), 
+$\alpha_j$ are threshold parameters, 
+% $\bm{\beta}$ are the regression parameters for the covariates 
+and $\theta_1, \theta_2$ are the main parameters of interest.
 
 For parameter estimation, we employ a fully Bayesian framework for statistical inference as implemented in Stan (\citealt{StanDevelopmentTeam2020}). 
 Specifically, we rely on Hamiltonian Monte Carlo sampling in which priors are defined to follow Student-$t$ distributions with three degrees of freedom.
 % are centered around zero and take on a sufficiently large variance to ensure that priors are uninformative and do not favor any of the substantial hypotheses. 
-We run a set of two Markov chains out of which we discard the first 10,000 as warm-up and use the following 50,000 samples to describe posterior distributions. We check for model convergence using the Gelman-Rubin diagnostic and consider models converged if the discrepancy measure stays below 1.1 (\citealt{Gelman2004}).
+We run a set of four Markov chains out of which we discard the first 3,500 as warm-up and use the following 2,500 samples to describe posterior distributions, which result into 10,000 post-warmup samples. We check for model convergence using the Gelman-Rubin diagnostic and consider models converged if the discrepancy measure stays below 1.1 (\citealt{Gelman2004}).
 
 %While relying on a Bayesian framework holds general advantages as it allows us to state the uncertainties around our results in straightforward probabilistic statements, it provides very specific advantages to our substantive questions at hand. As our hypotheses on the moderating effect of court rulings evolve around two competing expectations expressed in Hypothesis 2a and 2b, we exploit formal Bayesian hypothesis testing using the Bayes factor defined as 
 
@@ -300,12 +304,16 @@ We run a set of two Markov chains out of which we discard the first 10,000 as wa
 \vspace{1cm}
 
 
-% Due to the nature of the dependent variable, we use ordered logistic regression to evaluate the effects of fraud and punishment information on trust in institutions. 
+Due to the nature of the dependent variable, we use ordered logistic regression to evaluate the effects of fraud and punishment information on trust in institutions. To facilitate the interpretation, we first calculate the probabilities of selecting each of the four categories in evaluating institutional trust. We then calculate the differences in probabilities between those who received fraud information alone and those assigned to another condition - control or one of the punishment conditions.  
+
+The results reveal some support for our first hypothesis about the effect of fraud information on diffuse trust. In line with expectations, respondents in Latin America were more likely to report less confidence in political institutions if they received information about electoral misconducts alone in comparison to receiving no such information. For all institutions, the point estimates for differences are negative for categories indicating more trust and positive for the categories indicating lower trust. While unsurprisingly, the largest differences are present for the central electoral commissions, directly involved and implicated in case of fraud, the differences for most political institutions are significantly different from zero, basing on a 89\% HDIs. 
+
+
 % We present the estimates from two model specifications: estimating effects for the entire sample, i.e. testing the first hypothesis, and the heterogeneous effects, estimating the effects of treatment conditional on the political affiliation of the respondent, i.e. testing the second hypothesis. We use all complete cases available for a particular institution, hence total sample sizes vary slightly across institutions. 
 
 % Figure NN depicts, for each institution in question, the first differences in probabilities of selecting each category when evaluating the trust between receiving fraud information alone and another condition  - control or one of the punishment conditions. Hence, for each respected category depicted on the vertical axis the differences in probabilities would be positive when the respective predicted probability is larger in the fraud condition and negative when the probability of selecting the category is smaller in case only fraud information was presented to the respondents (or was supplemented with punishment information). 
 
-% In line with expectations, respondents in Latin America were more likely to report less confidence in political institutions if they received information about electoral misconducts alone. For all institutions, the point estimates for differences are negative for categories indicating more trust and positive for the categories indicating lower trust. While unsurprisingly, the largest differences are present for the federal (?) electoral commissions, directly involved and implicated in case of fraud, the differences for most political institutions are significantly different from zero, basing on a 89% HDIs. For instance, respondents have, on average, 15 percentage points higher probability of reporting no support for government whatsoever when they are faced with information about fraud rather than with a neutral status quo scenario. At the same time, their probability of reporting some support to governemnt is smaller once they learn about fraud on the local level. Interestingly, fraud information led to no significant changes in reported trust in the armed forces in Latin America, which could be a result of clearer demarcation of this institution from the other actors in the political sphere. 
+%  For instance, respondents have, on average, 15 percentage points higher probability of reporting no support for government whatsoever when they are faced with information about fraud rather than with a neutral status quo scenario. At the same time, their probability of reporting some support to governemnt is smaller once they learn about fraud on the local level. Interestingly, fraud information led to no significant changes in reported trust in the armed forces in Latin America, which could be a result of clearer demarcation of this institution from the other actors in the political sphere. 
 
 % The effects of retribution information is less straightforward: while the information about members of the commissions loosing their jobs seems to have no correcting effect on the trust in political institutions, the involvement of judiciary branch seems, to some extent, reinstate trust in parliament and courts themselves in Latin American countries. Still, 
 
@@ -777,8 +785,12 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 % \end{tabular} 
 % \end{table} 
 
+\subsection{Results}
 
-\subsection*{Covariate Balance for Exact Matching}
+\subfile{sections/introduction}
+
+
+\section*{Covariate Balance for Exact Matching}
 
 \begin{figure}[H]
     \caption{Covariate Balance Before and After Sample Adjustment Using Exact Matching.}
