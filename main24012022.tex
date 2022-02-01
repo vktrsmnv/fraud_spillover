@@ -32,7 +32,7 @@
 \usepackage[page,header]{appendix}
 \usepackage{titletoc}
 \usepackage{subfiles} % Best loaded last in the preamble
-
+\usepackage{threeparttable}
 
 \setcitestyle{authoryear,open={(},close={)}}
 
@@ -796,8 +796,11 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 % \begin{landscape}
 \subfile{tables/la_pol1}
 \subfile{tables/la_pol2}
-\subfile{tables/ru_pol}
+
+\subfile{tables/ru_pol1}
+\subfile{tables/ru_pol2}
 % \end{landscape}
+\newpage
 \subsubsection*{Non-Political Institutions}
 \begin{landscape}
 \subfile{tables/la_npol}
