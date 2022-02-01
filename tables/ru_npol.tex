@@ -1,5 +1,8 @@
+\usepackage{threeparttable}
+
 \begin{table}
 \begin{center}
+\begin{threeparttable}
 \begin{tabular}{l c c c c c c}
 \hline
  & Companies & Banks & Environmental Organizations & United Nations & World Bank & WTO \\
@@ -19,8 +22,11 @@ Judicial Punishment & $0.23$            & $0.21$            & $0.27^{*}$        
 \hline
 Observations        & $1133$            & $1155$            & $1148$            & $1118$            & $1116$            & $1095$            \\
 \hline
-\multicolumn{7}{l}{\scriptsize{$^*$ Null hypothesis value outside 89\% credible interval..  This table examines the effect of information about fraud and punitative measures on institutional trust. Fraud treatement group serves as the baseline.}}
 \end{tabular}
+\begin{tablenotes}[flushleft]
+\scriptsize{$^*$ Null hypothesis value outside 89\% credible interval..  This table examines the effect of information about fraud and punitative measures on institutional trust. Fraud treatement group serves as the baseline.}
+\end{tablenotes}
+\end{threeparttable}
 \caption{Ordinal logistic regression results for Russian sample}
 \label{table:coefficients}
 \end{center}
