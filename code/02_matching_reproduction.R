@@ -358,17 +358,104 @@ for (depvar in y_vars) {
 #   theme_ipsum() +
 #   xlab("Posterior distribution of ATE") +
 #   ggtitle("Linear models, exact matching") -> p1
+library(tidybayes)
+library(stickylabeller)
 
 # ordingal models, exact matching
-ggplot(att_data[which(att_data$algorithm == "exact"), ], aes(x = att_ord, color = y_var, fill = y_var)) +
-  geom_histogram(alpha = 0.6, binwidth = 0.01) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "black", size = 1) +
-  facet_wrap(~y_var) +
-  scale_fill_viridis(discrete = TRUE) +
+
+att_data %>%
+  mutate(algorithm =
+           case_when(algorithm == "exact" ~ "Exact",
+                     algorithm == "cem" ~ "CEM",
+                     algorithm == "nearest" ~ "PS Nearest Neighbor"
+                     ),
+         algorithm = as_factor(algorithm) %>%
+           fct_relevel(
+             "Exact",
+             "CEM",
+             "PS Nearest Neighbor"
+           )) %>%
+  mutate(
+    institution =
+      case_when(
+        y_var == "inst_armed" ~ "Armed Forces",
+        y_var == "inst_police" ~ "Police",
+        y_var == "inst_gov" ~ "Government",
+        y_var == "inst_parties" ~ "Parties",
+        y_var == "inst_parl" ~ "Parliament",
+        y_var == "inst_courts" ~ "Courts",
+        y_var == "inst_comp" ~ "Companies",
+        y_var == "inst_banks" ~ "Banks",
+        y_var == "inst_UN" ~ "United Nations",
+        y_var == "inst_wb" ~ "World Bank",
+        y_var == "inst_wto" ~ "WTO"
+      ),
+    institution = as_factor(institution) %>%
+      fct_relevel(
+        "Parties",
+        "Parliament",
+        "Courts",
+        "Government",
+        "Police",
+        "Armed Forces",
+        "Companies",
+        "Banks",
+        "World Bank",
+        "WTO"
+      ) %>% fct_rev(),
+    political = case_when(
+      institution %in% c( "Parties",
+                          "Parliament",
+                          "Courts",
+                          "Government",
+                          "Police",
+                          "Armed Forces") ~ "Political",
+      TRUE ~ "Non-political"
+    )
+  ) %>%
+  na.omit() %>%
+ggplot(.,
+       aes(x = att_ord,
+           y = institution,
+           color = political,
+           fill = political)) +
+  stat_gradientinterval(
+    # alpha = 0.6,
+               aes(fill_ramp = stat(cut_cdf_qi(
+                 cdf,
+                 .width = c(.5, .89, .95),
+                 labels = scales::percent_format()
+               ))),
+               ) +
+  geom_vline(xintercept = 0,
+             linetype = "dashed",
+             color = "black",
+             size = 1) +
+  labs(y = "",
+       color = "",
+       fill = "",
+       fill_ramp = "") +
+  facet_wrap( ~ algorithm,
+             ncol = 3,
+             labeller = label_glue('{algorithm}, N = {"tba"}')) +
+  # theme_minimal() +
+  # scale_fill_viridis(discrete = T,
+  #                    direction = -1) +
+  scale_fill_viridis(discrete = T) +
   scale_color_viridis(discrete = TRUE) +
-  theme_ipsum() +
+  scale_fill_ramp_discrete(range = c(1, 0.4),
+                           na.translate = FALSE) +
   xlab("Posterior distribution of ATE") +
-  ggtitle("Ordinal models, exact matching") -> p2
+  theme_bw() +
+  theme(legend.position = "bottom") +
+
+  ggtitle("Matching Analysis Results") -> p2
+p2
+ggsave(p2,
+       filename = "figs/matching.png",
+       height = 8,
+       width = 10)
+# why NAs in att_ord for nearest??
 
 # # linear models, CEM
 # ggplot(att_data[which(att_data$algorithm == "cem"), ], aes(x = att_lin, color = y_var, fill = y_var)) +
