@@ -131,6 +131,18 @@ The second reason why specifically regime supporters' spillovers should be ampli
 \indent \textit{Hypothesis 2b: The attitudinal spillover effect of election fraud information is weaker for regime \\ \indent opponents when they are exposed to information about within-system interventions.}
 
 
+\section*{Cross-National Evidence with Matching Analysis}
+
+We first turn to cross-national data to evaluate the spillover effects of election fraud information and perceptions, and to World Values Survey data in particular. WVS relies on nationally representative samples, and we use the data from the most recent Wave 7 (2017-2020). In this section, we outline the results of matching analysis and present the estimates of spillover effects on trust in various institutions not directly related to election administration. 
+%While the empirical evidence is in line with our expectations, due to shortcomings of observational data the results could still be considered inconclusive. 
+
+To test the theory empirically, data on political trust, election fraud perceptions, and a battery of covariates to counteract the nonrandom assignment of fraud perceptions among the respondents would be necessary. This makes Wave 7 of the WVS, which covers 48 countries of various regime types, the most relevant source, as it includes all of required information. We use the classic diffuse support (Easton 1965, 1975) measure, confidence in institutions, as our dependent variables, and the fraud information treatment is captured with four-category evaluations of election day ballot fraud regularity, which we dichotomize for the purposes of straightforward matching process. Due to the nature of dependent variable, we use ordered logit models. 
+
+To address the potential endogenous relationship between perceptions of political fraud and trust, we apply matching as the main method for covariate adjustment to avoid parametric assumptions that stem from more conventional statistical models for cross-sectional data. 
+Among the variety of matching algorithms and approaches to achieve balanced datasets, we select three: the direct, exact matching; a less restrictive coarsened exact matching (King and Nielsen 2019); and a widely-used propensity score-based nearest neighbor matching (without replacement). While first two of them drastically reduce sample size, with over 48,000 observations, we are able to construct balanced datasets of 580 and 2,475 respondents respectively. \footnote{More details on the procedure as well as balance plots are available in the appendix.} 
+
+Causal estimates on the relation between election fraud perceptions and diffuse political support.
+
 \section*{Research Design}
 
  
@@ -248,12 +260,13 @@ Among these participants, changes in diffuse support for the institutions of the
 Instead, it can be a straightforward withdrawal of political support from the perceived perpetrator of electoral misconduct. 
 While substantively relevant, this scenario would not provide evidence for our outlined theory on information processing, which focuses on the \textit{extrapolation} of trust which spills over to unaffected branches of the political system.
 
-We use two strategies to counter this possibility. 
-First, we ask for respondents' levels of diffuse support towards a number of institutions that are clearly exogenous to our fraud treatment. 
+% We use two strategies to counter this possibility. 
+To counter this possibility, 
+% First, 
+we ask for respondents' levels of diffuse support towards a number of institutions that are clearly exogenous to our fraud treatment. 
 Without spillover, trust in institutions such as the armed forces, the police, or the justice system are unaffected by information on election day manipulation, as members of these institutions are unrelated to fraudulent interference practiced by individuals working for electoral commissions on voting day. 
 In contrast, decays in diffuse support towards these institutions as a response to our fraud treatments present genuine spillover effects. 
-Second, in order to disentangle whether changes in diffuse support for the institutions of the central electoral commissions, government, parliament and political parties represent genuine spillover effects as stated by Hypothesis 1 or merely a direct withdrawal of support from assumed perpetrators, we include a follow-up question after our treatment and the responses to the political trust battery asking: \textit{... some people say that there are systematic irregularities to be observed in the federal elections of [country], while other people deny that. 
-Given that such claims were true, to which extent do you expect representatives of political parties and state-affiliated agents to be involved?”}. 
+% Second, in order to disentangle whether changes in diffuse support for the institutions of the central electoral commissions, government, parliament and political parties represent genuine spillover effects as stated by Hypothesis 1 or merely a direct withdrawal of support from assumed perpetrators, we include a follow-up question after our treatment and the responses to the political trust battery asking: \textit{... some people say that there are systematic irregularities to be observed in the federal elections of [country], while other people deny that. Given that such claims were true, to which extent do you expect representatives of political parties and state-affiliated agents to be involved?”}. 
 Changes in diffuse support among those respondents who do not expect party representatives playing a role in fraudulent interference are considerably less prone to treatment endogeneity and hence provide a more realistic estimate of the causal effect even towards institutions that might be implicitly associated with our fraud treatment. 
 
 \section*{Analysis and Findings}
@@ -302,10 +315,7 @@ We run a set of four Markov chains out of which we discard the first 3,500 as wa
 
 \subsection*{Empirical Results}
 
-\vspace{1cm}
-
-
-Due to the nature of the dependent variable, we use ordered logistic regression to evaluate the effects of fraud and punishment information on trust in institutions. To facilitate the interpretation, we first calculate the probabilities of selecting each of the four categories in evaluating institutional trust. We then calculate the differences in probabilities between those who received fraud information alone and those assigned to another condition - control or one of the punishment conditions.  
+Due to the nature of the dependent variable, we use ordered logistic regression to evaluate the effects of fraud and punishment information on trust in institutions. To facilitate the interpretation of the estimates, we first calculate individual's probabilities of selecting each of the four categories in evaluating institutional trust. We then calculate the differences in probabilities between those who received fraud information alone and those assigned to another condition - control or one of the punishment conditions. These quantities allow us to compare the effects substantively. 
 
 The results reveal some support for our first hypothesis about the effect of fraud information on diffuse trust. In line with expectations, respondents in Latin America were more likely to report less confidence in political institutions if they received information about electoral misconducts alone in comparison to receiving no such information. For all institutions, the point estimates for differences are negative for categories indicating more trust and positive for the categories indicating lower trust. While unsurprisingly, the largest differences are present for the central electoral commissions, directly involved and implicated in case of fraud, the differences for most political institutions are significantly different from zero, basing on a 89\% HDIs. 
 
@@ -337,10 +347,11 @@ The results reveal some support for our first hypothesis about the effect of fra
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/ru_hdi89_conditional.png}
     \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/la_hdi89_conditional.png}
+    \end{figure}
 
-\begin{center}
-    [SEE PRELIMINARY RESULTS FROM OUR SURVEY EXPERIMENT IN THE APPENDIX]
-\end{center}
 
 \vspace{1cm}
 
@@ -800,17 +811,17 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 \subfile{tables/ru_pol2}
 
 % % \end{landscape}
-% \newpage
-% \begin{landscape}
-% \subsubsection*{Non-Political Institutions}
+\begin{landscape}
 
-% \subfile{tables/la_npol}
-% \end{landscape}
+\subsubsection*{Non-Political Institutions}
 
-% \begin{landscape}
-% \subfile{tables/ru_npol}
+\subfile{tables/la_npol}
+\end{landscape}
 
-% \end{landscape}
+\begin{landscape}
+\subfile{tables/ru_npol}
+
+\end{landscape}
 
 \normalsize
 
