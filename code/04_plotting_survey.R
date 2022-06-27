@@ -9,6 +9,7 @@ setup <- function() {
     "sjlabelled",
     "styler",
     "here",
+    "BayesPostEst",
     "bayesplot",
     "brms",
     "bayestestR",
@@ -33,7 +34,7 @@ setup()
 
 ### Political Institutions #####
 
-mpol <- read_rds("output/ol_main_la_pol_fe.rds")
+mpol <- read_rds("output/ol_main_la_pol.rds")
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
@@ -124,6 +125,54 @@ ggsave(plot,
        height = 8,
        width = 10)
 
+names(mpol) <- case_when(names(mpol) == "pol_inst_pres" ~ "President",
+                         names(mpol) == "pol_inst_police" ~ "Police",
+                         names(mpol) == "pol_inst_CEC" ~ "Central EC",
+                         names(mpol) == "pol_inst_gov" ~ "Government",
+                         names(mpol) == "pol_inst_part" ~ "Political Parties",
+                         names(mpol) == "pol_inst_parl" ~ "Parliament",
+                         names(mpol) == "pol_inst_courts" ~ "Courts",
+                         names(mpol) == "pol_inst_armed" ~ "Armed Forces",
+)
+
+BayesPostEst::mcmcReg(mpol[1:4], ci = 0.89,
+                      pars = "b",
+                      regex = T,
+                      custom.gof.rows = list("Observations" = n_cases[1:4]),
+                      custom.note = "%stars.  \\\\\nThis table examines the effect of information about fraud
+                      and punitive measures on institutional trust. \\\\\nFraud treatment group serves as the baseline.",
+                      caption = "Ordinal logistic regression results for Latin American sample",
+                      custom.model.names = names(mpol)[1:4],
+                      coefnames = rep(list(c("Intercept$_1$",
+                                             "Intercept$_2$",
+                                             "Intercept$_3$",
+                                             "Control",
+                                             "Punishment",
+                                             "Judicial Punishment"
+                                             )), 4),
+                      float.pos = "h",
+                      threeparttable = TRUE,
+                      file = "tables/la_pol1.tex")
+
+BayesPostEst::mcmcReg(mpol[5:8], ci = 0.89,
+                      pars = "b",
+                      regex = T,
+                      custom.gof.rows = list("Observations" = n_cases[5:8]),
+                      custom.note = "%stars.  \\\\\nThis table examines the effect of information about fraud
+                      and punitive measures on institutional trust. \\\\\nFraud treatment group serves as the baseline.",
+                      caption = "Ordinal logistic regression results for Latin American sample",
+                      custom.model.names = names(mpol)[5:8],
+                      coefnames = rep(list(c("Intercept$_1$",
+                                             "Intercept$_2$",
+                                             "Intercept$_3$",
+                                             "Control",
+                                             "Punishment",
+                                             "Judicial Punishment"
+                      )), 4),
+                      float.pos = "h",
+                      threeparttable = TRUE,
+                      file = "tables/la_pol2.tex")
+
 ### Non-political Institutions #####
 mpol <- read_rds("output/ol_main_la_npol.rds")
 n_cases <- c()
@@ -213,19 +262,47 @@ ggsave(plot,
        height = 8,
        width = 10)
 
+names(mpol) <- case_when(names(mpol) == "npol_inst_comp" ~ "Companies",
+                         names(mpol) == "npol_inst_banks" ~ "Banks",
+                         names(mpol) == "npol_inst_env" ~ "Environmental Organizations",
+                         names(mpol) == "npol_inst_UN" ~ "United Nations",
+                         names(mpol) == "npol_inst_WB" ~ "World Bank",
+                         names(mpol) == "npol_inst_WTO" ~ "WTO",
+)
+
+BayesPostEst::mcmcReg(mpol, ci = 0.89,
+                      pars = "b",
+                      regex = T,
+                      float.pos = "h",
+                      custom.gof.rows = list("Observations" = n_cases),
+                      custom.note = "%stars.  \\\\\nThis table examines the effect of information about fraud
+                      and punitive measures on institutional trust. \\\\\nFraud treatment group serves as the baseline.",
+                      caption = "Ordinal logistic regression results for Latin American sample",
+                      custom.model.names = names(mpol),
+                      coefnames = rep(list(c("Intercept$_1$",
+                                             "Intercept$_2$",
+                                             "Intercept$_3$",
+                                             "Control",
+                                             "Punishment",
+                                             "Judicial Punishment"
+                      )),
+                      length(names(mpol))),
+                      threeparttable = TRUE,
+                      file = "tables/la_npol.tex")
+
 # RU: Full Sample ####
 
 ### Political Institutions #####
 mpol <- read_rds("output/ol_main_ru_pol.rds")
+# mpol <- read_rds("output/ol_main_ru_pol_no_exclusions.rds")
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
 for (inst in pol){
   esoph_plot = mpol$pol_inst_armed$data %>%
     data_grid(condition) %>%
-    add_predicted_draws(mpol[[inst]],
-                     category = "Trust",
-                     prediction = ".value")
+    add_fitted_draws(mpol[[inst]],
+                     category = "Trust")
   plot_categories <- tibble(
     median = rep(NA, 12),
     lower = rep(NA, 12),
@@ -246,11 +323,11 @@ for (inst in pol){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
                         plot_categories$condition == cond, 1:3] <-
-        median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" #&
-                                       # esoph_plot$Trust == num
+        median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
+                                       esoph_plot$Trust == num
         ] %>% as.numeric() -
-          esoph_plot$.value[esoph_plot$condition == cond #&
-                              # esoph_plot$Trust == num
+          esoph_plot$.value[esoph_plot$condition == cond &
+                              esoph_plot$Trust == num
           ] %>% as.numeric(), .width = 0.89)[1:3]
       plot_categories$institution <- inst
     }
@@ -305,6 +382,68 @@ ggsave(plot,
        filename = "figs/ru_hdi89.png",
        height = 8,
        width = 10)
+
+names(mpol) <- case_when(names(mpol) == "pol_inst_pres" ~ "President",
+                         names(mpol) == "pol_inst_police" ~ "Police",
+                         names(mpol) == "pol_inst_CEC" ~ "Central EC",
+                         names(mpol) == "pol_inst_gov" ~ "Government",
+                         names(mpol) == "pol_inst_part" ~ "Political Parties",
+                         names(mpol) == "pol_inst_parl" ~ "Parliament",
+                         names(mpol) == "pol_inst_courts" ~ "Courts",
+                         names(mpol) == "pol_inst_armed" ~ "Armed Forces",
+)
+
+BayesPostEst::mcmcReg(
+  mpol[1:4],
+  ci = 0.89,
+  pars = "b",
+  regex = T,
+  float.pos = "h",
+  custom.gof.rows = list("Observations" = n_cases[1:4]),
+  custom.note = "",
+  caption = "",
+  custom.model.names = names(mpol)[1:4],
+  coefnames = rep(list(
+    c(
+      "Intercept$_1$",
+      "Intercept$_2$",
+      "Intercept$_3$",
+      "Control",
+      "Punishment",
+      "Judicial Punishment"
+    )
+  ),
+  threeparttable = TRUE,
+  length(names(mpol)[1:4])),
+  file = "tables/ru_pol1.tex"
+)
+
+BayesPostEst::mcmcReg(
+  mpol[5:8],
+  ci = 0.89,
+  pars = "b",
+  regex = T,
+  threeparttable = TRUE,
+  float.pos = "h",
+  custom.gof.rows = list("Observations" = n_cases[5:8]),
+  custom.note = "%stars.
+  \\\\\nThis table examines the effect of information about fraud and punitive measures on institutional trust.
+  \\\\\nFraud treatment group serves as the baseline.",
+  caption = "Ordinal logistic regression results for Russian sample",
+  custom.model.names = names(mpol)[5:8],
+  coefnames = rep(list(
+    c(
+      "Intercept$_1$",
+      "Intercept$_2$",
+      "Intercept$_3$",
+      "Control",
+      "Punishment",
+      "Judicial Punishment"
+    )
+  ),
+  length(names(mpol)[5:8])),
+  file = "tables/ru_pol2.tex"
+)
 
 ### Non-political Institutions #####
 mpol <- read_rds("output/ol_main_ru_npol.rds")
@@ -393,6 +532,40 @@ ggsave(plot,
        filename = "figs/ru_hdi89_npol.png",
        height = 8,
        width = 10)
+
+names(mpol) <- case_when(names(mpol) == "npol_inst_comp" ~ "Companies",
+                         names(mpol) == "npol_inst_banks" ~ "Banks",
+                         names(mpol) == "npol_inst_env" ~ "Environmental Organizations",
+                         names(mpol) == "npol_inst_UN" ~ "United Nations",
+                         names(mpol) == "npol_inst_WB" ~ "World Bank",
+                         names(mpol) == "npol_inst_WTO" ~ "WTO",
+)
+
+BayesPostEst::mcmcReg(
+  mpol,
+  ci = 0.89,
+  pars = "b",
+  regex = T,
+  float.pos = "h",
+  custom.gof.rows = list("Observations" = n_cases),
+  custom.note = "%stars.  \\\\\nThis table examines the effect of information about fraud
+                      and punitive measures on institutional trust. \\\\\nFraud treatment group serves as the baseline.",
+  caption = "Ordinal logistic regression results for Russian sample",
+  custom.model.names = names(mpol),
+  coefnames = rep(list(
+    c(
+      "Intercept$_1$",
+      "Intercept$_2$",
+      "Intercept$_3$",
+      "Control",
+      "Punishment",
+      "Judicial Punishment"
+    )
+  ),
+  length(names(mpol))),
+  threeparttable = TRUE,
+  file = "tables/ru_npol.tex"
+)
 
 # LA: Conditional Effects ####
 

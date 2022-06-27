@@ -28,9 +28,13 @@ setup()
 
 # 1. Loading Data ####
 
-data_rus <- read_csv(here("data/RU.csv")) %>% # manually coded quality
+data_rus <-
+  read_csv(here("data/RU.csv")) %>% # manually coded quality
   full_join(read_rds(here("data/toloka.rds")), .,
             by = c("case" = "CASE")) %>%
+# data_rus <- read_rds(here("data/toloka.rds")) %>% # manually coded quality
+  # full_join(read_rds(here("data/toloka.rds")), .,
+  #           by = c("case" = "CASE")) %>%
   filter(
     questnnr == "russia",
     response != 3,
@@ -211,6 +215,14 @@ model_calc(
   name = "conditional_ru_pol"
 )
 
+IVs <- c("(fraud + punishment + judicial_punishment)*polint")
+model_calc(
+  data = data_rus,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = "conditional_ru_pol_polint"
+)
 model_calc(
   data = data_rus,
   inst = npol,

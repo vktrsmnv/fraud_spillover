@@ -36,6 +36,7 @@ setup()
 
 wvs7 <- read_rds(
   here("data/World_Values_Survey_Wave_7_Inverted_R_v1_6_2.rds")
+  # here("data/WVS_Cross-National_Wave_7_RDS_v3_0.rds")
 ) %>%
   label_to_colnames() %>%
   clean_names()
@@ -112,7 +113,8 @@ contr <- c(
 
 # summary statistics
 wvs_vdem %>%
-  select(starts_with("inst_"), "fraud1", "fraud1d", "polint", "gentrust", "sex", "age", "edu_three", "emplstat",
+  select(starts_with("inst_"), "fraud1", "fraud1d", "polint",
+         "gentrust", "sex", "age", "edu_three", "emplstat",
               "savings", "rural", "polcorup", "vdem_elections") %>%
   drop_na() %>%
   mutate(female = ifelse(sex == 2, 1, 0),

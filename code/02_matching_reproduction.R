@@ -19,7 +19,8 @@ setup <- function() {
     "ordinal",
     "here",
     "hrbrthemes",
-    "viridis"
+    "viridis",
+    "ggdist"
   )
   packages <- rownames(installed.packages())
   p_to_install <- p_needed[!(p_needed %in% packages)]
@@ -346,7 +347,7 @@ for (depvar in y_vars) {
 
 # 4. Plotting Results ####
 
-# att_data <- readRDS(here("output/att_data.RDS"))
+att_data <- readRDS(here("output/att_data.RDS"))
 
 # # linear models, exact matching
 # ggplot(att_data[which(att_data$algorithm == "exact"), ], aes(x = att_lin, color = y_var, fill = y_var)) +
@@ -357,7 +358,7 @@ for (depvar in y_vars) {
 #   scale_color_viridis(discrete = TRUE) +
 #   theme_ipsum() +
 #   xlab("Posterior distribution of ATE") +
-#   ggtitle("Linear models, exact matching") -> p1
+#   ggtitle("Linear models, exact matching")
 library(tidybayes)
 library(stickylabeller)
 
@@ -423,7 +424,7 @@ ggplot(.,
     # alpha = 0.6,
                aes(fill_ramp = stat(cut_cdf_qi(
                  cdf,
-                 .width = c(.5, .89, .95),
+                 .width = c(.89, .95),
                  labels = scales::percent_format()
                ))),
                ) +
@@ -443,17 +444,15 @@ ggplot(.,
   #                    direction = -1) +
   scale_fill_viridis(discrete = T) +
   scale_color_viridis(discrete = TRUE) +
-  scale_fill_ramp_discrete(range = c(1, 0.4),
+  ggdist::scale_fill_ramp_discrete(range = c(1, 0.4),
                            na.translate = FALSE) +
   xlab("Posterior distribution of ATE") +
   theme_bw() +
-  theme(legend.position = "bottom") +
-
-  ggtitle("Matching Analysis Results") -> p2
+  theme(legend.position = "bottom") -> p2
 p2
 ggsave(p2,
        filename = "figs/matching.png",
-       height = 8,
+       height = 6,
        width = 10)
 # why NAs in att_ord for nearest??
 

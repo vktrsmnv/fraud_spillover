@@ -41,6 +41,7 @@ data_rus %>%
   mutate(opponent = as.character(opponent),
          fraud = as.character(fraud),
          punishment = as.character(punishment),
+         drop_after_treatment = ifelse(!is.na(time004) & is.na(time005), 1, 0),
          judicial_punishment = as.character(judicial_punishment),
          condition = fct_relevel(condition,
                                  "Fraud",
@@ -49,11 +50,11 @@ data_rus %>%
                                  "Judicial Punishment")) %>%
   mutate(rural = case_when(rural %in% 1:4 ~ "Urban",
                            TRUE ~ "Rural") %>% as.character()) %>%
-  select(finished,  condition) %>%
+  select(drop_after_treatment, finished, condition) %>%
   # select(starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
   #        "age":"involvement", "condition") %>%
   modelsummary::datasummary_crosstab(data = .,
-                                    formula = condition~finished,
+                                    formula = condition~drop_after_treatment,
                                     fmt = 2,
                                     output = "latex"
   )
@@ -64,10 +65,12 @@ data_la %>%
                                  "Fraud",
                                  "Control",
                                  "Punishment",
-                                 "Judicial Punishment")) %>%
-  select(finished,  condition) %>%
+                                 "Judicial Punishment"),
+         drop_after_treatment = ifelse(!is.na(time004) & is.na(time005), 1, 0),
+  ) %>%
+  select(finished,  drop_after_treatment, condition) %>%
   modelsummary::datasummary_crosstab(data = .,
-                                     formula = condition~finished,
+                                     formula = condition~drop_after_treatment,
                                      fmt = 2,
                                      output = "latex"
   )
