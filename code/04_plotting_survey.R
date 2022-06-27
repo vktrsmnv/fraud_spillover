@@ -869,13 +869,13 @@ plot <- plot +
   geom_abline(intercept = 2.5,
               slope = 15,
               size = 0.5,
-              alpha = 0.7,
+              # alpha = 0.7,
               linetype = 2,
               color = "grey") +
   geom_abline(intercept = 2.5,
               slope = -15,
               size = 0.5,
-              alpha = 0.7,
+              # alpha = 0.7,
               linetype = 3,
               color = "grey") +
   geom_text(data = data.frame(median = c(0.2, -0.2),
@@ -888,12 +888,14 @@ plot <- plot +
             label = c("Amplification\nEffect", "Correction\nEffect"),
             size = 3,
             color = "grey",
-            alpha = 0.5) +
+            # alpha = 0.9
+            ) +
   geom_curve(
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
-    alpha = 0.5, color = "grey",
+    # alpha = 0.9,
+    color = "grey",
     curvature = -0.2)
 
 arrows <- data.frame(
@@ -912,7 +914,8 @@ plot <- plot +
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
-    alpha = 0.5, color = "grey",
+    # alpha = 0.9,
+    color = "grey",
     curvature = 0.2)
 
 
@@ -1137,13 +1140,13 @@ plot <- plot +
   geom_abline(intercept = 2.5,
               slope = 15,
               size = 0.5,
-              alpha = 0.7,
+              # alpha = 0.7,
               linetype = 2,
               color = "grey") +
   geom_abline(intercept = 2.5,
               slope = -15,
               size = 0.5,
-              alpha = 0.7,
+              # alpha = 0.7,
               linetype = 3,
               color = "grey") +
   geom_text(data = data.frame(median = c(0.2, -0.2),
@@ -1156,12 +1159,14 @@ plot <- plot +
             label = c("Amplification\nEffect", "Correction\nEffect"),
             size = 3,
             color = "grey",
-            alpha = 0.5) +
+            # alpha = 0.9
+            ) +
   geom_curve(
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
-    alpha = 0.5, color = "grey",
+    # alpha = 0.9,
+    color = "grey",
     curvature = -0.2)
 
 arrows <- data.frame(
@@ -1180,7 +1185,8 @@ plot <- plot +
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
-    alpha = 0.5, color = "grey",
+    # alpha = 0.9,
+    color = "grey",
     curvature = 0.2)
 ggsave(plot,
        filename = "figs/ru_hdi89_conditional.png",
