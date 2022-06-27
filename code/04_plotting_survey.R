@@ -16,7 +16,8 @@ setup <- function() {
     "parallel",
     "tidybayes",
     "modelr",
-    "remotes"
+    "remotes",
+    "viridis"
   )
   packages <- rownames(installed.packages())
   p_to_install <- p_needed[!(p_needed %in% packages)]
@@ -27,6 +28,8 @@ setup <- function() {
   library(stickylabeller)
   lapply(p_needed, require, character.only = TRUE)
   options(mc.cores = parallel::detectCores())
+  formals(plasma)$end <- 0.8
+  formals(scale_color_viridis)$end <- 0.8
 }
 setup()
 
@@ -76,6 +79,7 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
   mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
                    institution == "pol_inst_police" ~ "Police",
                    institution == "pol_inst_CEC" ~ "Central Electoral Commission",
@@ -96,7 +100,8 @@ plotting %>%
                 group = Condition)) +
   geom_pointrange(aes(xmin = lower,
                       xmax = upper,
-                      color = Condition),
+                      color = Condition,
+                      alpha = significant),
                   position = position_dodge(0.4)) +
   theme_bw() +
   theme(legend.position = "bottom") +
@@ -114,12 +119,45 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
+  scale_alpha_discrete(range = c(0.3, 1)) +
+  # annotate("text", x = 0.1, y = 2.3, label = "Hypothesis 1", size = 2) +
   facet_wrap(~ institution,
              ncol = 4,
              labeller = label_glue('{institution}, N = {n_cases}')) +
-  viridis::scale_color_viridis(discrete = T, option = "C") -> plot
+  viridis::scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
 
-plot
+arrows <- data.frame(x1 = 0.19, x2 = 0.1,
+                     y1 = 1.55, y2 = 1.2,
+                     Condition =  c(
+                       "Control"
+                     ),
+                     institution = "Armed Forces")
+plot <- plot +
+  geom_abline(intercept = 2.5,
+              slope = -15,
+              size = 0.5,
+              alpha = 0.3,
+              linetype = 2,
+              color = viridis::plasma(1)) +
+  geom_text(data = data.frame(median = 0.2,
+                              category = 1.7,
+                              Condition =  c(
+                                "Control"
+                              ),
+                              institution = "Armed Forces"),
+            label = "Hypothesis 1",
+            size = 3,
+            color = viridis::plasma(1, 0.5)) +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.3, color = viridis::plasma(1),
+    curvature = -0.3)
+
+
 ggsave(plot,
        filename = "figs/la_hdi89.png",
        height = 8,
@@ -336,6 +374,7 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
   mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
                                  institution == "pol_inst_police" ~ "Police",
                                  institution == "pol_inst_CEC" ~ "Central Electoral Commission",
@@ -354,7 +393,8 @@ plotting %>%
                 group = Condition)) +
   geom_pointrange(aes(xmin = lower,
                       xmax = upper,
-                      color = Condition),
+                      color = Condition,
+                      alpha = significant),
                   position = position_dodge(0.4)) +
   theme_bw() +
   theme(legend.position = "bottom") +
@@ -363,7 +403,10 @@ plotting %>%
          "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
        ),
        x = "Pr(Category|Fraud) - Pr(Category|Condition)",
-       y = "") +
+       y = "",
+       alpha = "") +
+  guides(alpha = "none") +
+  scale_alpha_discrete(range = c(0.3, 1)) +
   scale_y_continuous(
     breaks = 1:4,
     labels = c("None\nat all",
@@ -375,8 +418,38 @@ plotting %>%
   facet_wrap(~ institution,
              ncol = 4,
              labeller = label_glue('{institution}, N = {n_cases}')) +
-  viridis::scale_color_viridis(discrete = T, option = "C") -> plot
+  viridis::scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
 
+plot
+arrows <- data.frame(x1 = 0.19, x2 = 0.1,
+                     y1 = 1.55, y2 = 1.2,
+                     Condition =  c(
+                       "Control"
+                     ),
+                     institution = "Armed Forces")
+plot <- plot +
+  xlim(-0.3, 0.3) +
+  geom_abline(intercept = 2.5,
+              slope = -15,
+              size = 0.5,
+              alpha = 0.3,
+              linetype = 2,
+              color = viridis::plasma(1)) +
+  geom_text(data = data.frame(median = 0.2,
+                              category = 1.7,
+                              Condition =  c(
+                                "Control"
+                              ),
+                              institution = "Armed Forces"),
+            label = "Hypothesis 1",
+            size = 3,
+            color = viridis::plasma(1, 0.5)) +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.3, color = viridis::plasma(1),
+    curvature = -0.3)
 plot
 ggsave(plot,
        filename = "figs/ru_hdi89.png",
