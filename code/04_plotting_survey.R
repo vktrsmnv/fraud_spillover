@@ -149,7 +149,7 @@ plot <- plot +
                                 "Control"
                               ),
                               institution = "Armed Forces"),
-            label = "Hypothesis 1",
+            label = "Detrimental\nEffect",
             size = 3,
             color = viridis::plasma(1, 0.5)) +
   geom_curve(
@@ -447,7 +447,7 @@ plot <- plot +
                                 "Control"
                               ),
                               institution = "Armed Forces"),
-            label = "Hypothesis 1",
+            label = "Detrimental\nEffect",
             size = 3,
             color = viridis::plasma(1, 0.5)) +
   geom_curve(
@@ -809,8 +809,7 @@ plotting %>%
       "Supporter"
     )
   ) %>%
-  filter(!str_detect("Control",
-                     string =  condition)) %>%
+  # filter(!str_detect("Control", string =  condition)) %>%
   ggplot(., aes(
     y = category,
     x = median,
@@ -851,7 +850,7 @@ plotting %>%
               ncol = 4,
               labeller = label_glue('{institution}, N = {n_cases}')) +
   scale_color_viridis(discrete = T, option = "C"
-                      , begin = 0.27 # if control category omitted
+                      # , begin = 0.27 # if control category omitted
                       ) -> plot
 
 plot
@@ -1106,6 +1105,7 @@ plotting %>%
     y = "",
     shape = ""
   ) +
+  scale_alpha_discrete(range = c(0.3, 1)) +
   scale_y_continuous(
     breaks = 1:4,
     labels = c("None\nat all",
