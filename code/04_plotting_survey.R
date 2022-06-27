@@ -28,10 +28,12 @@ setup <- function() {
   library(stickylabeller)
   lapply(p_needed, require, character.only = TRUE)
   options(mc.cores = parallel::detectCores())
-  formals(plasma)$end <- 0.8
-  formals(scale_color_viridis)$end <- 0.8
 }
 setup()
+
+formals(plasma)$end <- 0.8
+formals(scale_color_viridis)$end <- 0.8
+formals(scale_alpha_discrete)$range <- c(0.3, 1)
 
 # LA: Full Sample ####
 
@@ -126,7 +128,7 @@ plotting %>%
   facet_wrap(~ institution,
              ncol = 4,
              labeller = label_glue('{institution}, N = {n_cases}')) +
-  viridis::scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
+  scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
 
 arrows <- data.frame(x1 = 0.19, x2 = 0.1,
                      y1 = 1.55, y2 = 1.2,
@@ -154,7 +156,7 @@ plot <- plot +
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
-    alpha = 0.3, color = viridis::plasma(1),
+    alpha = 0.3, color = plasma(1),
     curvature = -0.3)
 
 
@@ -254,6 +256,7 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
   mutate(institution = case_when(institution == "npol_inst_comp" ~ "Companies",
                                  institution == "npol_inst_banks" ~ "Banks",
                                  institution == "npol_inst_env" ~ "Environmental Organizations",
@@ -271,7 +274,8 @@ plotting %>%
                 group = Condition)) +
   geom_pointrange(aes(xmin = lower,
                       xmax = upper,
-                      color = Condition),
+                      color = Condition,
+                      alpha = significant),
                   position = position_dodge(0.4)) +
   theme_bw() +
   theme(legend.position = "bottom") +
@@ -288,6 +292,8 @@ plotting %>%
                "Quite\na Lot",
                "A Great\nDeal")
   ) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
   facet_wrap(~ institution,
              ncol = 3,
@@ -561,6 +567,7 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
   mutate(institution = case_when(institution == "npol_inst_comp" ~ "Companies",
                                  institution == "npol_inst_banks" ~ "Banks",
                                  institution == "npol_inst_env" ~ "Environmental Organizations",
@@ -577,7 +584,8 @@ plotting %>%
                 group = Condition)) +
   geom_pointrange(aes(xmin = lower,
                       xmax = upper,
-                      color = Condition),
+                      color = Condition,
+                      alpha = significant),
                   position = position_dodge(0.4)) +
   theme_bw() +
   theme(legend.position = "bottom") +
@@ -595,10 +603,12 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
   facet_wrap(~ institution,
              ncol = 3,
              labeller = label_glue('{institution}, N = {n_cases}')) +
-  viridis::scale_color_viridis(discrete = T, option = "C") -> plot
+  scale_color_viridis(discrete = T, option = "C") -> plot
 
 plot
 ggsave(plot,
@@ -765,6 +775,7 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
   mutate(
     institution = case_when(
       institution == "pol_inst_pres" ~ "President",
@@ -798,17 +809,20 @@ plotting %>%
       "Supporter"
     )
   ) %>%
+  filter(!str_detect("Control",
+                     string =  condition)) %>%
   ggplot(., aes(
     y = category,
     x = median,
     shape = opponent,
     group = condition
-  )) +
+    )) +
   geom_pointrange(aes(
     xmin = lower,
     xmax = upper,
     color = Condition,
-    shape = opponent
+    shape = opponent,
+    alpha = significant
   ),
   position = position_dodge(0.4)) +
   theme_bw() +
@@ -822,6 +836,7 @@ plotting %>%
     y = "",
     shape = ""
   ) +
+  scale_alpha_discrete(range = c(0.3, 1)) +
   scale_y_continuous(
     breaks = 1:4,
     labels = c("None\nat all",
@@ -829,13 +844,79 @@ plotting %>%
                "Quite\na Lot",
                "A Great\nDeal")
   ) +
-  geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  geom_vline(aes(xintercept = 0), alpha = 0.33) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
   facet_wrap( ~ institution,
               ncol = 4,
               labeller = label_glue('{institution}, N = {n_cases}')) +
-  viridis::scale_color_viridis(discrete = T, option = "C") -> plot
+  scale_color_viridis(discrete = T, option = "C"
+                      , begin = 0.27 # if control category omitted
+                      ) -> plot
 
 plot
+
+arrows <- data.frame(
+  # x1 = 0.19, x2 = 0.1,
+  # y1 = 3.1, y2 = 1.4,
+  x1 = 0.14, x2 = 0.07,
+  y1 = 3.5, y2 = 3.4,
+                     condition =  c(
+                       "Control"
+                     ),
+                     opponent = "Opponent",
+                     institution = "Armed Forces")
+plot <- plot +
+  geom_abline(intercept = 2.5,
+              slope = 15,
+              size = 0.5,
+              alpha = 0.7,
+              linetype = 2,
+              color = "grey") +
+  geom_abline(intercept = 2.5,
+              slope = -15,
+              size = 0.5,
+              alpha = 0.7,
+              linetype = 3,
+              color = "grey") +
+  geom_text(data = data.frame(median = c(0.2, -0.2),
+                              category = c(3.5, 3.5),
+                              condition =  c(
+                                "Control"
+                              ),
+                              opponent = "Opponent",
+                              institution = "Armed Forces"),
+            label = c("Amplification\nEffect", "Correction\nEffect"),
+            size = 3,
+            color = "grey",
+            alpha = 0.5) +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.5, color = "grey",
+    curvature = -0.2)
+
+arrows <- data.frame(
+  # x1 = 0.19, x2 = 0.1,
+  # y1 = 3.1, y2 = 1.4,
+  x1 = -0.14, x2 = -0.07,
+  y1 = 3.5, y2 = 3.4,
+  condition =  c(
+    "Control"
+  ),
+  opponent = "Opponent",
+  institution = "Armed Forces")
+
+plot <- plot +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.5, color = "grey",
+    curvature = 0.2)
+
+
 ggsave(plot,
        filename = "figs/la_hdi89_conditional.png",
        height = 8,
@@ -966,6 +1047,7 @@ for (inst in pol){
 }
 
 plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
   mutate(
     institution = case_when(
       institution == "pol_inst_pres" ~ "President",
@@ -1009,7 +1091,8 @@ plotting %>%
     xmin = lower,
     xmax = upper,
     color = Condition,
-    shape = opponent
+    shape = opponent,
+    alpha = significant
   ),
   position = position_dodge(0.4)) +
   theme_bw() +
@@ -1031,12 +1114,74 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
   facet_wrap( ~ institution,
               ncol = 4,
               labeller = label_glue('{institution}, N = {n_cases}')) +
-  viridis::scale_color_viridis(discrete = T, option = "C") -> plot
+  scale_color_viridis(discrete = T, option = "C") -> plot
 
 plot
+
+arrows <- data.frame(
+  # x1 = 0.19, x2 = 0.1,
+  # y1 = 3.1, y2 = 1.4,
+  x1 = 0.14, x2 = 0.07,
+  y1 = 3.5, y2 = 3.4,
+  condition =  c(
+    "Control"
+  ),
+  opponent = "Opponent",
+  institution = "Armed Forces")
+plot <- plot +
+  geom_abline(intercept = 2.5,
+              slope = 15,
+              size = 0.5,
+              alpha = 0.7,
+              linetype = 2,
+              color = "grey") +
+  geom_abline(intercept = 2.5,
+              slope = -15,
+              size = 0.5,
+              alpha = 0.7,
+              linetype = 3,
+              color = "grey") +
+  geom_text(data = data.frame(median = c(0.2, -0.2),
+                              category = c(3.5, 3.5),
+                              condition =  c(
+                                "Control"
+                              ),
+                              opponent = "Opponent",
+                              institution = "Armed Forces"),
+            label = c("Amplification\nEffect", "Correction\nEffect"),
+            size = 3,
+            color = "grey",
+            alpha = 0.5) +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.5, color = "grey",
+    curvature = -0.2)
+
+arrows <- data.frame(
+  # x1 = 0.19, x2 = 0.1,
+  # y1 = 3.1, y2 = 1.4,
+  x1 = -0.14, x2 = -0.07,
+  y1 = 3.5, y2 = 3.4,
+  condition =  c(
+    "Control"
+  ),
+  opponent = "Opponent",
+  institution = "Armed Forces")
+
+plot <- plot +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.5, color = "grey",
+    curvature = 0.2)
 ggsave(plot,
        filename = "figs/ru_hdi89_conditional.png",
        height = 8,
