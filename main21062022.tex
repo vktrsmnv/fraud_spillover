@@ -359,7 +359,7 @@ Due to the nature of the dependent variable, we use ordered logistic regression 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/la_hdi89.png}\\
-    \caption{The Effect of Exposure to Fraud and Punishment Information on Confidence in Political Institutions in Latin America}
+    \caption{The Effect of Exposure to Fraud and Punishment Information on Confidence in Political Institutions in Latin America (pooled sample).}
     \singlespacing
     \raggedright
     \footnotesize{Notes: Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% highest density interval.}   
@@ -370,10 +370,12 @@ Due to the nature of the dependent variable, we use ordered logistic regression 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/ru_hdi89.png}
-    \caption{The Effect of Exposure to Fraud and Punishment Information on Confidence in Political Institutions in Russia}
+    \caption{The Effects of Exposure to Fraud and Punishment Information on Confidence in Political Institutions in Russia (based on ordered logit model estimates).  \\
+     \footnotesize{Notes: Plots depict 89\% HDIs for differences in probabilities for choosing respective categories based on draws from Data collected in April-June 2021 via the original online survey. Points are means and ranges  \\
+     Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% highest density interval.} }
     \singlespacing
     \raggedright
-    \footnotesize{Notes: Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% highest density interval.} 
+    
     \label{fig:main-ru}
     \end{figure}
 
@@ -391,11 +393,7 @@ In Russia, these same effects seem to be more pronounced.
 In fact, we would see restoring of trust to almost the same level as the control condition and even some gains in trust relative to control condition, meaning that the negative effect of fraud information was overridden completely with an adequate within-system response. We observe these patterns in both full- and subsample analysis (figures \ref{fig:main-ru} and \ref{fig:het-ru} respectively), yet not for the Central Electoral Commission but for other institutions, and among at least either opponents or supporters or often both. 
 
 
-
-
-
-
-\begin{figure}[h]
+\begin{figure}
     \centering
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/ru_hdi89_conditional.png}
     \caption{Results for Russia}
@@ -405,11 +403,11 @@ In fact, we would see restoring of trust to almost the same level as the control
     \label{fig:het-ru}
     \end{figure}
 
-\begin{figure}[h]
+\begin{figure}
     \centering
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/la_hdi89_conditional.png}
     \caption{Results for Latin America}
-        \singlespacing
+    \singlespacing
     \raggedright
     \footnotesize{Notes: Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed (dotted) lines schematically depict the hypothesized relationships between categories, i.e. point estimates would loosely follow the pattern of the dashed (dotted) line if the relationship between trust and within-system response is amplifying (diminishing) the effect of fraud information on trust. Transparent point ranges include zero in the 89\% highest density interval.} 
     \label{fig:het-la}
@@ -549,15 +547,55 @@ V-Dem Election Integrity & 42,586 & 0.618 & 0.255 & 0.053 & 0.435 & 0.856 & 0.96
 
 \end{itemize}
 
+\subsection*{Matching Analysis}
+We now trace further empirical implications of our theory on a broader sample. Specifically, we test whether the proposed mechanism is in line with evidence from survey data from a heterogeneous country setting using statistical matching techniques for causal inference. To evaluate our central hypothesis of attitudinal spillover, we investigate whether effects of election fraud perceptions on diffuse support for political institutions that are unrelated to electoral administration also hold in a larger sample and a more heterogeneous country setting. To this end, we leverage data from the World Values Survey, a large-scale cross-national survey program relying on nationally representative samples providing time-series data between 1981-2020. 
 
-\subsection{Covariate Balance for Exact Matching}
+While survey items relating to Easton's (1965, 1975) concept of diffuse support are part of the core questionnaire and asked consistently throughout all waves, a comprehensive battery of questions assessing respondent's perceptions of their country's electoral integrity has not been introduced before Wave 6 (2010-2014, c.f. \citealt{Norris2014}). Because perceptions of electoral fraud are not randomly assigned among respondents, individuals may differ from each other in ways that are related to their fraud perception as well as their diffuse support for political institutions. The World Values Survey includes a rich set of covariates that make it possible to condition on possible differences between individuals. 
+
+After screening the data files, we noted that in particular Wave 7 (2017-2020) of the cumulative data file provides questions on issues that are particularly relevant for potential confounding mechanism that we are confronted with in the study of fraud perceptions and diffuse support. In particular, one can imagine that attitudes towards broader issues such as political corruption \textit{in general} may locate individuals on scales measuring perceptions of practices of election day fraud and confidence in political institutions. Moreover, citizens' levels of \textit{generalized trust} in the world may condition perceptions of election day events and the particularities of a political system (c.f. Keele 2007). The covariates that we employ are `pre-treatment' in the sense that they either portray socio-demographic characteristics that are unaffected by respondents' evaluations of election day practices or report more generalized attitudes that are likely to be preceding in the causal chain when explaining `treatment' variation of fraud perceptions.\footnote{One issue with our procedure is that the attitudinal measures are not strictly preceding the main variables of interest and might thus be \textit{affected} by fraud perceptions and confidence in institutions rather than \textit{predicting} `treatment' status. We report estimates including the attitudinal measures, but note that the results are robust to model specifications which only use socio-demographic information for covariate adjustment.} We hence exploit data from Wave 7 of the World Value Survey covering 48 different countries across democratic and electoral authoritarian regimes. Table A1 in the appendix provides an overview over our used variables and countries included in the analysis. Our final models include a total number of 48,953 respondents. 
+
+Regarding our measures of fraud perceptions and diffuse political support, we choose those variables that provide the closest approximation of the measurements imposed in our survey experiment to ensure a direct test of external validity. The World Values Survey measures diffuse support through asking respondents: \textit{“I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?”}. We include responses to the same seven institutions that we collect data on in our survey experiment. On the explanatory side, rather than assigning participants to different kinds of fraud information, respondents here are asked about a battery of items covering various aspects of electoral integrity throughout the whole electoral cycle. We focus on the question that is most closely related to the mechanism of election day ballot fraud of our survey experiment stating: \textit{“In your view, how often do the following things occur in this country's election: Votes are counted fairly.”}. Answers are collected on a four-point scale covering “very often”, “fairly often”, “not often” and “not at all often”. To straightforwardly discriminate `treatment' and `control' groups, we collapse this variable into a binary indicator with each group covering two response categories.  
 
 \begin{figure}[H]
-    \caption{Covariate Balance Before and After Sample Adjustment Using Exact Matching.}
+    \caption{Covariate Balance Before and After Sample Adjustment Using Coarsened Exact Matching.}
     \centering
-    \includegraphics[width=0.9\linewidth]{covbalance_exact.pdf}
+    \includegraphics[width=0.9\linewidth]{covbalance_cem.pdf}
     \label{fig:balance}
 \end{figure}
+
+We apply matching as our main method for covariate adjustment in order to avoid parametric assumptions that stem from more conventional statistical models for cross-sectional data and present causal estimates on the relation between election fraud perceptions and diffuse political support. Statistical matching is commonly described as “the most developed [..] strategy for causal analysis in observational studies” (\citealt{Pearl2010}) and the literature on causal inference from cross-sectional data has produced a large range of algorithms and approaches to achieve balanced datasets that are free of usually embedded  parametric assumptions. 
+
+We employ two different strategies for our inferences. First, we exploit propensity scores as the most popular similarity criterion and pre-select a subset of our data in which `treated' and `control' units most closely resemble each other in pre-treatment characteristics. The gold standard in constructing balanced data is exact matching, though usually disregarded because it produces a large share of cases that are left unmatched creating trouble for effect identification stemming from small sample sizes. In our particular case in which we exploit a dataset with over 48,000 data points, we can nevertheless rely on exact matches and construct a balanced dataset covering 580 individuals. Second, the use of propensity scores as a characteristic to match on has been criticized more generally (\citealt{King2019}). As a second approach to causal inference, we rely on coarsened exact matching (CEM) as developed by \citet{Iacus2012} which has been proposed as an alternative to propensity score-based methods and has the potential to reduce large parts of model dependence, bias and variance that are left unaccounted by conventional matching algorithms. We compared these two approaches to a number of other algorithms for sample adjustment using matching and find these provide us with the best covariate balance by far. 
+
+Figure 1 presents measures of covariate balance between those individuals falling into the `fraud' and `no fraud' perception condition before and after our sample adjustment. For each covariate that we match on, we report the standardized bias as measured by the difference in means between both groups of individuals scaled by the pooled standard deviation. Dots to the right (left) of the dashed vertical line are indicative of a higher incidence of respective characteristics among those individuals that perceive the elections of their country as unfair (fair). As indicated by the grey circles, fraud perceptions are most prevalent among those individuals that report to never turn out to vote, obtain low levels of interpersonal trust, and perceive political corruption at large scale in their country. 
+
+\begin{table}[]
+\caption{Matching Estimates: Effect of Fraud Perceptions on Confidence in Political Institutions.}
+\singlespace
+\begin{tabular}{llllccccc}
+\hline
+                              & \multicolumn{2}{c}{Na{\"i}ve Estimate}                                         & \multicolumn{1}{c}{}          & \multicolumn{2}{c}{Coarsened Exact Matching} &                      & \multicolumn{2}{c}{Exact Matching}          \\
+                              & \multicolumn{1}{c}{\textit{Coef.}} & \multicolumn{1}{c}{\textit{Std.Err.}} & \multicolumn{1}{c}{\textit{}} & \textit{Coef.}        & \textit{Std.Err.}    & \textit{}            & \textit{Coef.}       & \textit{Std.Err.}    \\ \cline{2-3} \cline{5-6} \cline{8-9} 
+\textit{Real Spillover}       &                                    &                                       &                               & \multicolumn{1}{l}{}  & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} \\
+Effect on: Armed Forces       & -0.432                             & 0.019                                 &                               & -0.508                & 0.073                &                      & -0.384               & 0.151                \\
+Effect on: Police             & -0.526                             & 0.019                                 &                               & -0.671                & 0.074                &                      & -0.681               & 0.153                \\
+Effect on: Press              & -0.428                             & 0.019                                 &                               & -0.366                & 0.074                &                      & -0.215               & 0.155                \\
+Effect on: Courts             & -0.601                             & 0.019                                 &                               & -0.803                & 0.075                &                      & -0.718               & 0.153                \\
+                              &                                    &                                       &                               &                       &                      &                      &                      &                      \\
+\textit{Endogenous Spillover} &                                    &                                       &                               &                       &                      &                      &                      &                      \\
+Effect on: Government         & -0.694                             & 0.020                                 &                               & -0.709                & 0.074                &                      & -0.739               & 0.153                \\
+Effect on: Parliament         & -0.660                             & 0.020                                 &                               & -0.745                & 0.076                &                      & -0.514               & 0.155                \\
+Effect on: Political Parties  & -0.560                             & 0.020                                 &                               & -0.535                & 0.076                &                      & -0.434               & 0.158                \\ \hline
+Covariate Adjustment          & \multicolumn{2}{c}{$\surd$}                                                & \multicolumn{1}{c}{}          & \multicolumn{2}{c}{$\surd$}                  &                      & \multicolumn{2}{c}{$\surd$}                 \\
+$N$                             & \multicolumn{2}{c}{48,953}                                                 & \multicolumn{1}{c}{}          & \multicolumn{2}{c}{2,475}                    &                      & \multicolumn{2}{c}{580}                     \\ \hline
+\end{tabular}
+\textit{Note: Na{\"i}ve estimates are drawn from ordinal logistic mixed models nesting 52,105 individuals in 48 countries fitted with maximum likelihood estimation. Matching results are drawn from exact and coarsened exact matching with postmatching regression adjustment through parametric ordinal logistic models. Coefficients represent average treatment effects (ATE).}
+\end{table}
+
+Notably, these differences are almost completely reduced after pruning the data as a result of our matching algorithms, as indicated by the black dots. Standardized bias is close to zero for all covariates in the adjusted sample, and matched groups are highly similar on any of their observed characteristics.\footnote{This picture equivalently holds for standardized bias reduction using propensity-score based exact matching.} Hence, in our analysis, the remaining differences on diffuse political support that are still observed between both groups on our fraud indicator can be plausibly attributed to differences in election day fraud perceptions. 
+
+Table 2 presents the effect estimates. The first column presents na{\"i}ve estimates drawn from an ordinal logistic mixed model on the whole dataset using available covariates as control variables. Columns 2 and 3 present the results of our matching estimators. All coefficients provide estimates of the average treatment effect (ATE). Across specifications, we find robust support for our main hypothesis of attitudinal spillover. Perceived prevalence of election day ballot fraud in the federal elections of one's country shows to robustly decrease confidence in political institutions that are unrelated to electoral administration. These effects hold for those institutions that are potentially thought to be related to electoral malpractice (endogenous spillover) as well as for those institutions that are exogenous to election day procedures (genuine spillover effect). 
+
 
 \newpage
 
@@ -864,64 +902,17 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 
 \normalsize
 
-\section*{Covariate Balance for Exact Matching}
-
-\begin{figure}[H]
-    \caption{Covariate Balance Before and After Sample Adjustment Using Exact Matching.}
-    \centering
-    \includegraphics[width=0.9\linewidth]{covbalance_exact.pdf}
-    \label{fig:balance}
-\end{figure}
-
 \newpage
-\section*{Cross-Country Evidence}
-We now trace further empirical implications of our theory on a broader sample. Specifically, we test whether the proposed mechanism is in line with evidence from survey data from a heterogeneous country setting using statistical matching techniques for causal inference. To evaluate our central hypothesis of attitudinal spillover, we investigate whether effects of election fraud perceptions on diffuse support for political institutions that are unrelated to electoral administration also hold in a larger sample and a more heterogeneous country setting. To this end, we leverage data from the World Values Survey, a large-scale cross-national survey program relying on nationally representative samples providing time-series data between 1981-2020. 
+\section*{Robustness}
 
-While survey items relating to Easton's (1965, 1975) concept of diffuse support are part of the core questionnaire and asked consistently throughout all waves, a comprehensive battery of questions assessing respondent's perceptions of their country's electoral integrity has not been introduced before Wave 6 (2010-2014, c.f. \citealt{Norris2014}). Because perceptions of electoral fraud are not randomly assigned among respondents, individuals may differ from each other in ways that are related to their fraud perception as well as their diffuse support for political institutions. The World Values Survey includes a rich set of covariates that make it possible to condition on possible differences between individuals. 
+\subsection*{Data Quality Restrictions}
 
-After screening the data files, we noted that in particular Wave 7 (2017-2020) of the cumulative data file provides questions on issues that are particularly relevant for potential confounding mechanism that we are confronted with in the study of fraud perceptions and diffuse support. In particular, one can imagine that attitudes towards broader issues such as political corruption \textit{in general} may locate individuals on scales measuring perceptions of practices of election day fraud and confidence in political institutions. Moreover, citizens' levels of \textit{generalized trust} in the world may condition perceptions of election day events and the particularities of a political system (c.f. Keele 2007). The covariates that we employ are `pre-treatment' in the sense that they either portray socio-demographic characteristics that are unaffected by respondents' evaluations of election day practices or report more generalized attitudes that are likely to be preceding in the causal chain when explaining `treatment' variation of fraud perceptions.\footnote{One issue with our procedure is that the attitudinal measures are not strictly preceding the main variables of interest and might thus be \textit{affected} by fraud perceptions and confidence in institutions rather than \textit{predicting} `treatment' status. We report estimates including the attitudinal measures, but note that the results are robust to model specifications which only use socio-demographic information for covariate adjustment.} We hence exploit data from Wave 7 of the World Value Survey covering 48 different countries across democratic and electoral authoritarian regimes. Table A1 in the appendix provides an overview over our used variables and countries included in the analysis. Our final models include a total number of 48,953 respondents. 
+\subsection*{Mediation Analysis}
 
-Regarding our measures of fraud perceptions and diffuse political support, we choose those variables that provide the closest approximation of the measurements imposed in our survey experiment to ensure a direct test of external validity. The World Values Survey measures diffuse support through asking respondents: \textit{“I am going to name a number of organizations. For each one, could you tell me how much confidence you have in them: is it a great deal of confidence, quite a lot of confidence, not very much confidence or none at all?”}. We include responses to the same seven institutions that we collect data on in our survey experiment. On the explanatory side, rather than assigning participants to different kinds of fraud information, respondents here are asked about a battery of items covering various aspects of electoral integrity throughout the whole electoral cycle. We focus on the question that is most closely related to the mechanism of election day ballot fraud of our survey experiment stating: \textit{“In your view, how often do the following things occur in this country's election: Votes are counted fairly.”}. Answers are collected on a four-point scale covering “very often”, “fairly often”, “not often” and “not at all often”. To straightforwardly discriminate `treatment' and `control' groups, we collapse this variable into a binary indicator with each group covering two response categories.  
+\subsection*{Alternative Operationalizations}
 
-\begin{figure}[H]
-    \caption{Covariate Balance Before and After Sample Adjustment Using Coarsened Exact Matching.}
-    \centering
-    \includegraphics[width=0.9\linewidth]{covbalance_cem.pdf}
-    \label{fig:balance}
-\end{figure}
+\section*{Questionnaire and Translations}
 
-We apply matching as our main method for covariate adjustment in order to avoid parametric assumptions that stem from more conventional statistical models for cross-sectional data and present causal estimates on the relation between election fraud perceptions and diffuse political support. Statistical matching is commonly described as “the most developed [..] strategy for causal analysis in observational studies” (\citealt{Pearl2010}) and the literature on causal inference from cross-sectional data has produced a large range of algorithms and approaches to achieve balanced datasets that are free of usually embedded  parametric assumptions. 
-
-We employ two different strategies for our inferences. First, we exploit propensity scores as the most popular similarity criterion and pre-select a subset of our data in which `treated' and `control' units most closely resemble each other in pre-treatment characteristics. The gold standard in constructing balanced data is exact matching, though usually disregarded because it produces a large share of cases that are left unmatched creating trouble for effect identification stemming from small sample sizes. In our particular case in which we exploit a dataset with over 48,000 data points, we can nevertheless rely on exact matches and construct a balanced dataset covering 580 individuals. Second, the use of propensity scores as a characteristic to match on has been criticized more generally (\citealt{King2019}). As a second approach to causal inference, we rely on coarsened exact matching (CEM) as developed by \citet{Iacus2012} which has been proposed as an alternative to propensity score-based methods and has the potential to reduce large parts of model dependence, bias and variance that are left unaccounted by conventional matching algorithms. We compared these two approaches to a number of other algorithms for sample adjustment using matching and find these provide us with the best covariate balance by far. 
-
-Figure 1 presents measures of covariate balance between those individuals falling into the `fraud' and `no fraud' perception condition before and after our sample adjustment. For each covariate that we match on, we report the standardized bias as measured by the difference in means between both groups of individuals scaled by the pooled standard deviation. Dots to the right (left) of the dashed vertical line are indicative of a higher incidence of respective characteristics among those individuals that perceive the elections of their country as unfair (fair). As indicated by the grey circles, fraud perceptions are most prevalent among those individuals that report to never turn out to vote, obtain low levels of interpersonal trust, and perceive political corruption at large scale in their country. 
-
-\begin{table}[]
-\caption{Matching Estimates: Effect of Fraud Perceptions on Confidence in Political Institutions.}
-\singlespace
-\begin{tabular}{llllccccc}
-\hline
-                              & \multicolumn{2}{c}{Na{\"i}ve Estimate}                                         & \multicolumn{1}{c}{}          & \multicolumn{2}{c}{Coarsened Exact Matching} &                      & \multicolumn{2}{c}{Exact Matching}          \\
-                              & \multicolumn{1}{c}{\textit{Coef.}} & \multicolumn{1}{c}{\textit{Std.Err.}} & \multicolumn{1}{c}{\textit{}} & \textit{Coef.}        & \textit{Std.Err.}    & \textit{}            & \textit{Coef.}       & \textit{Std.Err.}    \\ \cline{2-3} \cline{5-6} \cline{8-9} 
-\textit{Real Spillover}       &                                    &                                       &                               & \multicolumn{1}{l}{}  & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{} \\
-Effect on: Armed Forces       & -0.432                             & 0.019                                 &                               & -0.508                & 0.073                &                      & -0.384               & 0.151                \\
-Effect on: Police             & -0.526                             & 0.019                                 &                               & -0.671                & 0.074                &                      & -0.681               & 0.153                \\
-Effect on: Press              & -0.428                             & 0.019                                 &                               & -0.366                & 0.074                &                      & -0.215               & 0.155                \\
-Effect on: Courts             & -0.601                             & 0.019                                 &                               & -0.803                & 0.075                &                      & -0.718               & 0.153                \\
-                              &                                    &                                       &                               &                       &                      &                      &                      &                      \\
-\textit{Endogenous Spillover} &                                    &                                       &                               &                       &                      &                      &                      &                      \\
-Effect on: Government         & -0.694                             & 0.020                                 &                               & -0.709                & 0.074                &                      & -0.739               & 0.153                \\
-Effect on: Parliament         & -0.660                             & 0.020                                 &                               & -0.745                & 0.076                &                      & -0.514               & 0.155                \\
-Effect on: Political Parties  & -0.560                             & 0.020                                 &                               & -0.535                & 0.076                &                      & -0.434               & 0.158                \\ \hline
-Covariate Adjustment          & \multicolumn{2}{c}{$\surd$}                                                & \multicolumn{1}{c}{}          & \multicolumn{2}{c}{$\surd$}                  &                      & \multicolumn{2}{c}{$\surd$}                 \\
-$N$                             & \multicolumn{2}{c}{48,953}                                                 & \multicolumn{1}{c}{}          & \multicolumn{2}{c}{2,475}                    &                      & \multicolumn{2}{c}{580}                     \\ \hline
-\end{tabular}
-\textit{Note: Na{\"i}ve estimates are drawn from ordinal logistic mixed models nesting 52,105 individuals in 48 countries fitted with maximum likelihood estimation. Matching results are drawn from exact and coarsened exact matching with postmatching regression adjustment through parametric ordinal logistic models. Coefficients represent average treatment effects (ATE).}
-\end{table}
-
-Notably, these differences are almost completely reduced after pruning the data as a result of our matching algorithms, as indicated by the black dots. Standardized bias is close to zero for all covariates in the adjusted sample, and matched groups are highly similar on any of their observed characteristics.\footnote{This picture equivalently holds for standardized bias reduction using propensity-score based exact matching.} Hence, in our analysis, the remaining differences on diffuse political support that are still observed between both groups on our fraud indicator can be plausibly attributed to differences in election day fraud perceptions. 
-
-Table 2 presents the effect estimates. The first column presents na{\"i}ve estimates drawn from an ordinal logistic mixed model on the whole dataset using available covariates as control variables. Columns 2 and 3 present the results of our matching estimators. All coefficients provide estimates of the average treatment effect (ATE). Across specifications, we find robust support for our main hypothesis of attitudinal spillover. Perceived prevalence of election day ballot fraud in the federal elections of one's country shows to robustly decrease confidence in political institutions that are unrelated to electoral administration. These effects hold for those institutions that are potentially thought to be related to electoral malpractice (endogenous spillover) as well as for those institutions that are exogenous to election day procedures (genuine spillover effect). 
 
 % \vspace{0.5cm}
 
