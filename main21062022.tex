@@ -356,31 +356,30 @@ We run a set of four Markov chains out of which we discard the first 3,500 as wa
 Due to the nature of the dependent variable, we use ordered logistic regression to evaluate the effects of fraud and punishment information on trust in institutions. To facilitate the substantive interpretation of the estimates, using posterior draws we first calculate individuals' probabilities of selecting each of the four answer categories in evaluating institutional trust. We then calculate the differences in probabilities between those who received fraud information alone and those assigned to another condition - control or one of the punishment conditions. These quantities allow us to compare the effects substantively to our main scenario of interest - exposure to explicit fraud information alone. As a result, the differences for the control and fraud condition serve to evaluate the first hypothesis, while the differences for the two punishment conditions allow for testing of the second one. Given that for one of the punishment conditions another institution of a political system is explicitly mentioned, extrapolation may be more likely to occur there, which is why we treat these conditions separately in the analysis. The former two plots in the section contain the estimates for the full samples for both Russia and Latin America, while the latter two depict the differences in effects across the supporters and opponents. Number of observations per institution varies somewhat as we used all complete data points for each model we estimated. 
 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/la_hdi89_control.png}\\
-    \caption{The Effect of Exposure to Fraud and Punishment Information on Confidence in Political Institutions in Latin America (pooled sample).}
-    \singlespacing
-    \raggedright
-    \footnotesize{Notes: Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% highest density interval.}   
-    \label{fig:main-la}
-    % \footnotesize{Note: }
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \caption{The Effect of Exposure to Fraud and Punishment Information on Confidence in Political Institutions in Latin America (pooled sample).}
+%     \singlespacing
+%     \raggedright
+%     \footnotesize{Notes: Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% highest density interval.}   
+%     \label{fig:main-la}
+%     % \footnotesize{Note: }
+% \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/ru_hdi89_control.png}
-    \caption{The Effects of Exposure to Fraud and Punishment Information on Confidence in Political Institutions in Russia (based on ordered logit model estimates).  \\
+    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/main_hdi89.png}
+    \caption{The Effects of Exposure to Fraud and Punishment Information on Confidence in Political Institutions (based on ordered logit model estimates).  \\
      \footnotesize{Notes: Plots depict 89\% HDIs for differences in probabilities for choosing respective categories based on draws from Data collected in April-June 2021 via the original online survey. Points are means and ranges  \\
      Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% highest density interval.} }
     \singlespacing
     \raggedright
     
-    \label{fig:main-ru}
+    \label{fig:main}
     \end{figure}
 
 
-The results presented in figures \ref{fig:main-la} and \ref{fig:main-ru} are in line with the first hypothesis about the effect of fraud information on diffuse support. Across both Russian and Latin American samples, while modest in size, point estimates for the differences between control an fraud conditions are consistent with the expectations. For all institutions, the point estimates for differences are negative for categories indicating higher levels of trust, i.e. the probability of demonstrating more confidence in institutions is higher when being exposed to the control condition than when exposed to the fraud information, and vica versa for the categories for lower trust. While unsurprisingly, the largest differences are present for the central electoral commissions, the differences for many political institutions, both involved in the conduct of elections and not, are significantly different from zero, basing on a 89\% HDIs, which points toward the presence of spillover effects. We are less likely to observe the spillover effects for police and armed forces for both samples though, which have a less direct relationship to politics per se. Coupled with the lack of spillover effects for non-political institutions (see appendix), this provides evidence for the limits of trust extrapolation and its diminishing with potentially growing perceived distance from the electoral field. 
+The results presented in figure \ref{fig:main} in line with the first hypothesis about the effect of fraud information on diffuse support. Across both Russian and Latin American samples, while modest in size, point estimates for the differences between control an fraud conditions are consistent with the expectations. For all institutions, the point estimates for differences are negative for categories indicating higher levels of trust, i.e. the probability of demonstrating more confidence in institutions is higher when being exposed to the control condition than when exposed to the fraud information, and vica versa for the categories for lower trust. While unsurprisingly, the largest differences are present for the central electoral commissions, the differences for many political institutions, both involved in the conduct of elections and not, are significantly different from zero, basing on a 89\% HDIs, which points toward the presence of spillover effects. We are less likely to observe the spillover effects for police and armed forces for both samples though, which have a less direct relationship to politics per se. Coupled with the lack of spillover effects for non-political institutions (see appendix), this provides evidence for the limits of trust extrapolation and its diminishing with potentially growing perceived distance from the electoral field. 
 
 Notably, the effect sizes are somewhat higher in Latin American sample in comparison to the Russian one, with absolute differences between control and fraud conditions not exceeding 13 percentage points in Russia and 27 percentage points in Latin America. This fact could be related to countries' political regimes and point towards larger discrepancies in the status quo evaluation. The differences would be less pronounced between explicit indication of fraud and the control condition, which could potentially prompt the pre-existing notions of manipulation should respondents have any doubts regarding the presence of fraud in status quo. This provides a harder test for the theory and, coupled with a relatively small sample size, it makes the magnitude of the effects potentially smaller for the entire sample. 
 
