@@ -596,8 +596,7 @@ Notably, these differences are almost completely reduced after pruning the data 
 Table 2 presents the effect estimates. The first column presents na{\"i}ve estimates drawn from an ordinal logistic mixed model on the whole dataset using available covariates as control variables. Columns 2 and 3 present the results of our matching estimators. All coefficients provide estimates of the average treatment effect (ATE). Across specifications, we find robust support for our main hypothesis of attitudinal spillover. Perceived prevalence of election day ballot fraud in the federal elections of one's country shows to robustly decrease confidence in political institutions that are unrelated to electoral administration. These effects hold for those institutions that are potentially thought to be related to electoral malpractice (endogenous spillover) as well as for those institutions that are exogenous to election day procedures (genuine spillover effect). 
 
 
-\newpage
-
+\clearpage
 \section{Survey Experiment} 
 \subsection{Descriptive Statistics}
 
@@ -724,8 +723,7 @@ Opponent & No & 57 & 25.7 & 51 & 24.8 & 51 & 23.8 & 56 & 26.4\\
 \end{tabular}}
 \end{table}
 
-\newpage
-
+\clearpage
 \subsection{Data Quality}
 
 We have relied on the crowd-sourcing platforms for participant recruitment, which implies that participants are paid for completing the survey. Given that participants only received the payment upon completion of the survey, we have a 95\% completion rate in Russia and 92\% in Latin American countries. There seem to be no systematic differences in the dropout rates across the experimental conditions, i.e. dropout rates right after reading the treatment condition, as evidenced by the tables below. We are limiting the analysis to complete cases only. 
@@ -751,7 +749,7 @@ We have relied on the crowd-sourcing platforms for participant recruitment, whic
 % \end{tabular}
 % \end{table}
 
-\begin{table}
+\begin{table}[H]
 \centering
 \caption{Dropout Rates right after Reading the Treatment across Experimental Conditions, Survey Data in Russia.} 
 \begin{tabular}[t]{llrrr}
@@ -833,11 +831,13 @@ Trust evaluation page & 80.29 & 41.60 & 92.77 & 92.15 & 96.41 & 138.06 & 93.03 &
 
 \end{landscape}
 
-Additionally, to evaluate the quality of our data, we have included a question asking to summarize the text of the experimental condition. We have then used these responses to this question to filter the cases where the respondents failed to show meaningful engagement with the treatment text. Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text but rather some random characters were excluded. Similarly, the cases with summaries of a scenario different to the one given to the respondent in the current questionnaire, likely to arise due to the fact that people have multiple accounts on the platform, are treated as lack of meaningful engagement.  While the crowd-sourcing platforms aim to prevent users to have multiple accounts, eliminating such practices completely is not yet possible. 
+Additionally, to evaluate the quality of our data, we have included a question asking to summarize the text of the experimental condition. We have then used responses to this question to filter the cases where the respondents failed to show meaningful engagement with the treatment text. Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text but rather some random characters were excluded. Similarly, the cases with summaries of a scenario different to the one given to the respondent in the current questionnaire, likely to arise due to the fact that people have multiple accounts on the platform, are treated as lack of meaningful engagement.  While the crowd-sourcing platforms aim to prevent users to have multiple accounts, eliminating such practices completely is not yet possible. 
 
-We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between correct summaries of the condition (\textit{0}), responses to the conditions which allowed us to concluded that the treatment text was read (\textit{1}), copy-paste of one or multiple paragraphs from the treatment text in the questionnaire (\textit{2}), and unacceptable answer (\textit{3}), indicating lack of meaningful engagement with the treatment. In the main analysis, we are only removing the cases that were assigned into the last category.  In Russia, that lead to exclusion of 23 completed in longer than 3 minutes interviews, which is less than 2\% of the cases. In our Latin American sample, such an approach led to exclusion of 27 cases, comprising 3\% of the cases where the interview was finished in 3 minutes or more. 
+We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between correct summaries of the condition (\textit{0}), responses to the conditions which allowed us to concluded that the treatment text was read (\textit{1}), copy-paste of one or multiple paragraphs from the treatment text in the questionnaire (\textit{2}), and unacceptable answer (\textit{3}), indicating lack of meaningful engagement with the treatment. While we avoid removing any data in the main analysis due to potential introduction of post-treatment bias though case selection, we report the analysis on the restricted samples, which shows that our findings still hold. 
+% In the main analysis, we are only removing the cases that were assigned into the last category.  
+In Russia, that lead to exclusion of 23 completed in longer than 3 minutes interviews, which is less than 2\% of the cases. In our Latin American sample, this approach led to exclusion of 27 cases, comprising 3\% of the cases where the interview was finished in 3 minutes or more. 
 
-Lastly, we excluded all the cases where the reported age of the respondent was below 18 years old. 
+Lastly, we excluded all the cases where the reported age of the respondent was below 18 years old (despite the crowd-sourcing platform restriction of 18 years old). 
 
 
 % \subsection*{Cross-National Evidence: Descriptive Statistics}
@@ -877,14 +877,15 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 
 \subsubsection*{Political Institutions}
 
+\small
 % \begin{landscape}
 \subfile{tables/la_pol1}
-\subfile{tables/la_pol2}
+% \subfile{tables/la_pol2}
 
 
 \newpage
 \subfile{tables/ru_pol1}
-\subfile{tables/ru_pol2}
+% \subfile{tables/ru_pol2}
 
 % % \end{landscape}
 \begin{landscape}
