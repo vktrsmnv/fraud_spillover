@@ -224,7 +224,7 @@ model_calc(
   inst = npol,
   IVs = "condition",
   model = "ol",
-  name = paste0("main_la_pol_", nrow(data))
+  name = paste0("main_la_npol_", nrow(data))
 )
 
 
@@ -261,94 +261,230 @@ model_calc(
   model = "ol",
   name = "main_la_pol_colombia"
 )
-#
-#
-# ## 2.2. Conditional Effects with Opposition to Regime ####
-#
-# # IVs <- c("fraud + punishment + judicial_punishment")
-# #
-# # model_calc(
-# #   data = data_rus,
-# #   inst = pol,
-# #   IVs = IVs,
-# #   model = "ol",
-# #   name = "fraud_punishment_ru"
-# # )
-# #
-# # model_calc(
-# #   data = data_rus,
-# #   inst = npol,
-# #   IVs = IVs,
-# #   model = "ol",
-# #   name = "fraud_punishment_ru_npol"
-# # )
-#
-# IVs <- c("(fraud + punishment + judicial_punishment)*opponent")
-# model_calc(
-#   data = data_rus,
-#   inst = pol,
-#   IVs = IVs,
-#   model = "ol",
-#   name = "conditional_ru_pol"
-# )
-#
-# IVs <- c("(fraud + punishment + judicial_punishment)*polint")
-# model_calc(
-#   data = data_rus,
-#   inst = pol,
-#   IVs = IVs,
-#   model = "ol",
-#   name = "conditional_ru_pol_polint"
-# )
-# model_calc(
-#   data = data_rus,
-#   inst = npol,
-#   IVs = IVs,
-#   model = "ol",
-#   name = "conditional_ru_npol"
-# )
-#
-# model_calc(
-#   data = data_la,
-#   inst = pol,
-#   IVs = IVs,
-#   model = "ol",
-#   name = "conditional_la_pol"
-# )
-#
-# model_calc(
-#   data = data_la,
-#   inst = npol,
-#   IVs = IVs,
-#   model = "ol",
-#   name = "conditional_la_npol"
-# )
-#
-# ## 2.3. With involvement ####
-#
-# IVs <- c("(fraud + punishment + judicial_punishment)*involvement")
-# model_calc(
-#   data = data_rus,
-#   inst = pol,
-#   IVs = IVs,
-#   model = "ol",
-#   name = "ru_pol_involvement"
-# )
-#
-# ## 2.3. With Controls ####
-#
-# IVs <- c("(fraud + punishment + judicial_punishment) +
-#          opponent +
-#          polint + gentrust + log(age) + sex + edu_three +
-#          emplstat + sector + savings")
-#
-# model_calc(
-#   data = data_rus,
-#   polinst = polinst,
-#   IVs = IVs,
-#   npolinst = npolinst,
-#   model = "lm"
-# )
+
+
+## 2.2. Conditional Effects with Opposition to Regime ####
+
+IVs <- c("condition*opponent")
+
+data <- data_rus
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_ru_pol_", nrow(data))
+)
+model_calc(
+  data = data,
+  inst = npol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("cond_ru_npol_", nrow(data))
+)
+
+
+data <- data_rus %>% filter(response != 3)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_ru_pol_", nrow(data))
+)
+model_calc(
+  data = data,
+  inst = npol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("cond_ru_npol_", nrow(data))
+)
+
+
+data <- data_rus %>% filter(response != 3, response != 2)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_ru_pol_", nrow(data))
+)
+model_calc(
+  data = data,
+  inst = npol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("cond_ru_npol_", nrow(data))
+)
+
+
+
+data <- data_la
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_la_pol_", nrow(data))
+)
+model_calc(
+  data = data,
+  inst = npol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("cond_la_npol_", nrow(data))
+)
+
+
+data <- data_la %>% filter(response != 3)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_la_pol_", nrow(data))
+)
+model_calc(
+  data = data,
+  inst = npol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("cond_la_npol_", nrow(data))
+)
+
+
+data <- data_la %>% filter(response != 3, response != 2)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_la_pol_", nrow(data))
+)
+model_calc(
+  data = data,
+  inst = npol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("cond_la_npol_", nrow(data))
+)
+
+# 3. Additional Specifications ####
+## 3.3. With involvement ####
+
+IVs <- c("condition*involvement")
+data <- data_rus
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("involvement_ru_pol_", nrow(data))
+)
+data <- data_rus%>% filter(response != 3)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("involvement_ru_pol_", nrow(data))
+)
+data <- data_rus%>% filter(response != 3, response != 2)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("involvement_ru_pol_", nrow(data))
+)
+
+
+data <- data_la
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("involvement_la_pol_", nrow(data))
+)
+data <- data_la%>% filter(response != 3)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("involvement_la_pol_", nrow(data))
+)
+data <- data_la%>% filter(response != 3, response != 2)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("involvement_la_pol_", nrow(data))
+)
+
+
+## 3.3. With Controls ####
+
+IVs <- c("condition +
+         opponent +
+         polint + gentrust + log(age) + sex + edu_three +
+         emplstat + sector + savings")
+
+data <- data_rus
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("controls_ru_pol_", nrow(data))
+)
+
+data <- data_rus%>% filter(response != 3)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("controls_ru_pol_", nrow(data))
+)
+
+data <- data_rus%>% filter(response != 3, response != 2)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("controls_ru_pol_", nrow(data))
+)
+
+data <- data_la
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("controls_la_pol_", nrow(data))
+)
+data <- data_la %>% filter(response != 3)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("controls_la_pol_", nrow(data))
+)
+data <- data_la %>% filter(response != 3, response != 2)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name = paste0("controls_la_pol_", nrow(data))
+)
+
+
 #
 # model_calc(
 #   data = data_rus,
@@ -398,155 +534,124 @@ model_calc(
 #   model = "ol"
 # )
 #
-# # 3. Mediation Analysis #####
-#
-# mediation_calc <- function(data,
-#                            polinst,
-#                            npolinst,
-#                            IVs,
-#                            model) {
-#
-#   # empty objects for storing
-#   polinst_mods_lm <- npolinst_mods_lm <- list()
-#   polinst_mods_ol <- npolinst_mods_ol <- list()
-#
-#   # transform variables to factors for OL model
-#   data1 <- data %>%
-#     mutate(
-#       across(starts_with("pol_inst_"), ~ as.numeric(.x)),
-#       across(starts_with("npol_inst"), ~ as.numeric(.x))
-#     )
-#   time <- format(Sys.time(), "%b%d_%H_%M_%S")
-#
-#
-#   if (!is.null(polinst)) {
-#     for (DV in polinst) {
-#       if (model == "lm") {
-#         f1 <- bf(paste("pol_election", IVs, sep = "~"))
-#         f2 <- bf(paste(DV,
-#           paste("pol_election", IVs, sep = "+"),
-#           sep = "~"
-#         ))
-#
-#         polinst_mods_lm[[DV]] <-
-#           brm(
-#             formula = f1 + f2 + set_rescor(FALSE),
-#             data = data,
-#             iter = 4000,
-#             warmup = 2000,
-#             chains = 5,
-#             cores = 5,
-#             seed = 1201
-#           )
-#         write_rds(
-#           polinst_mods_lm,
-#           paste0(
-#             "output/polinst_mediation_lm_",
-#             time, ".rds"
-#           )
-#         )
-#       }
-#       if (model == "ol") {
-#         f1 <- bf(paste("pol_election", IVs, sep = "~"),
-#           family = "cumulative"
-#         )
-#         f2 <- bf(paste(DV,
-#           paste("pol_election", IVs, sep = "+"),
-#           sep = "~"
-#         ),
-#         family = "cumulative"
-#         )
-#
-#         polinst_mods_ol[[DV]] <-
-#           brm(
-#             formula = f1 + f2 + set_rescor(FALSE),
-#             data = data1,
-#             # family = cumulative("logit"),
-#             iter = 5000,
-#             warmup = 3000,
-#             chains = 5,
-#             cores = 5,
-#             seed = 1201
-#           )
-#         write_rds(
-#           polinst_mods_ol,
-#           paste0(
-#             "output/polinst_mediation_ol_",
-#             time, ".rds"
-#           )
-#         )
-#       }
-#     }
-#   }
-#   if (!is.null(npolinst)) {
-#     for (DV in npolinst) {
-#       f1 <- bf(paste("pol_election", IVs, sep = "~"))
-#       f2 <- bf(paste(DV,
-#         paste("pol_election", IVs, sep = "+"),
-#         sep = "~"
-#       ))
-#
-#       npolinst_mods_lm[[DV]] <-
-#         brm(
-#           formula = f1 + f2 + set_rescor(FALSE),
-#           data = data,
-#           iter = 4000,
-#           warmup = 2000,
-#           chains = 5,
-#           cores = 5,
-#           seed = 1201
-#         )
-#       write_rds(
-#         npolinst_mods_lm,
-#         paste0(
-#           "output/npolinst_mediation_lm_",
-#           time, ".rds"
-#         )
-#       )
-#     }
-#     if (model == "ol") {
-#       f1 <- bf(paste("pol_election", IVs, sep = "~"),
-#         family = "cumulative"
-#       )
-#       f2 <- bf(paste(DV,
-#         paste("pol_election", IVs, sep = "+"),
-#         sep = "~"
-#       ),
-#       family = "cumulative"
-#       )
-#
-#       npolinst_mods_ol[[DV]] <-
-#         brm(
-#           formula = f1 + f2 + set_rescor(FALSE),
-#           data = data1,
-#           # family = cumulative("logit"),
-#           iter = 5000,
-#           warmup = 3000,
-#           chains = 5,
-#           cores = 5,
-#           seed = 1201
-#         )
-#       write_rds(
-#         npolinst_mods_ol,
-#         paste0(
-#           "output/npolinst_mediation_ol_",
-#           time, ".rds"
-#         )
-#       )
-#     }
-#   }
-# }
+# 4. Mediation Analysis #####
+
+mediation_calc <- function(data,
+                           inst,
+                           IVs,
+                           model,
+                           iter = 6000,
+                           cores = 4,
+                           chains = 4,
+                           warmup = 3500,
+                           seed = 1201,
+                           name){
+
+  # empty objects for storing
+  mods <- list()
+  # polinst_mods_ol <- npolinst_mods_ol <- list()
+
+  # transform variables to factors for OL model
+  data1 <- data %>%
+    mutate(
+      across(starts_with("pol_inst_"), ~ as.numeric(.x)),
+      across(starts_with("npol_inst"), ~ as.numeric(.x))
+    ) #
+
+  # time <- format(Sys.time(), "%b%d_%H_%M_%S")
+  for (DV in inst) {
+    if (match(DV, inst) == 1) {
+        f1 <- bf(paste("pol_election", IVs, sep = "~"),
+                 family = "cumulative"
+        )
+        f2 <- bf(paste(DV,
+                       paste("pol_election", IVs, sep = "+"),
+                       sep = "~"
+        ),
+        family = "cumulative"
+        )
+        mods[[DV]] <-
+          first <-
+          brm(
+            formula = f1 + f2 + set_rescor(FALSE),
+            data = data1,
+            family = cumulative("logit"),
+            iter = iter,
+            warmup = warmup,
+            chains = chains,
+            cores = cores,
+            seed = seed
+          )
+        write_rds(
+          mods,
+          paste0(
+            "output/",
+            model,
+            "_",
+            name,
+            ".rds"
+          )
+        )
+    } else {
+        mods[[DV]] <-
+          update(first,
+                 formula. = paste(DV, IVs, sep = "~"),
+                 newdata = data1
+          )
+        write_rds(
+          mods,
+          paste0(
+            "output/",
+            model,
+            "_",
+            name,
+            ".rds"
+          )
+        )
+    }
+  }
+
+      }
+
 #
 # IVs <- c("fraud + punishment + judicial_punishment")
+
+data <- data_rus
+
+data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
+data <- cbind(model.matrix( ~ condition - 1, data), data %>% select(starts_with("pol_")))
+IVs <- "conditionFraud + conditionJudicialPunishment + conditionPunishment"
+mediation_calc(
+  data = data,
+  inst = pol,
+  IVs = "conditionFraud + conditionJudicialPunishment + conditionPunishment",
+  model = "ol",
+  name = paste0("mediation_ru_pol_", nrow(data))
+)
+
+
+data <- data_la
+
+data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
+data <- cbind(model.matrix( ~ condition - 1, data), data %>% select(starts_with("pol_")))
+IVs <- "conditionFraud + conditionJudicialPunishment + conditionPunishment"
+mediation_calc(
+  data = data,
+  inst = pol,
+  IVs = "conditionFraud + conditionJudicialPunishment + conditionPunishment",
+  model = "ol",
+  name = paste0("mediation_la_pol_", nrow(data))
+)
+
 #
-# # conditional means
-# mediation_calc(
-#   data = data_rus,
-#   polinst = polinst[1],
-#   IVs = "condition",
-#   npolinst = npolinst[1],
-#   model = "lm"
-# )
+# mm <- read_rds("output/ol_mediation_ru_pol_1226.rds")
+# bayestestR::mediation(mm$pol_inst_armed,
+#                       treatment = c("conditionControl"),
+#                       mediator = "pol_election",
+#                       ci = .95) %>%
+#   as.data.frame()
+
+
 #
 # mediation_calc(
 #   data = data_rus,
