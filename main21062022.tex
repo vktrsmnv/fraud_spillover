@@ -323,7 +323,7 @@ Since our dependent variables take on the form of ordered categorical vectors co
 % \begin{split}
 \small
 ln \left (\frac{\text{Pr}(y_i \leq j)}{\text{Pr}(y_i > j)} \right) &= \underbrace{\underbrace{\alpha_j - 
-({\beta_1} {\text{ Fraud}_i} + 
+({\beta_1} {\text{ Control}_i} + 
 \beta_2 {\text{ Punishment}_i} + 
 \beta_3 {\text{ Judicial Punishment}_i})
 }_{\text{Main Specification (H1)}} \times 
@@ -332,7 +332,7 @@ ln \left (\frac{\text{Pr}(y_i \leq j)}{\text{Pr}(y_i > j)} \right) &= \underbrac
 % \end{split}
 \end{equation}
 
-\noindent where $y_i$ is the level of diffuse support of an individual $i$ with ($i=1,...,n$) for an institution, and Fraud, Punishment, and Judicial Punishment are binary indicators for membership in the experimental groups (2),  (3), and (4) \footnote{Individuals in the control unit serve as the reference category in our analysis.}. We analyze Russian and Latin American samples separately, using all available observations that fulfill the basic data-quality criteria, such as completing the questionnaire in lower than 3 minutes, as per the pre-registration plan. 
+\noindent where $y_i$ is the level of diffuse support of an individual $i$ with ($i=1,...,n$) for an institution, and Control, Punishment, and Judicial Punishment are binary indicators for membership in the experimental groups (2),  (3), and (4) \footnote{Individuals who only received fraud information serve as the reference category in our analysis.}. We analyze Russian and Latin American samples separately, using all available observations that fulfill the basic data-quality criteria, such as completing the questionnaire in lower than 3 minutes, as per the pre-registration plan. 
 % $\bm{X}$ is an $i \times k$ vector of covariates ($k=1,...,k$), 
 % $\alpha_j$ are threshold parameters, 
 % $\bm{\beta}$ are the regression parameters for the covariates 
@@ -395,7 +395,7 @@ In fact, we would see restoring of trust to almost the same level as the control
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/hdi89_conditional_punishment.png}
+    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/.png}
     \caption{Results for Russia}
     \singlespacing
     \raggedright
