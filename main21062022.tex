@@ -370,9 +370,10 @@ Due to the nature of the dependent variable, we use ordered logistic regression 
     \centering
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/main_hdi89_1.png}
     \caption{The Effects of Exposure to Fraud Information on Confidence in Political Institutions.  \\
-     \footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.\\
-     Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.\\
-     Data were collected in April-June 2021 via the original online survey. } }
+     \footnotesize{Notes: Plots depict medians and 89\% highest-density continuous intervals for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated with ordered logit model estimates.
+    %  Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. 
+     Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.
+     Data were collected in April-June 2021 via an original online survey. } }
     \singlespacing
     \raggedright
     
@@ -395,15 +396,14 @@ In fact, we would see restoring of trust to almost the same level as the control
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/.png}
-    \caption{Results for Russia}
-    \singlespacing
-    \raggedright
-
+    \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/cond_hdi89_1.png}
+    % \singlespacing
+    % \raggedright
     \caption{The Effects of Exposure to Perpetrators' Punishment Information on Confidence in Political Institutions.  \\
-     \footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.\\
-     Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed (dotted) lines schematically depict the hypothesized relationships between categories, i.e. point estimates would loosely follow the pattern of the dashed (dotted) line if the relationship between trust and within-system response is amplifying (diminishing) the effect of fraud information on trust. Transparent point ranges include zero in the 89\% HDCI.\\
-     Data were collected in April-June 2021 via the original online survey. } }
+     \footnotesize{Notes: Plots depict medians and 89\% highest-density continuous intervals for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated with ordered logit model estimates.
+    %  Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. 
+     Dashed (dotted) lines schematically depict the hypothesized relationships between categories, i.e. point estimates would loosely follow the pattern of the dashed (dotted) line if the relationship between trust and within-system response is amplifying (diminishing) the effect of fraud information on trust. Transparent point ranges include zero in the 89\% HDCI.
+     Data were collected in April-June 2021 via an original online survey. } }
     \label{fig:het}
     \end{figure}
 
@@ -880,25 +880,34 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 \newpage
 \subsection{Results}
 
-\subsubsection*{Political Institutions}
+This section contains tables with models' estimates and additional figures with quantities of interest calculated with these models. 
+
+\subsubsection*{Full Sample}
+
+\textbf{Political Institutions}
 
 \small
 % \begin{landscape}
 \subfile{tables/la_pol1}
-% \subfile{tables/la_pol2}
 
+\newpage
+
+\subfile{tables/    }
+
+% \subfile{tables/la_pol2}
 
 \newpage
 \subfile{tables/ru_pol1}
 % \subfile{tables/ru_pol2}
 
 % % \end{landscape}
-\begin{landscape}
+% \begin{landscape}
 
 \subsubsection*{Non-Political Institutions}
+\small
 
 \subfile{tables/la_npol}
-\end{landscape}
+% \end{landscape}
 
 \begin{landscape}
 \subfile{tables/ru_npol}
