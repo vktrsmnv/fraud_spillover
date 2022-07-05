@@ -106,13 +106,6 @@ npol <- data_rus %>%
   dplyr::select(starts_with("npol_inst")) %>%
   colnames()
 
-
-## Models to run:
-# 1. LM
-# 2. OL
-# 3. with/without controls
-# 4.
-
 # 2. Main Analysis ####
 ## 2.0. Calculation Function ####
 
@@ -545,73 +538,44 @@ mediation_calc <- function(data,
                            chains = 4,
                            warmup = 3500,
                            seed = 1201,
-                           name){
-
+                           name) {
   # empty objects for storing
   mods <- list()
   # polinst_mods_ol <- npolinst_mods_ol <- list()
 
   # transform variables to factors for OL model
   data1 <- data %>%
-    mutate(
-      across(starts_with("pol_inst_"), ~ as.numeric(.x)),
-      across(starts_with("npol_inst"), ~ as.numeric(.x))
-    ) #
+    mutate(across(starts_with("pol_inst_"), ~ as.numeric(.x)),
+           across(starts_with("npol_inst"), ~ as.numeric(.x))) #
 
   # time <- format(Sys.time(), "%b%d_%H_%M_%S")
   for (DV in inst) {
-    if (match(DV, inst) == 1) {
-        f1 <- bf(paste("pol_election", IVs, sep = "~"),
-                 family = "cumulative"
+      f1 <- bf(paste("pol_election", IVs, sep = "~"),
+               family = "cumulative")
+      f2 <- bf(paste(DV,
+                     paste("pol_election", IVs, sep = "+"),
+                     sep = "~"),
+               family = "cumulative")
+      mods[[DV]] <-
+        brm(
+          formula = f1 + f2 + set_rescor(FALSE),
+          data = data1,
+          family = cumulative("logit"),
+          iter = iter,
+          warmup = warmup,
+          chains = chains,
+          cores = cores,
+          seed = seed
         )
-        f2 <- bf(paste(DV,
-                       paste("pol_election", IVs, sep = "+"),
-                       sep = "~"
-        ),
-        family = "cumulative"
-        )
-        mods[[DV]] <-
-          first <-
-          brm(
-            formula = f1 + f2 + set_rescor(FALSE),
-            data = data1,
-            family = cumulative("logit"),
-            iter = iter,
-            warmup = warmup,
-            chains = chains,
-            cores = cores,
-            seed = seed
-          )
-        write_rds(
-          mods,
-          paste0(
-            "output/",
-            model,
-            "_",
-            name,
-            ".rds"
-          )
-        )
-    } else {
-        mods[[DV]] <-
-          update(first,
-                 formula. = paste(DV, IVs, sep = "~"),
-                 newdata = data1
-          )
-        write_rds(
-          mods,
-          paste0(
-            "output/",
-            model,
-            "_",
-            name,
-            ".rds"
-          )
-        )
+      write_rds(mods,
+                paste0("output/",
+                       model,
+                       "_",
+                       name,
+                       ".rds"))
     }
-  }
 
-      }
+}
 
 #
 # IVs <- c("fraud + punishment + judicial_punishment")

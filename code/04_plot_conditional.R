@@ -38,7 +38,7 @@ setup <- function() {
   theme_set(theme_bw(base_family = "Source Sans Pro") +
               # theme_bw(base_family = "Source Sans Pro") +
               theme(
-                plot.background = element_blank(),
+                # plot.background = element_blank(),
                 plot.title.position = "plot",
                 plot.caption.position = "plot",
                 legend.title = element_blank(),
@@ -213,6 +213,9 @@ prep_plotting <- function(mpol_path = "output/ol_cond_ru_pol_1226.rds") {
   return(plotting)
 }
 
+## Political Institutions ####
+### All Cases #####
+## Russia
 plotting <- prep_plotting("output/ol_cond_ru_pol_1226.rds")
 n_ru <- plotting %>%
   select(institution, n) %>%
@@ -245,7 +248,7 @@ arrows <- data.frame(
            ))
 
 
-plot_ru1 <- plotting %>%
+plot_ru <- plotting %>%
   ggplot(., aes(
     y = category,
     x = median,
@@ -286,11 +289,290 @@ plot_ru1 <- plotting %>%
   ),
   position = position_dodge(0.4)
   ) +
-  theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title.position = "plot",
-    plot.caption.position = "plot"
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c(
+      "None\nat all",
+      "Not very\nmuch",
+      "Quite\na Lot",
+      "A Great\nDeal"
+    )
+  ) +
+  # scale_shape_manual(
+  #   values = c(0, 2, 15, 17),
+  #   labels = c("Opponent", "Supporter", "", "")
+  # ) +
+  scale_shape_manual(
+    values = c(15, 17),
+    labels = c("Opponent", "Supporter")
+  ) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  geom_vline(aes(xintercept = 0), alpha = 0.33) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
+  facet_wrap(~institution,
+             ncol = 4,
+             labeller = label_glue("{institution}, N = {n_ru}")
+  ) +
+  scale_color_viridis(
+    discrete = T, option = "C", direction = -1,
+    begin = 0.27 # if control category omitted
+  ) +
+  geom_curve(
+    data = arrows[1, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = -0.2
+  ) +
+  geom_curve(
+    data = arrows[2, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = 0.2
+  ) +
+  geom_text(
+    data = data.frame(
+      median = c(0.2, -0.2),
+      category = c(3.5, 3.5),
+      condition = c(
+        "Control"
+      ),
+      significant_opponent = "no_Opponent",
+      institution = "Central Electoral\nCommission"
+    ) %>%
+      mutate(institution = as_factor(institution) %>%
+               fct_expand(
+                 "Central Electoral\nCommission",
+                 "Political Parties",
+                 "Parliament",
+                 "Courts",
+                 "President",
+                 "Government",
+                 "Police",
+                 "Armed Forces"
+               )),
+    label = c(
+      "Punishment\ndecreases\ntrust",
+      "Punishnment\nincreases\ntrust"
+    ),
+    size = 3,
+    color = "black",
+    alpha = 0.7
+  )
+
+
+# Latin America
+plotting <- prep_plotting("output/ol_cond_la_pol_881.rds")
+
+plot_la <- plotting %>%
+  ggplot(., aes(
+    y = category,
+    x = median,
+    group = condition
+  )) +
+  labs(
+    # title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+    # subtitle = paste0(
+    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+    # ),
+    title = "Latin America",
+    x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+    y = "Confidence",
+    shape = ""
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = 15,
+    size = 0.5,
+    linetype = 2,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = -15,
+    size = 0.5,
+    linetype = 3,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_pointrange(aes(
+    xmin = lower,
+    xmax = upper,
+    color = Condition,
+    shape = opponent,
+    alpha = significant
+  ),
+  position = position_dodge(0.4)
+  ) +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c(
+      "None\nat all",
+      "Not very\nmuch",
+      "Quite\na Lot",
+      "A Great\nDeal"
+    )
+  ) +
+  # scale_shape_manual(
+  #   values = c(0, 2, 15, 17),
+  #   labels = c("Opponent", "Supporter", "", "")
+  # ) +
+  scale_shape_manual(
+    values = c(15, 17),
+    labels = c("Opponent", "Supporter")
+  ) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  geom_vline(aes(xintercept = 0), alpha = 0.33) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
+  facet_wrap(
+    ~ institution,
+    ncol = 4,
+    labeller = label_glue(
+      "{institution}, N = {plotting %>%
+  select(institution, n) %>%
+  distinct() %>%
+  arrange(institution) %>%
+  pull(n)}"
+    )
+  ) +
+  scale_color_viridis(
+    discrete = T, option = "C", direction = -1,
+    begin = 0.27 # if control category omitted
+  ) +
+  geom_curve(
+    data = arrows[1, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = -0.2
+  ) +
+  geom_curve(
+    data = arrows[2, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = 0.2
+  ) +
+  geom_text(
+    data = data.frame(
+      median = c(0.2, -0.2),
+      category = c(3.5, 3.5),
+      condition = c(
+        "Control"
+      ),
+      significant_opponent = "no_Opponent",
+      institution = "Central Electoral\nCommission"
+    ) %>%
+      mutate(institution = as_factor(institution) %>%
+               fct_expand(
+                 "Central Electoral\nCommission",
+                 "Political Parties",
+                 "Parliament",
+                 "Courts",
+                 "President",
+                 "Government",
+                 "Police",
+                 "Armed Forces"
+               )),
+    label = c(
+      "Punishment\ndecreases\ntrust",
+      "Punishnment\nincreases\ntrust"
+    ),
+    size = 3,
+    color = "black",
+    alpha = 0.7)
+
+pp <- plot_la / plot_ru +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+pp
+ggsave(pp,
+       filename = paste0("figs/cond_hdi89_", 1, ".png"),
+       height = 10,
+       width = 10)
+
+### Exclude Response = 3 #####
+## Russia
+plotting <- prep_plotting("output/ol_cond_ru_pol_1203.rds")
+n_ru <- plotting %>%
+  select(institution, n) %>%
+  distinct() %>%
+  arrange(institution) %>%
+  pull(n)
+
+# arrows for annotation on the plots
+arrows <- data.frame(
+  # x1 = 0.19, x2 = 0.1,
+  # y1 = 3.1, y2 = 1.4,
+  x1 = c(0.16, -0.15), x2 = c(0.07, -0.07),
+  y1 = c(3.3, 3.3), y2 = c(3.4, 3.4),
+  condition = c(
+    "Control", "Control"
+  ),
+  significant_opponent = c("no_Opponent", "no_Opponent"),
+  institution = c("Central Electoral\nCommission", "Central Electoral\nCommission")
+) %>%
+  mutate(institution = as_factor(institution) %>%
+           fct_expand(
+             "Central Electoral\nCommission",
+             "Political Parties",
+             "Parliament",
+             "Courts",
+             "President",
+             "Government",
+             "Police",
+             "Armed Forces"
+           ))
+
+
+plot_ru <- plotting %>%
+  ggplot(., aes(
+    y = category,
+    x = median,
+    group = condition
+  )) +
+  labs(
+    # title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+    # subtitle = paste0(
+    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+    # ),
+    title = "Russia",
+    x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+    y = "Confidence",
+    shape = ""
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = 15,
+    size = 0.5,
+    linetype = 2,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = -15,
+    size = 0.5,
+    linetype = 3,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_pointrange(aes(
+    xmin = lower,
+    xmax = upper,
+    color = Condition,
+    shape = opponent,
+    alpha = significant
+  ),
+  position = position_dodge(0.4)
   ) +
   scale_y_continuous(
     breaks = 1:4,
@@ -327,7 +609,7 @@ plot_ru1 <- plotting %>%
     arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
     color = "black",
     alpha = 0.7,
-    curvature = 0.2
+    curvature = -0.2
   ) +
   geom_curve(
     data = arrows[2, ],
@@ -335,7 +617,7 @@ plot_ru1 <- plotting %>%
     arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
     color = "black",
     alpha = 0.7,
-    curvature = -0.2
+    curvature = 0.2
   ) +
   geom_text(
     data = data.frame(
@@ -366,8 +648,424 @@ plot_ru1 <- plotting %>%
     color = "black",
     alpha = 0.7
   )
-plot_ru1
-pp <- plot_ru1 / plot_ru +
+
+
+# Latin America
+plotting <- prep_plotting("output/ol_cond_la_pol_854.rds")
+
+plot_la <- plotting %>%
+  ggplot(., aes(
+    y = category,
+    x = median,
+    group = condition
+  )) +
+  labs(
+    # title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+    # subtitle = paste0(
+    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+    # ),
+    title = "Latin America",
+    x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+    y = "Confidence",
+    shape = ""
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = 15,
+    size = 0.5,
+    linetype = 2,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = -15,
+    size = 0.5,
+    linetype = 3,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_pointrange(aes(
+    xmin = lower,
+    xmax = upper,
+    color = Condition,
+    shape = opponent,
+    alpha = significant
+  ),
+  position = position_dodge(0.4)
+  ) +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c(
+      "None\nat all",
+      "Not very\nmuch",
+      "Quite\na Lot",
+      "A Great\nDeal"
+    )
+  ) +
+  # scale_shape_manual(
+  #   values = c(0, 2, 15, 17),
+  #   labels = c("Opponent", "Supporter", "", "")
+  # ) +
+  scale_shape_manual(
+    values = c(15, 17),
+    labels = c("Opponent", "Supporter")
+  ) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  geom_vline(aes(xintercept = 0), alpha = 0.33) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
+  facet_wrap(
+    ~ institution,
+    ncol = 4,
+    labeller = label_glue(
+      "{institution}, N = {plotting %>%
+  select(institution, n) %>%
+  distinct() %>%
+  arrange(institution) %>%
+  pull(n)}"
+    )
+  ) +
+  scale_color_viridis(
+    discrete = T, option = "C", direction = -1,
+    begin = 0.27 # if control category omitted
+  ) +
+  geom_curve(
+    data = arrows[1, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = -0.2
+  ) +
+  geom_curve(
+    data = arrows[2, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = 0.2
+  ) +
+  geom_text(
+    data = data.frame(
+      median = c(0.2, -0.2),
+      category = c(3.5, 3.5),
+      condition = c(
+        "Control"
+      ),
+      significant_opponent = "no_Opponent",
+      institution = "Central Electoral\nCommission"
+    ) %>%
+      mutate(institution = as_factor(institution) %>%
+               fct_expand(
+                 "Central Electoral\nCommission",
+                 "Political Parties",
+                 "Parliament",
+                 "Courts",
+                 "President",
+                 "Government",
+                 "Police",
+                 "Armed Forces"
+               )),
+    label = c(
+      "Punishment\ndecreases\ntrust",
+      "Punishnment\nincreases\ntrust"
+    ),
+    size = 3,
+    color = "black",
+    alpha = 0.7)
+
+pp <- plot_la / plot_ru +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 pp
+ggsave(pp,
+       filename = paste0("figs/cond_hdi89_", 2, ".png"),
+       height = 10,
+       width = 10)
+
+### Exclude Response = 3 & 2 #####
+## Russia
+plotting <- prep_plotting("output/ol_cond_ru_pol_1191.rds")
+n_ru <- plotting %>%
+  select(institution, n) %>%
+  distinct() %>%
+  arrange(institution) %>%
+  pull(n)
+
+# arrows for annotation on the plots
+arrows <- data.frame(
+  # x1 = 0.19, x2 = 0.1,
+  # y1 = 3.1, y2 = 1.4,
+  x1 = c(0.16, -0.15), x2 = c(0.07, -0.07),
+  y1 = c(3.3, 3.3), y2 = c(3.4, 3.4),
+  condition = c(
+    "Control", "Control"
+  ),
+  significant_opponent = c("no_Opponent", "no_Opponent"),
+  institution = c("Central Electoral\nCommission", "Central Electoral\nCommission")
+) %>%
+  mutate(institution = as_factor(institution) %>%
+           fct_expand(
+             "Central Electoral\nCommission",
+             "Political Parties",
+             "Parliament",
+             "Courts",
+             "President",
+             "Government",
+             "Police",
+             "Armed Forces"
+           ))
+
+
+plot_ru <- plotting %>%
+  ggplot(., aes(
+    y = category,
+    x = median,
+    group = condition
+  )) +
+  labs(
+    # title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+    # subtitle = paste0(
+    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+    # ),
+    title = "Russia",
+    x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+    y = "Confidence",
+    shape = ""
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = 15,
+    size = 0.5,
+    linetype = 2,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = -15,
+    size = 0.5,
+    linetype = 3,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_pointrange(aes(
+    xmin = lower,
+    xmax = upper,
+    color = Condition,
+    shape = opponent,
+    alpha = significant
+  ),
+  position = position_dodge(0.4)
+  ) +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c(
+      "None\nat all",
+      "Not very\nmuch",
+      "Quite\na Lot",
+      "A Great\nDeal"
+    )
+  ) +
+  # scale_shape_manual(
+  #   values = c(0, 2, 15, 17),
+  #   labels = c("Opponent", "Supporter", "", "")
+  # ) +
+  scale_shape_manual(
+    values = c(15, 17),
+    labels = c("Opponent", "Supporter")
+  ) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  geom_vline(aes(xintercept = 0), alpha = 0.33) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
+  facet_wrap(~institution,
+             ncol = 4,
+             labeller = label_glue("{institution}, N = {n_ru}")
+  ) +
+  scale_color_viridis(
+    discrete = T, option = "C", direction = -1,
+    begin = 0.27 # if control category omitted
+  ) +
+  geom_curve(
+    data = arrows[1, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = -0.2
+  ) +
+  geom_curve(
+    data = arrows[2, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = 0.2
+  ) +
+  geom_text(
+    data = data.frame(
+      median = c(0.2, -0.2),
+      category = c(3.5, 3.5),
+      condition = c(
+        "Control"
+      ),
+      significant_opponent = "no_Opponent",
+      institution = "Central Electoral\nCommission"
+    ) %>%
+      mutate(institution = as_factor(institution) %>%
+               fct_expand(
+                 "Central Electoral\nCommission",
+                 "Political Parties",
+                 "Parliament",
+                 "Courts",
+                 "President",
+                 "Government",
+                 "Police",
+                 "Armed Forces"
+               )),
+    label = c(
+      "Punishment\ndecreases\ntrust",
+      "Punishnment\nincreases\ntrust"
+    ),
+    size = 3,
+    color = "black",
+    alpha = 0.7
+  )
+
+
+# Latin America
+plotting <- prep_plotting("output/ol_cond_la_pol_851.rds")
+
+plot_la <- plotting %>%
+  ggplot(., aes(
+    y = category,
+    x = median,
+    group = condition
+  )) +
+  labs(
+    # title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+    # subtitle = paste0(
+    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+    # ),
+    title = "Latin America",
+    x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+    y = "Confidence",
+    shape = ""
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = 15,
+    size = 0.5,
+    linetype = 2,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_abline(
+    intercept = 2.5,
+    slope = -15,
+    size = 0.5,
+    linetype = 3,
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_pointrange(aes(
+    xmin = lower,
+    xmax = upper,
+    color = Condition,
+    shape = opponent,
+    alpha = significant
+  ),
+  position = position_dodge(0.4)
+  ) +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c(
+      "None\nat all",
+      "Not very\nmuch",
+      "Quite\na Lot",
+      "A Great\nDeal"
+    )
+  ) +
+  # scale_shape_manual(
+  #   values = c(0, 2, 15, 17),
+  #   labels = c("Opponent", "Supporter", "", "")
+  # ) +
+  scale_shape_manual(
+    values = c(15, 17),
+    labels = c("Opponent", "Supporter")
+  ) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  geom_vline(aes(xintercept = 0), alpha = 0.33) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
+  facet_wrap(
+    ~ institution,
+    ncol = 4,
+    labeller = label_glue(
+      "{institution}, N = {plotting %>%
+  select(institution, n) %>%
+  distinct() %>%
+  arrange(institution) %>%
+  pull(n)}"
+    )
+  ) +
+  scale_color_viridis(
+    discrete = T, option = "C", direction = -1,
+    begin = 0.27 # if control category omitted
+  ) +
+  geom_curve(
+    data = arrows[1, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = -0.2
+  ) +
+  geom_curve(
+    data = arrows[2, ],
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
+    color = "black",
+    alpha = 0.7,
+    curvature = 0.2
+  ) +
+  geom_text(
+    data = data.frame(
+      median = c(0.2, -0.2),
+      category = c(3.5, 3.5),
+      condition = c(
+        "Control"
+      ),
+      significant_opponent = "no_Opponent",
+      institution = "Central Electoral\nCommission"
+    ) %>%
+      mutate(institution = as_factor(institution) %>%
+               fct_expand(
+                 "Central Electoral\nCommission",
+                 "Political Parties",
+                 "Parliament",
+                 "Courts",
+                 "President",
+                 "Government",
+                 "Police",
+                 "Armed Forces"
+               )),
+    label = c(
+      "Punishment\ndecreases\ntrust",
+      "Punishnment\nincreases\ntrust"
+    ),
+    size = 3,
+    color = "black",
+    alpha = 0.7)
+
+pp <- plot_la / plot_ru +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+pp
+ggsave(pp,
+       filename = paste0("figs/cond_hdi89_", 3, ".png"),
+       height = 10,
+       width = 10)
+

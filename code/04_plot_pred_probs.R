@@ -157,7 +157,7 @@ plot_ru <- plotting4 %>%
   )
   # annotate("text", x = 0.38, y = 4, label = "much trust", size = 3, angle = 51) + # annotation on all facets
   # annotate("text", x = 0.42, y = 1.1, label = "little trust", size = 3, angle = -51) # annotation on all facets
-
+plot_ru
 ## LA
 mpol <- read_rds("output/ol_main_la_pol_881.rds")
 plotting4 <- tibble()
