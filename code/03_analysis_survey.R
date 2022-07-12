@@ -46,6 +46,8 @@ data_rus <-
   ) %>%
   select(-pa12, -pa17) %>%
   mutate(opponent = as.character(opponent),
+         UR = ifelse(pa14 == "UR", "UR", "Non-UR"),
+         CPRF = ifelse(pa14 == "CPRF", "CPRF", "Non-CPRF"),
          fraud = as.character(fraud),
          punishment = as.character(punishment),
          judicial_punishment = as.character(judicial_punishment),
@@ -533,10 +535,10 @@ mediation_calc <- function(data,
                            inst,
                            IVs,
                            model,
-                           iter = 6000,
+                           iter = 10000,
                            cores = 4,
                            chains = 4,
-                           warmup = 3500,
+                           warmup = 5500,
                            seed = 1201,
                            name) {
   # empty objects for storing
@@ -606,6 +608,54 @@ mediation_calc(
   model = "ol",
   name = paste0("mediation_la_pol_", nrow(data))
 )
+
+
+
+# 5. Opponent Specification ######
+IVs <- c("condition*UR")
+
+data <- data_rus
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_ru_pol_UR_", nrow(data))
+)
+
+data <- data_rus %>% filter(response != 3)
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_ru_pol_UR_", nrow(data))
+)
+
+IVs <- c("condition*pa14")
+
+data <- data_rus %>%
+  mutate(pa14 = as.character(pa14))
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_ru_pol_pa14_", nrow(data))
+)
+
+data <- data_rus %>%
+  mutate(pa14 = as.character(pa14)) %>%
+  filter(response != 3)
+
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_ru_pol_pa14_", nrow(data))
+)
+
 
 #
 # mm <- read_rds("output/ol_mediation_ru_pol_1226.rds")
