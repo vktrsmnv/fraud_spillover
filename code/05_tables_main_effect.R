@@ -210,7 +210,7 @@ for (i in model_files){
 }
 
 
-## Results with Controls
+# Results with Controls #####
 ## Political Institutions ####
 ### All Cases #####
 
@@ -241,13 +241,17 @@ for (i in model_files){
     tt <- "Russian sample."
 
   }
-  BayesPostEst::mcmcReg(mpol[1:4], ci = 0.89,
+
+
+  BayesPostEst::mcmcReg(mpol[1:4],
+                        pointest = "median",
+                        ci = 0.89,
                         pars = "b",
                         regex = T,
                         custom.gof.rows = list("Observations" = n_cases[1:4]),
-                        # custom.note = "%stars.  \\\\\nThis table examines the effect of information about fraud
-                        # and punitive measures on institutional trust. \\\\\nFraud treatment group serves as the baseline.",
-                        # caption = "Ordinal logistic regression results for Latin American sample",
+                        custom.note = "%stars. Repoted are medians and 89\\% credible intervals.
+                        \\\\\nRespective baseline categories are Fraud, Supporter, Employment: paid employment, Sector: Government or public institution",
+                        caption = paste0("Ordinal logistic regression estimates of treatment effects for ", tt),
                         custom.model.names = names(mpol)[1:4],
                         coefnames = rep(list(c("Intercept$_1$",
                                                "Intercept$_2$",
@@ -275,15 +279,20 @@ for (i in model_files){
                         )), 4),
                         float.pos = "h",
                         threeparttable = TRUE,
+                        label = paste0("table:", i),
                         file = paste0("tables/", str_remove(i, pattern = ".rds"), "_1.tex"))
 
   BayesPostEst::mcmcReg(mpol[5:8],
                         ci = 0.89,
                         pars = "b",
                         regex = T,
+                        pointest = "median",
+
                         custom.gof.rows = list("Observations" = n_cases[5:8]),
-                        custom.note = "%stars  \\\\\nFraud treatment group serves as the baseline.",
-                        caption = paste0("Ordinal logistic regression estimates of treatment effects for ", tt),
+                        custom.note = "%stars Repoted are medians and 89\\% credible intervals.
+                        \\\\\nRespective baseline categories are Fraud, Supporter, Employment: paid employment, Sector: Government or public institution",
+                        # custom.note = "%stars. Repoted are medians and 89% credible intervals. \\\\\nFraud treatment group serves as the baseline.",
+                        caption = paste0("Ordinal logistic regression estimates of treatment effects for ", tt, " (cont.)"),
                         custom.model.names = names(mpol)[5:8],
                         coefnames = rep(list(c("Intercept$_1$",
                                                "Intercept$_2$",
@@ -310,12 +319,28 @@ for (i in model_files){
                         threeparttable = TRUE,
                         file = paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))
 
-  b <- c(readLines(paste0("tables/", str_remove(i, pattern = ".rds"), "_1.tex"))[-c(1:2, 53:61)],
-         readLines(paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))[-c(1:7)])
+  # change the caption position in first file
+  b <- c(readLines(paste0("tables/", str_remove(i, pattern = ".rds"), "_1.tex"))[-c(1:2)])
   b_caption <- b[str_detect(b,  pattern = "caption")]
   b <- b[!str_detect(b,  pattern = "caption")]
   c(b[1:2], b_caption, b[3:length(b)]) %>%
+    write(.,file=paste0("tables/", str_remove(i, pattern = ".rds"), "_1.tex"))
+
+  # change the caption position in second file
+  b <- c(readLines(paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))[-c(1:2)])
+  b_caption <- b[str_detect(b,  pattern = "caption")]
+
+  b <- b[!str_detect(b,  pattern = "caption")]
+  c(b[1:2], str_trunc(b_caption, width = 8,ellipsis = ""), "*",
+    str_trunc(b_caption, width = str_length(b_caption) - 8, ellipsis = "", side = "left"),
+    b_caption, b[3:length(b)]) %>%
+    write(.,file=paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))
+
+  # put tables into a single tex file
+  c(readLines(paste0("tables/", str_remove(i, pattern = ".rds"), "_1.tex")),
+    readLines(paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))) %>%
     write(.,file=paste0("tables/", str_remove(i, pattern = ".rds"), ".tex"))
+
   file.remove(paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))
   file.remove(paste0("tables/", str_remove(i, pattern = ".rds"), "_1.tex"))
 }
