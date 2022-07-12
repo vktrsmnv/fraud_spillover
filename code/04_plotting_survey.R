@@ -1764,9 +1764,115 @@ ggsave(plot_ru,
 #         #   esoph_plot$.value[esoph_plot$condition == cond &
 #       #                       esoph_plot$Trust == num
 #       #   ], .width = 0.89)
-#       median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
-#                                      esoph_plot$Trust == num
-#       ] -
+#       ci = .95)
+
+data <- data_rus
+data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
+data <- cbind(model.matrix( ~ condition - 1, data), data %>% select(starts_with("pol_")))
+IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
+mediation_calc(
+data = data,
+inst = pol[1],
+IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
+model = "ol",
+name = paste0("mediation_ru_pol_", nrow(data))
+)
+
+plotting_mediation <- tibble()
+condition <- c("conditionControl", "conditionJudicialPunishment",  "conditionPunishment")
+for (md in pol){
+  for (cn in condition){
+    tt <- bayestestR::mediation(ol_mediation_ru_pol_1226[[md]],
+                                treatment = cn,
+                                mediator = "pol_election",
+                                ci = .89)
+
+
+    plotting_mediation <- tt %>%
+      as_tibble() %>%
+      add_column(institution = md,
+                 treatment = cn,
+                 n = nrow(ol_mediation_ru_pol_1226[[md]]$data)) %>%
+      janitor::clean_names() %>%
+      slice(1:4) %>%
+      bind_rows(plotting_mediation)
+  }
+
+}
+
+
+
+plotting_mediation %>%
+  mutate(significant = ifelse(ci_low < 0 & ci_high > 0, "no", "yes"),
+         institution =
+      case_when(
+        institution == "pol_inst_armed" ~ "Armed Forces",
+        institution == "pol_inst_police" ~ "Police",
+        institution == "pol_inst_CEC" ~ "Central Electoral\nCommission",
+        institution == "pol_inst_gov" ~ "Government",
+        institution == "pol_inst_part" ~ "Parties",
+        institution == "pol_inst_parl" ~ "Parliament",
+        institution == "pol_inst_courts" ~ "Courts",
+        institution == "pol_inst_pres" ~ "President"
+      ),
+    # institution = as_factor(institution) %>%
+    #   fct_relevel(
+    #     "Central Electoral\nCommission",
+    #     "Parties",
+    #     "Parliament",
+    #     "Courts",
+    #     "President",
+    #     "Government",
+    #     "Police",
+    #     "Armed Forces"
+    #   ),
+    # opponent = ifelse(opponent == 1, "Opponents", "Supporters")
+    treatment = treatment %>%
+      str_remove("condition"),
+    treatment = case_when(treatment == "JudicialPunishment" ~ "Judicial Punishment",
+                          TRUE ~ treatment),
+    treatment = treatment %>%
+      factor(., levels = c(
+        "Control", "Punishment", "Judicial Punishment"
+      )
+  )) %>%
+  ggplot(aes(x = estimate, xmin = ci_low, xmax = ci_high,
+             y = effect,
+             shape = treatment,
+             color = treatment,
+             alpha = significant
+             )) +
+  geom_pointrange(
+  position = position_dodge(0.5),
+  size = 0.4
+  ) +
+  facet_wrap(
+    . ~ institution,
+    ncol = 4,
+    labeller = label_glue(
+      "{institution}, N = {plotting_mediation %>% select(institution, n) %>% distinct() %>% arrange(institution) %>% pull(n)}"
+    )
+  ) +
+  scale_color_viridis(
+    discrete = T,
+    option = "C",
+    end = 0.8
+  ) +
+  geom_vline(xintercept = 0,
+               linetype = 2,
+               color = "black",
+               alpha = 0.5
+             ) +
+  labs(y = "",
+       x = "Estimate",
+       alpha = "",
+       shape = "")+
+  guides(alpha = "none", color = "none")
+
+
+
+
+
 #         esoph_plot$.value[esoph_plot$condition == cond &
 #                             esoph_plot$Trust == num
 #         ], .width = 0.89)[1:3]
