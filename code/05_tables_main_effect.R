@@ -54,8 +54,8 @@ formals(plasma)$end <- 0.8
 formals(scale_color_viridis)$end <- 0.8
 formals(scale_alpha_manual)$values <- c(0.5, 1)
 
+# Main Results #####
 ## Political Institutions ####
-### All Cases #####
 
 model_files <- list.files("output", pattern = "ol_main_[a-z]+_pol_[0-9]")
 
@@ -134,7 +134,7 @@ for (i in model_files){
 
 
 
-## non-political institutions
+## Non-political Institutions ####
 model_files <- list.files("output", pattern = "ol_main_[a-z]+_npol_[0-9]")
 
 
@@ -212,7 +212,6 @@ for (i in model_files){
 
 # Results with Controls #####
 ## Political Institutions ####
-### All Cases #####
 
 model_files <- list.files("output", pattern = "ol_controls_[a-z]+_pol_[0-9]")
 
@@ -279,7 +278,7 @@ for (i in model_files){
                         )), 4),
                         float.pos = "h",
                         threeparttable = TRUE,
-                        label = paste0("table:", i),
+                        label = paste0("table:", str_remove(str_replace_all(i, replacement = "-", pattern = "_"), pattern = ".rds")),
                         file = paste0("tables/", str_remove(i, pattern = ".rds"), "_1.tex"))
 
   BayesPostEst::mcmcReg(mpol[5:8],
@@ -317,6 +316,7 @@ for (i in model_files){
                         )), 4),
                         float.pos = "h",
                         threeparttable = TRUE,
+                        label = "",
                         file = paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))
 
   # change the caption position in first file
@@ -331,9 +331,9 @@ for (i in model_files){
   b_caption <- b[str_detect(b,  pattern = "caption")]
 
   b <- b[!str_detect(b,  pattern = "caption")]
-  c(b[1:2], str_trunc(b_caption, width = 8,ellipsis = ""), "*",
-    str_trunc(b_caption, width = str_length(b_caption) - 8, ellipsis = "", side = "left"),
-    b_caption, b[3:length(b)]) %>%
+  c(b[1:2], paste0(str_trunc(b_caption, width = 8,ellipsis = ""), "*",
+    str_trunc(b_caption, width = str_length(b_caption) - 8, ellipsis = "", side = "left")),
+     b[3:length(b)]) %>%
     write(.,file=paste0("tables/", str_remove(i, pattern = ".rds"), "_2.tex"))
 
   # put tables into a single tex file
@@ -347,9 +347,9 @@ for (i in model_files){
 
 
 
-## non-political institutions
-model_files <- list.files("output", pattern = "ol_main_[a-z]+_npol_[0-9]")
+## Non-political Institutions ####
 
+model_files <- list.files("output", pattern = "ol_main_[a-z]+_npol_[0-9]")
 
 for (i in model_files){
   mpol <- read_rds(paste0("output/", i))
