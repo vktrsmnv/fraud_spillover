@@ -6,22 +6,49 @@ setup <- function() {
     "janitor",
     "magrittr",
     "sjlabelled",
+    "patchwork",
     "styler",
     "here",
+    "BayesPostEst",
     "bayesplot",
     "brms",
     "bayestestR",
     "parallel",
     "tidybayes",
-    "modelr"
+    "modelr",
+    "remotes",
+    "viridis",
+    "showtext",
+    "ggthemes"
   )
   packages <- rownames(installed.packages())
   p_to_install <- p_needed[!(p_needed %in% packages)]
   if (length(p_to_install) > 0) {
     install.packages(p_to_install)
   }
+
+  remotes::install_github("rensa/stickylabeller")
+  library(stickylabeller)
   lapply(p_needed, require, character.only = TRUE)
   options(mc.cores = parallel::detectCores())
+
+  # Let's Add a Different Font for Plots!
+  font_add_google("Source Sans Pro")
+  showtext_auto()
+
+  # setting a global theme for the entire document
+  theme_set(theme_bw(base_family = "Source Sans Pro") +
+              # theme_bw(base_family = "Source Sans Pro") +
+              theme(
+                # plot.background = element_blank(),
+                plot.title.position = "plot",
+                plot.caption.position = "plot",
+                legend.title = element_blank(),
+                legend.position = "bottom"
+              ))
+  formals(plasma)$end <- 0.8
+  formals(scale_color_viridis)$end <- 0.8
+  formals(scale_alpha_manual)$values <- c(0.5, 1)
 
 }
 setup()
@@ -113,58 +140,7 @@ npol <- data_rus %>%
 
 source("code/functions.R")
 
-
-mediation_calc <- function(data,
-                           inst,
-                           IVs,
-                           model,
-                           iter = 10000,
-                           cores = 4,
-                           chains = 4,
-                           warmup = 5500,
-                           seed = 1201,
-                           name) {
-  # empty objects for storing
-  mods <- list()
-  # polinst_mods_ol <- npolinst_mods_ol <- list()
-
-  # transform variables to factors for OL model
-  data1 <- data %>%
-    mutate(across(starts_with("pol_inst_"), ~ as.numeric(.x)),
-           across(starts_with("npol_inst"), ~ as.numeric(.x))) #
-
-  # time <- format(Sys.time(), "%b%d_%H_%M_%S")
-  for (DV in inst) {
-    f1 <- bf(paste("pol_election", IVs, sep = "~"),
-             family = "cumulative")
-    f2 <- bf(paste(DV,
-                   paste("pol_election", IVs, sep = "+"),
-                   sep = "~"),
-             family = "cumulative")
-    mods[[DV]] <-
-      brm(
-        formula = f1 + f2 + set_rescor(FALSE),
-        data = data1,
-        family = cumulative("logit"),
-        iter = iter,
-        warmup = warmup,
-        chains = chains,
-        cores = cores,
-        seed = seed
-      )
-    write_rds(mods,
-              paste0("output/",
-                     model,
-                     "_",
-                     name,
-                     ".rds"))
-  }
-
-}
-
-#
-# IVs <- c("fraud + punishment + judicial_punishment")
-
+## 2.1. Estimation ####
 data <- data_rus
 
 data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
@@ -180,7 +156,6 @@ mediation_calc(
 
 
 data <- data_la
-
 data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
 data <- cbind(model.matrix( ~ condition - 1, data), data %>% select(starts_with("pol_")))
 IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
@@ -193,13 +168,20 @@ mediation_calc(
 )
 
 
+# 3. Plotting ####
+
+model_files <- list.files("output", pattern = "ol_mediation_[a-z]+_pol_[0-9]")
 
 
-plotting_mediation <- tibble()
+for (i in model_files) {
+  mm <- read_rds(paste0("output/", i))
+
+
+  plotting_mediation <- tibble()
 condition <- c("conditionControl", "conditionJudicialPunishment",  "conditionPunishment")
 for (md in pol){
   for (cn in condition){
-    tt <- bayestestR::mediation(ol_mediation_la_pol_881[[md]],
+    tt <- bayestestR::mediation(mm[[md]],
                                 treatment = cn,
                                 mediator = "pol_election",
                                 ci = .89)
@@ -208,7 +190,7 @@ for (md in pol){
       as_tibble() %>%
       add_column(institution = md,
                  treatment = cn,
-                 n = nrow(ol_mediation_la_pol_881[[md]]$data)) %>%
+                 n = nrow(mm[[md]]$data)) %>%
       janitor::clean_names() %>%
       slice(1:4) %>%
       bind_rows(plotting_mediation)
@@ -216,42 +198,42 @@ for (md in pol){
 
 }
 
-
-
-plotting_mediation %>%
+temp <-  plotting_mediation %>%
   mutate(significant = ifelse(ci_low < 0 & ci_high > 0, "no", "yes"),
-         institution =
-           case_when(
-             institution == "pol_inst_armed" ~ "Armed Forces",
-             institution == "pol_inst_police" ~ "Police",
-             institution == "pol_inst_CEC" ~ "Central Electoral\nCommission",
-             institution == "pol_inst_gov" ~ "Government",
-             institution == "pol_inst_part" ~ "Parties",
-             institution == "pol_inst_parl" ~ "Parliament",
-             institution == "pol_inst_courts" ~ "Courts",
-             institution == "pol_inst_pres" ~ "President"
-           ),
          institution = as_factor(institution) %>%
            fct_relevel(
-             "Central Electoral\nCommission",
-             "Parties",
-             "Parliament",
-             "Courts",
-             "President",
-             "Government",
-             "Police",
-             "Armed Forces"
-           ),
-         # opponent = ifelse(opponent == 1, "Opponents", "Supporters")
-         treatment = treatment %>%
-           str_remove("condition"),
-         treatment = case_when(treatment == "JudicialPunishment" ~ "Judicial Punishment",
-                               TRUE ~ treatment),
-         treatment = treatment %>%
-           factor(., levels = c(
-             "Control", "Punishment", "Judicial Punishment"
-           )
+             "pol_inst_CEC",
+             "pol_inst_part",
+             "pol_inst_parl",
+             "pol_inst_courts",
+             "pol_inst_pres",
+             "pol_inst_gov",
+             "pol_inst_police",
+             "pol_inst_armed"
            )) %>%
+  arrange(institution) %>%
+  mutate(
+    institution =
+      case_when(
+        institution == "pol_inst_armed" ~ paste0("Armed Forces,\nN = ", n),
+        institution == "pol_inst_police" ~ paste0("Police,\nN = ", n),
+        institution == "pol_inst_CEC" ~ paste0("Central Electoral\nCommission,\nN = ", n),
+        institution == "pol_inst_gov" ~ paste0("Government,\nN = ", n),
+        institution == "pol_inst_part" ~ paste0("Parties,\nN = ", n),
+        institution == "pol_inst_parl" ~ paste0("Parliament,\nN = ", n),
+        institution == "pol_inst_courts" ~ paste0("Courts,\nN = ", n),
+        institution == "pol_inst_pres" ~ paste0("President,\nN = ", n)
+      ),
+    institution = fct_inorder(institution),
+    treatment = treatment %>%
+      str_remove("condition"),
+    treatment = case_when(treatment == "JudicialPunishment" ~ "Judicial Punishment",
+                          TRUE ~ treatment),
+    treatment = treatment %>%
+      factor(., levels = c(
+        "Control", "Punishment", "Judicial Punishment"
+      )
+      )) %>%
   ggplot(aes(x = estimate, xmin = ci_low, xmax = ci_high,
              y = effect,
              shape = treatment,
@@ -262,12 +244,8 @@ plotting_mediation %>%
     position = position_dodge(0.5),
     size = 0.4
   ) +
-  facet_wrap(
-    . ~ institution,
-    ncol = 4,
-    labeller = label_glue(
-      "{institution}, N = {plotting_mediation %>% select(institution, n) %>% distinct() %>% arrange(institution) %>% pull(n)}"
-    )
+  facet_grid(rows = vars(treatment),
+             cols = vars(institution),
   ) +
   scale_color_viridis(
     discrete = T,
@@ -282,5 +260,24 @@ plotting_mediation %>%
   labs(y = "",
        x = "Estimate",
        alpha = "",
+       title = "Russia",
        shape = "")+
-  guides(alpha = "none", color = "none")
+  guides(alpha = "none", color = "none") +
+  scale_alpha_manual(values = c(0.3, 1)) +
+  guides(shape = guide_legend(override.aes = list(shape = c(16, 17, 15),
+                                                  color = viridis(3, end = 0.8, option = "C"))))
+assign(paste0("plot_", str_remove(i, ".rds")), temp)
+}
+
+
+pp <- eval(parse(text = paste0("plot_", str_remove(model_files, ".rds"), collapse = "/"))) +
+  plot_layout(guides = 'collect') &
+  theme(legend.position = 'bottom')
+pp
+ggsave(pp,
+       filename = paste0("figs/",
+                         str_remove(model_files[1],  "ol_") %>% str_remove("_[a-z]+_pol") %>% str_remove(".rds"),
+                         ".png"),
+       height = 10,
+       width = 10)
+
