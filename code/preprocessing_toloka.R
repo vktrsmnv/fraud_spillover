@@ -104,25 +104,37 @@ data <-
         "Not very interested" = "2",
         "Not at all interested" = "1"
       ),
+    news_newspaper = coalesce(pa05_01, pa20_01),
+    news_tv = coalesce(pa05_02, pa20_02),
+    news_radio = coalesce(pa05_03, pa20_03),
+    news_internet = coalesce(pa05_04, pa20_04),
+    news_social = coalesce(pa05_05, pa20_05),
+    news_talk = coalesce(pa05_06, pa20_06),
     gentrust = coalesce(gt01, gt02),
     gentrust_f = as_factor(gentrust) %>%
       fct_recode(
         "Most people can be trusted" = "1",
         "Need to be very careful" = "2"
       ),
-    polint = pa01,
     age = sd03_01,
     sex = case_when(
       sd01 == 1 ~ "Female",
       TRUE ~ "Male"
     ),
     edu = coalesce(sd04, sd14),
-    edu_three = case_when(
-      edu %in% 1:3 ~ 1,
-      edu %in% 4:6 ~ 2,
-      edu %in% 7:11 ~ 3,
-      TRUE ~ edu
+    sd04_three = case_when(
+      sd04 %in% 1:3 ~ 1,
+      sd04 %in% 4:7 ~ 2,
+      sd04 %in% 8:11 ~ 3,
+      TRUE ~ sd04
     ),
+    sd14_three = case_when(
+      sd14 %in% 1:3 ~ 1,
+      sd14 %in% 4:6 ~ 2,
+      sd14 %in% 7:9 ~ 3,
+      TRUE ~ sd14
+    ),
+    edu_three = coalesce(sd04_three, sd14_three),
     edu_three_f = as_factor(edu_three),
     edu_three_f = fct_recode(
       edu_three_f,
@@ -182,7 +194,9 @@ data <-
     pa12,
     pa17,
     started = strptime(started, format = "%d-%m-%Y %H:%M:%S"),
-    date = as.Date(started)
+    date = as.Date(started),
+    maxpage,
+    lastpage
   )
 
 write_rds(data, "data/toloka.rds")
