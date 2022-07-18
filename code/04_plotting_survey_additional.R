@@ -7,7 +7,6 @@ setup <- function() {
     "janitor",
     "magrittr",
     "sjlabelled",
-    "patchwork",
     "styler",
     "here",
     "BayesPostEst",
@@ -18,9 +17,7 @@ setup <- function() {
     "tidybayes",
     "modelr",
     "remotes",
-    "viridis",
-    "showtext",
-    "ggthemes"
+    "viridis"
   )
   packages <- rownames(installed.packages())
   p_to_install <- p_needed[!(p_needed %in% packages)]
@@ -31,22 +28,7 @@ setup <- function() {
   library(stickylabeller)
   lapply(p_needed, require, character.only = TRUE)
   options(mc.cores = parallel::detectCores())
-
-  # Let's Add a Different Font for Plots!
-  font_add_google("Source Sans Pro")
-  showtext_auto()
-
-  # setting a global theme for the entire document
-  theme_set(theme_bw(base_family = "Source Sans Pro") +
-              # theme_bw(base_family = "Source Sans Pro") +
-              theme(
-                plot.background = element_blank(),
-                plot.title.position = "plot",
-                legend.title = element_blank(),
-                legend.position = "bottom"
-              ))
 }
-
 setup()
 
 formals(plasma)$end <- 0.8
@@ -57,10 +39,7 @@ formals(scale_alpha_manual)$values <- c(0.5, 1)
 
 ### Political Institutions #####
 
-# load the estimation results from main model
 mpol <- read_rds("output/ol_main_la_pol.rds")
-
-# extract the posterior samples
 n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
@@ -101,57 +80,128 @@ for (inst in pol){
   plotting <- bind_rows(plot_categories, plotting)
 }
 
-#### Main Effect: Fraud vs. Control
-
 plotting %>%
-  mutate(significant = ifelse(lower < 0 &
-                                upper > 0, "no", "yes")) %>%
-  mutate(
-    institution = case_when(
-      institution == "pol_inst_pres" ~ "President",
-      institution == "pol_inst_police" ~ "Police",
-      institution == "pol_inst_CEC" ~ "Central Electoral Commission",
-      institution == "pol_inst_gov" ~ "Government",
-      institution == "pol_inst_part" ~ "Political Parties",
-      institution == "pol_inst_parl" ~ "Parliament",
-      institution == "pol_inst_courts" ~ "Courts",
-      institution == "pol_inst_armed" ~ "Armed Forces",
-    ),
-    Condition = condition %>%
-      factor(., levels = c(
-        "Control", "Punishment", "Judicial Punishment"
-      ))
-  ) %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
+  mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
+                                 institution == "pol_inst_police" ~ "Police",
+                                 institution == "pol_inst_CEC" ~ "Central Electoral Commission",
+                                 institution == "pol_inst_gov" ~ "Government",
+                                 institution == "pol_inst_part" ~ "Political Parties",
+                                 institution == "pol_inst_parl" ~ "Parliament",
+                                 institution == "pol_inst_courts" ~ "Courts",
+                                 institution == "pol_inst_armed" ~ "Armed Forces",
+  ),
+  # Condition = condition,
+  Condition = condition %>%
+    factor(., levels = c(
+      "Control", "Punishment", "Judicial Punishment"
+    ))) %>%
   # filter(!str_detect(institution, "npol"))%>%
-  filter(str_detect(string = condition, "Control")) %>% # only plot the control condition for main effects
   ggplot(., aes(y = category,
                 x = median,
                 group = Condition)) +
-  geom_pointrange(aes(
-    xmin = lower,
-    xmax = upper,
-    color = Condition,
-    alpha = significant
-  ),
-  position = position_dodge(0.4)) +
+  geom_pointrange(aes(xmin = lower,
+                      xmax = upper,
+                      color = Condition,
+                      alpha = significant),
+                  position = position_dodge(0.4)) +
   theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title.position = "plot",
-    plot.caption.position =  "plot"
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
+       x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+       y = "Confidence") +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c("None\nat all",
+               "Not very\nmuch",
+               "Quite\na Lot",
+               "A Great\nDeal")
   ) +
-  labs(
-    title = "Latin America",
-    # title = "Effect of Fraud Information on Confidence in Political Institutions in Latin America",
-    # subtitle = paste0(
-    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
-    # ),
-    x = "",
-    # x = "Pr(Category|Fraud) - Pr(Category|Control)",
-    y = "Confidence",
-    color = "",
-    alpha = ""
-  ) +
+  geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  xlim(-0.3, 0.3) +
+  guides(alpha = "none") +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  # annotate("text", x = 0.1, y = 2.3, label = "Hypothesis 1", size = 2) +
+  facet_wrap(~ institution,
+             ncol = 4,
+             labeller = label_glue('{institution}, N = {n_cases}')) +
+  scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
+
+arrows <- data.frame(x1 = 0.19, x2 = 0.1,
+                     y1 = 1.55, y2 = 1.2,
+                     Condition =  c(
+                       "Control"
+                     ),
+                     institution = "Armed Forces")
+plot <- plot +
+  geom_abline(intercept = 2.5,
+              slope = -15,
+              size = 0.5,
+              alpha = 0.3,
+              linetype = 2,
+              color = viridis::plasma(1)) +
+  geom_text(data = data.frame(median = 0.2,
+                              category = 1.7,
+                              Condition =  c(
+                                "Control"
+                              ),
+                              institution = "Armed Forces"),
+            label = "Fraud\ndecreases\ntrust",
+            size = 3,
+            color = plasma(1, 0.5)) +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.3, color = plasma(1),
+    curvature = -0.3)
+
+plot
+
+ggsave(plot,
+       filename = "figs/la_hdi89.png",
+       height = 8,
+       width = 10)
+
+#### Only Control vs. Fraud Plots
+
+plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
+  mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
+                                 institution == "pol_inst_police" ~ "Police",
+                                 institution == "pol_inst_CEC" ~ "Central Electoral Commission",
+                                 institution == "pol_inst_gov" ~ "Government",
+                                 institution == "pol_inst_part" ~ "Political Parties",
+                                 institution == "pol_inst_parl" ~ "Parliament",
+                                 institution == "pol_inst_courts" ~ "Courts",
+                                 institution == "pol_inst_armed" ~ "Armed Forces",
+  ),
+  Condition = condition %>%
+    factor(., levels = c(
+      "Control", "Punishment", "Judicial Punishment"))) %>%
+  # filter(!str_detect(institution, "npol"))%>%
+  filter(str_detect(string = condition, "Control")) %>%
+  ggplot(., aes(y = category,
+                x = median,
+                group = Condition)) +
+  geom_pointrange(aes(xmin = lower,
+                      xmax = upper,
+                      color = Condition,
+                      alpha = significant),
+                  position = position_dodge(0.4)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud Information on Confidence in Political Institutions in Latin America",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
+       x = "Pr(Category|Fraud) - Pr(Category|Control)",
+       y = "Trust",
+       color = "",
+       alpha = "") +
   guides(alpha = "none", color = "none") +
   scale_alpha_manual(values = c(0.4, 1)) +
   scale_y_continuous(
@@ -162,21 +212,19 @@ plotting %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap( ~ institution,
-              ncol = 4,
-              labeller = label_glue('{institution}, N = {n_cases}')) +
-  scale_color_viridis(discrete = T,
-                      option = "C",
-                      end = 0.8) -> plot_la
+  facet_wrap(~ institution,
+             ncol = 4,
+             labeller = label_glue('{institution}, N = {n_cases}')) +
+  scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
 
-plot_la
+plot
 arrows <- data.frame(x1 = 0.19, x2 = 0.1,
                      y1 = 1.55, y2 = 1.2,
                      Condition =  c(
                        "Control"
                      ),
                      institution = "Armed Forces")
-plot_la <- plot_la +
+plot <- plot +
   xlim(-0.3, 0.3) +
   geom_abline(intercept = 2.5,
               slope = -15,
@@ -199,11 +247,11 @@ plot_la <- plot_la +
     arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
     alpha = 0.3, color = viridis::plasma(1),
     curvature = -0.3)
-
-# ggsave(plot_la,
-#        filename = "figs/la_hdi89_control.png",
-#        height = 4,
-#        width = 10)
+plot
+ggsave(plot,
+       filename = "figs/la_hdi89_control.png",
+       height = 4,
+       width = 10)
 
 #### tables ####
 
@@ -221,9 +269,9 @@ BayesPostEst::mcmcReg(mpol[1:4], ci = 0.89,
                       pars = "b",
                       regex = T,
                       custom.gof.rows = list("Observations" = n_cases[1:4]),
-                      # custom.note = "%stars.  \\\\\nThis table examines the effect of information about fraud
-                      # and punitive measures on institutional trust. \\\\\nFraud treatment group serves as the baseline.",
-                      # caption = "Ordinal logistic regression results for Latin American sample",
+                      custom.note = "%stars.  \\\\\nThis table examines the effect of information about fraud
+                      and punitive measures on institutional trust. \\\\\nFraud treatment group serves as the baseline.",
+                      caption = "Ordinal logistic regression results for Latin American sample",
                       custom.model.names = names(mpol)[1:4],
                       coefnames = rep(list(c("Intercept$_1$",
                                              "Intercept$_2$",
@@ -320,19 +368,13 @@ plotting %>%
                       alpha = significant),
                   position = position_dodge(0.4)) +
   theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title.position = "plot",
-    plot.caption.position =  "plot"
-  )+
-  labs(
-    # title = "Effect of Fraud and Punishment Information on Confidence in Non-political Institutions in Latin America",
-       # subtitle = paste0(
-       #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
-       # ),
-    title = "Latin America",
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Non-political Institutions in Latin America",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
        x = "Pr(Category|Fraud) - Pr(Category|Condition)",
-       y = "Confidence") +
+       y = "Trust") +
   scale_y_continuous(
     breaks = 1:4,
     labels = c("None\nat all",
@@ -348,7 +390,7 @@ plotting %>%
              labeller = label_glue('{institution}, N = {n_cases}')) +
   scale_color_viridis(discrete = T, option = "C") -> plot
 
-plot_npol_la <- plot
+plot
 ggsave(plot,
        filename = "figs/la_hdi89_npol.png",
        height = 8,
@@ -385,11 +427,11 @@ BayesPostEst::mcmcReg(mpol, ci = 0.89,
 # RU: Full Sample ####
 
 ### Political Institutions #####
-mpol <- read_rds("output/ol_main_ru_pol_1226.rds")
+mpol <- read_rds("output/ol_main_ru_pol.rds")
 # mpol <- read_rds("output/ol_main_ru_pol_no_exclusions.rds")
-n_cases_ru <- c()
+n_cases <- c()
 pol <- names(mpol)
-plotting_ru <- tibble()
+plotting <- tibble()
 for (inst in pol){
   esoph_plot = mpol$pol_inst_armed$data %>%
     data_grid(condition) %>%
@@ -409,13 +451,13 @@ for (inst in pol){
   ) %>%
     as.data.frame()
 
-  n_cases_ru <- c(n_cases_ru, nrow(mpol[[inst]]$data))
+  n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
 
   for (cond in levels(mpol$pol_inst_armed$data$condition)[2:4]){
     for (num in 1:4){
       plot_categories[plot_categories$category == num &
                         plot_categories$condition == cond, 1:3] <-
-        median_hdci(esoph_plot$.value[esoph_plot$condition == "Fraud" &
+        median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
                                        esoph_plot$Trust == num
         ] %>% as.numeric() -
           esoph_plot$.value[esoph_plot$condition == cond &
@@ -424,60 +466,128 @@ for (inst in pol){
       plot_categories$institution <- inst
     }
   }
-  plotting_ru <- bind_rows(plot_categories, plotting_ru)
+  plotting <- bind_rows(plot_categories, plotting)
 }
 
+plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
+  mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
+                                 institution == "pol_inst_police" ~ "Police",
+                                 institution == "pol_inst_CEC" ~ "Central Electoral Commission",
+                                 institution == "pol_inst_gov" ~ "Government",
+                                 institution == "pol_inst_part" ~ "Political Parties",
+                                 institution == "pol_inst_parl" ~ "Parliament",
+                                 institution == "pol_inst_courts" ~ "Courts",
+                                 institution == "pol_inst_armed" ~ "Armed Forces",
+  ),
+  Condition = condition %>%
+    factor(., levels = c(
+      "Control", "Punishment", "Judicial Punishment"))) %>%
+  # filter(!str_detect(institution, "npol"))%>%
+  ggplot(., aes(y = category,
+                x = median,
+                group = Condition)) +
+  geom_pointrange(aes(xmin = lower,
+                      xmax = upper,
+                      color = Condition,
+                      alpha = significant),
+                  position = position_dodge(0.4)) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Russia",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
+       x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+       y = "Trust",
+       alpha = "") +
+  guides(alpha = "none") +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  scale_y_continuous(
+    breaks = 1:4,
+    labels = c("None\nat all",
+               "Not very\nmuch",
+               "Quite\na Lot",
+               "A Great\nDeal")
+  ) +
+  geom_vline(aes(xintercept = 0), alpha = 0.3) +
+  facet_wrap(~ institution,
+             ncol = 4,
+             labeller = label_glue('{institution}, N = {n_cases}')) +
+  scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
+
+plot
+arrows <- data.frame(x1 = 0.19, x2 = 0.1,
+                     y1 = 1.55, y2 = 1.2,
+                     Condition =  c(
+                       "Control"
+                     ),
+                     institution = "Armed Forces")
+plot <- plot +
+  xlim(-0.3, 0.3) +
+  geom_abline(intercept = 2.5,
+              slope = -15,
+              size = 0.5,
+              alpha = 0.3,
+              linetype = 2,
+              color = viridis::plasma(1)) +
+  geom_text(data = data.frame(median = 0.2,
+                              category = 1.7,
+                              Condition =  c(
+                                "Control"
+                              ),
+                              institution = "Armed Forces"),
+            label = "Fraud\ndecreases\ntrust",
+            size = 3,
+            color = viridis::plasma(1, 0.5)) +
+  geom_curve(
+    data = arrows,
+    aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
+    alpha = 0.3, color = viridis::plasma(1),
+    curvature = -0.3)
+plot
+ggsave(plot,
+       filename = "figs/ru_hdi89.png",
+       height = 8,
+       width = 10)
 
 #### Plot for Control vs. Fraud conditions alone
 
-plotting_ru %>%
-  mutate(significant = ifelse(lower < 0 &
-                                upper > 0, "no", "yes")) %>%
-  mutate(
-    institution = case_when(
-      institution == "pol_inst_pres" ~ "President",
-      institution == "pol_inst_police" ~ "Police",
-      institution == "pol_inst_CEC" ~ "Central Electoral Commission",
-      institution == "pol_inst_gov" ~ "Government",
-      institution == "pol_inst_part" ~ "Political Parties",
-      institution == "pol_inst_parl" ~ "Parliament",
-      institution == "pol_inst_courts" ~ "Courts",
-      institution == "pol_inst_armed" ~ "Armed Forces",
-    ),
-    Condition = condition %>%
-      factor(., levels = c(
-        "Control", "Punishment", "Judicial Punishment"
-      ))
-  ) %>%
+plotting %>%
+  mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
+  mutate(institution = case_when(institution == "pol_inst_pres" ~ "President",
+                                 institution == "pol_inst_police" ~ "Police",
+                                 institution == "pol_inst_CEC" ~ "Central Electoral Commission",
+                                 institution == "pol_inst_gov" ~ "Government",
+                                 institution == "pol_inst_part" ~ "Political Parties",
+                                 institution == "pol_inst_parl" ~ "Parliament",
+                                 institution == "pol_inst_courts" ~ "Courts",
+                                 institution == "pol_inst_armed" ~ "Armed Forces",
+  ),
+  Condition = condition %>%
+    factor(., levels = c(
+      "Control", "Punishment", "Judicial Punishment"))) %>%
   # filter(!str_detect(institution, "npol"))%>%
   filter(str_detect(string = condition, "Control")) %>%
   ggplot(., aes(y = category,
                 x = median,
                 group = Condition)) +
-  geom_pointrange(aes(
-    xmin = lower,
-    xmax = upper,
-    color = Condition,
-    alpha = significant
-  ),
-  position = position_dodge(0.4)) +
+  geom_pointrange(aes(xmin = lower,
+                      xmax = upper,
+                      color = Condition,
+                      alpha = significant),
+                  position = position_dodge(0.4)) +
   theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title.position = "plot",
-    plot.caption.position =  "plot"
-  ) +
-  labs(
-    # title = "Effect of Fraud Information on Confidence in Political Institutions in Russia",
-    # subtitle = paste0(
-    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
-    # ),
-    title = "Russia",
-    x = "Pr(Category|Fraud) - Pr(Category|Control)",
-    y = "Confidence",
-    color = "",
-    alpha = ""
-  ) +
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud Information on Confidence in Political Institutions in Russia",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
+       x = "Pr(Category|Fraud) - Pr(Category|Control)",
+       y = "Trust",
+       color = "",
+       alpha = "") +
   guides(alpha = "none", color = "none") +
   scale_alpha_manual(values = c(0.4, 1)) +
   scale_y_continuous(
@@ -488,28 +598,26 @@ plotting_ru %>%
                "A Great\nDeal")
   ) +
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
-  facet_wrap( ~ institution,
-              ncol = 4,
-              labeller = label_glue('{institution}, N = {n_cases_ru}')) +
-  scale_color_viridis(discrete = T,
-                      option = "C",
-                      end = 0.8) -> plot_ru
+  facet_wrap(~ institution,
+             ncol = 4,
+             labeller = label_glue('{institution}, N = {n_cases}')) +
+  scale_color_viridis(discrete = T, option = "C", end = 0.8) -> plot
 
-# plot_ru
+plot
 arrows <- data.frame(x1 = 0.19, x2 = 0.1,
                      y1 = 1.55, y2 = 1.2,
                      Condition =  c(
                        "Control"
                      ),
                      institution = "Armed Forces")
-plot_ru <- plot_ru +
+plot <- plot +
   xlim(-0.3, 0.3) +
   geom_abline(intercept = 2.5,
               slope = -15,
               size = 0.5,
               alpha = 0.3,
               linetype = 2,
-              color = plasma(1)) +
+              color = viridis::plasma(1)) +
   geom_text(data = data.frame(median = 0.2,
                               category = 1.7,
                               Condition =  c(
@@ -519,30 +627,18 @@ plot_ru <- plot_ru +
             label = "fraud\ndecreases\ntrust",
             size = 2.7,
             nudge_y = 0.3,
-            color = plasma(1, 0.7)) +
+            color = viridis::plasma(1, 0.5)) +
   geom_curve(
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.5,
-    alpha = 0.3, color = plasma(1),
+    alpha = 0.3, color = viridis::plasma(1),
     curvature = -0.3)
-
-plot_ru
-
-
-
-# collect both plots into one figure and merge their legends
-pp <- plot_la / plot_ru + plot_layout(guides = 'collect')
-pp
-ggsave(pp,
-       filename = "figs/main_hdi89.png",
-       height = 8,
+plot
+ggsave(plot,
+       filename = "figs/ru_hdi89_control.png",
+       height = 4,
        width = 10)
-
-# ggsave(plot,
-#        filename = "figs/ru_hdi89_control.png",
-#        height = 4,
-#        width = 10)
 
 #### tables #####
 
@@ -610,7 +706,7 @@ BayesPostEst::mcmcReg(
 
 ### Non-political Institutions #####
 mpol <- read_rds("output/ol_main_ru_npol.rds")
-n_cases_ru <- c()
+n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
 for (inst in pol){
@@ -632,7 +728,7 @@ for (inst in pol){
   ) %>%
     as.data.frame()
 
-  n_cases_ru <- c(n_cases_ru, nrow(mpol[[inst]]$data))
+  n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
 
   for (cond in levels(mpol$npol_inst_comp$data$condition)[2:4]){
     for (num in 1:4){
@@ -672,18 +768,13 @@ plotting %>%
                       alpha = significant),
                   position = position_dodge(0.4)) +
   theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title.position = "plot",
-    plot.caption.position =  "plot"
-  )+
-  labs(title = "Russia",
-    # title = "Effect of Fraud and Punishment Information on Confidence in Non-political Institutions in Russia",
-       # subtitle = paste0(
-       #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
-       # ),
+  theme(legend.position = "bottom") +
+  labs(title = "Effect of Fraud and Punishment Information on Confidence in Non-political Institutions in Russia",
+       subtitle = paste0(
+         "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+       ),
        x = "Pr(Category|Fraud) - Pr(Category|Condition)",
-       y = "Confidence") +
+       y = "") +
   scale_y_continuous(
     breaks = 1:4,
     labels = c("None\nat all",
@@ -696,20 +787,13 @@ plotting %>%
   guides(alpha = "none") +
   facet_wrap(~ institution,
              ncol = 3,
-             labeller = label_glue('{institution}, N = {n_cases_ru}')) +
+             labeller = label_glue('{institution}, N = {n_cases}')) +
   scale_color_viridis(discrete = T, option = "C") -> plot
 
-plot_npol_ru <- plot
-
-pp_npol <- (plot_npol_la  / plot_npol_ru) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = 'bottom') &
-  guides(shape = guide_legend(override.aes = list(shape = c(15, 17), color = c("black", "black", "white", "white"))))
-pp_npol
-
-ggsave(pp_npol,
-       filename = "figs/hdi89_npol.png",
-       height = 10,
+plot
+ggsave(plot,
+       filename = "figs/ru_hdi89_npol.png",
+       height = 8,
        width = 10)
 
 names(mpol) <- case_when(names(mpol) == "npol_inst_comp" ~ "Companies",
@@ -903,55 +987,33 @@ plotting %>%
       str_detect(condition, pattern = "Opponent"),
       "Opponent",
       "Supporter"
-    ),
-    significant_opponent = paste0(significant, "_", opponent)
+    )
   ) %>%
-  filter(!str_detect("Control", string =  condition)) -> plotting
-
-
-plotting %>%
+  filter(!str_detect("Control", string =  condition)) %>%
   ggplot(., aes(
     y = category,
     x = median,
+    shape = opponent,
     group = condition
   )) +
-  labs(
-    # title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
-    # subtitle = paste0(
-    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
-    # ),
-    title = "Latin America",
-    x = "Pr(Category|Fraud) - Pr(Category|Condition)",
-    y = "Confidence",
-    shape = ""
-  ) +
-  geom_abline(intercept = 2.5,
-              slope = 15,
-              size = 0.5,
-              # alpha = 0.7,
-              linetype = 2,
-              color = "black",
-              alpha = 0.7) +
-  geom_abline(intercept = 2.5,
-              slope = -15,
-              size = 0.5,
-              # alpha = 0.7,
-              linetype = 3,
-              color = "black",
-              alpha = 0.7) +
   geom_pointrange(aes(
     xmin = lower,
     xmax = upper,
     color = Condition,
-    shape = significant_opponent,
+    shape = opponent,
     alpha = significant
   ),
   position = position_dodge(0.4)) +
   theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title.position = "plot",
-    plot.caption.position =  "plot"
+  theme(legend.position = "bottom") +
+  labs(
+    title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Latin America",
+    subtitle = paste0(
+      "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+    ),
+    x = "Pr(Category|Fraud) - Pr(Category|Condition)",
+    y = "",
+    shape = ""
   ) +
   # scale_alpha_manual(values = c(0.4, 1)) +
   scale_y_continuous(
@@ -961,9 +1023,7 @@ plotting %>%
                "Quite\na Lot",
                "A Great\nDeal")
   ) +
-  scale_shape_manual(values = c(0, 2, 15, 17),
-                     labels = c("Opponent", "Supporter", "", "")
-  ) +
+  scale_shape_manual(values = c(15,17)) +
   scale_alpha_manual(values = c(0.4, 1)) +
   geom_vline(aes(xintercept = 0), alpha = 0.33) +
   xlim(-0.3, 0.3) +
@@ -975,6 +1035,7 @@ plotting %>%
                       , begin = 0.27 # if control category omitted
   ) -> plot
 
+plot
 
 arrows <- data.frame(
   # x1 = 0.19, x2 = 0.1,
@@ -984,21 +1045,32 @@ arrows <- data.frame(
   condition =  c(
     "Control"
   ),
-  significant_opponent = "no_Opponent",
+  opponent = "Opponent",
   institution = "Armed Forces")
 plot <- plot +
+  geom_abline(intercept = 2.5,
+              slope = 15,
+              size = 0.5,
+              # alpha = 0.7,
+              linetype = 2,
+              color = "grey") +
+  geom_abline(intercept = 2.5,
+              slope = -15,
+              size = 0.5,
+              # alpha = 0.7,
+              linetype = 3,
+              color = "grey") +
   geom_text(data = data.frame(median = c(0.2, -0.2),
                               category = c(3.5, 3.5),
                               condition =  c(
                                 "Control"
                               ),
-                              significant_opponent = "no_Opponent",
+                              opponent = "Opponent",
                               institution = "Armed Forces"),
             label = c("Punishment\ndecreases\ntrust", "Punishnment\nincreases\ntrust"),
             # label = c("Amplification\nEffect", "Correction\nEffect"),
             size = 3,
-            color = "black",
-            alpha = 0.7
+            color = "grey",
             # alpha = 0.9
   ) +
   geom_curve(
@@ -1006,8 +1078,7 @@ plot <- plot +
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
     # alpha = 0.9,
-    color = "black",
-    alpha = 0.7,
+    color = "grey",
     curvature = -0.2)
 plot
 arrows <- data.frame(
@@ -1018,7 +1089,7 @@ arrows <- data.frame(
   condition =  c(
     "Control"
   ),
-  significant_opponent = "no_Opponent",
+  opponent = "Opponent",
   institution = "Armed Forces")
 
 plot <- plot +
@@ -1027,9 +1098,10 @@ plot <- plot +
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
     # alpha = 0.9,
-    color = "black",
-    alpha = 0.7,
-    curvature = 0.2) -> plot
+    color = "grey",
+    curvature = 0.2)
+
+plot
 
 ggsave(plot,
        filename = "figs/la_hdi89_conditional_punishment.png",
@@ -1039,7 +1111,7 @@ ggsave(plot,
 # RU: Conditional Effects ####
 
 mpol <- read_rds("output/ol_conditional_ru_pol.rds")
-n_cases_ru <- c()
+n_cases <- c()
 pol <- names(mpol)
 plotting <- tibble()
 for (inst in pol){
@@ -1064,7 +1136,7 @@ for (inst in pol){
   ) %>%
     as.data.frame()
 
-  n_cases_ru <- c(n_cases_ru, nrow(mpol[[inst]]$data))
+  n_cases <- c(n_cases, nrow(mpol[[inst]]$data))
 
   # for (cond in plot_categories$condition[1:3]){
   for (num in 1:4){
@@ -1194,39 +1266,31 @@ plotting %>%
       str_detect(condition, pattern = "Opponent"),
       "Opponent",
       "Supporter"
-    ),
-    significant_opponent = paste0(significant, "_", opponent)
-  ) -> plotting
-
-plotting %>%
+    )
+  ) %>%
   ggplot(., aes(
     y = category,
     x = median,
-    shape = significant_opponent,
+    shape = opponent,
     group = condition
   )) +
   geom_pointrange(aes(
     xmin = lower,
     xmax = upper,
     color = Condition,
-    shape = significant_opponent,
+    shape = opponent,
     alpha = significant
   ),
   position = position_dodge(0.4)) +
   theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title.position = "plot",
-    plot.caption.position =  "plot"
-  )+
+  theme(legend.position = "bottom") +
   labs(
-    # title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Russia",
-    # subtitle = paste0(
-    #   "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
-    # ),
+    title = "Effect of Fraud and Punishment Information on Confidence in Political Institutions in Russia",
+    subtitle = paste0(
+      "89% HDIs for differences in probabilities for categories based on draws from expectation of the posterior predictive distributions"
+    ),
     x = "Pr(Category|Fraud) - Pr(Category|Condition)",
-    title = "Russia",
-    y = "Confidence",
+    y = "",
     shape = ""
   ) +
   scale_alpha_manual(values = c(0.4, 1)) +
@@ -1240,15 +1304,14 @@ plotting %>%
   geom_vline(aes(xintercept = 0), alpha = 0.3) +
   xlim(-0.3, 0.3) +
   guides(alpha = "none") +
-  scale_shape_manual(values = c(0, 2, 15, 17),
-                     labels = c("Opponent", "Supporter", "", "")
-                     ) +
+  scale_shape_manual(values = c(15,17)) +
   facet_wrap( ~ institution,
               ncol = 4,
-              labeller = label_glue('{institution}, N = {n_cases_ru}')) +
+              labeller = label_glue('{institution}, N = {n_cases}')) +
   scale_color_viridis(discrete = T, option = "C",
-                      begin = 0.27) -> plot_ru
-plot_ru
+                      begin = 0.27) -> plot
+
+plot
 
 
 arrows <- data.frame(
@@ -1259,45 +1322,42 @@ arrows <- data.frame(
   condition =  c(
     "Control"
   ),
-  significant_opponent = "no_Opponent",
+  opponent = "Opponent",
   institution = "Armed Forces")
-plot_ru <- plot_ru +
+plot <- plot +
   geom_abline(intercept = 2.5,
               slope = 15,
               size = 0.5,
               # alpha = 0.7,
               linetype = 2,
-              color = "black",
-              alpha = 0.7) +
+              color = "grey") +
   geom_abline(intercept = 2.5,
               slope = -15,
               size = 0.5,
               # alpha = 0.7,
               linetype = 3,
-              color = "black",
-              alpha = 0.7) +
+              color = "grey") +
   geom_text(data = data.frame(median = c(0.2, -0.2),
                               category = c(3.5, 3.2),
                               condition =  c(
                                 "Control"
                               ),
-                              significant_opponent = "no_Opponent",
+                              opponent = "Opponent",
                               institution = "Armed Forces"),
             label = c("Punishment\ndecreases\ntrust", "Punishnment\nincreases\ntrust"),
             # label = c("Amplification\nEffect", "Correction\nEffect"),
             size = 3,
-            color = "black",
-            alpha = 0.7
+            color = "grey",
+            # alpha = 0.9
   ) +
   geom_curve(
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
     # alpha = 0.9,
-    color = "black",
-    alpha = 0.7,
+    color = "grey",
     curvature = -0.2)
-plot_ru
+plot
 arrows <- data.frame(
   # x1 = 0.19, x2 = 0.1,
   # y1 = 3.1, y2 = 1.4,
@@ -1306,44 +1366,24 @@ arrows <- data.frame(
   condition =  c(
     "Control"
   ),
-  significant_opponent = "no_Opponent",
+  opponent = "Opponent",
   institution = "Armed Forces")
 
-plot_ru <- plot_ru +
+plot <- plot +
   geom_curve(
     data = arrows,
     aes(x = x1, y = y1, xend = x2, yend = y2),
     arrow = arrow(length = unit(0.08, "inch")), size = 0.2,
     # alpha = 0.9,
-    color = "black",
-    alpha = 0.7,
+    color = "grey",
     curvature = 0.2)
 
-plot_ru
+plot
 
-pp1 <- (plot  / plot_ru) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = 'bottom') &
-  guides(shape = guide_legend(override.aes = list(shape = c(15, 17), color = c("black", "black", "white", "white"))))
-pp1
-
-# grid.force()
-# grid.remove("label-1-17.2-18-2-18", redraw = T)
-# grid.remove("label-1-13.2-14-2-14")
-# grid.remove("key-1-15-1.2-16-2-16")
-# grid.remove("key-1-11-1.2-12-2-12")
-ggsave(pp1,
-  filename = "figs/hdi89_conditional_punishment.png",
-  height = 12,
-  width = 10)
-
-
-
-ggsave(plot_ru,
+ggsave(plot,
        filename = "figs/ru_hdi89_conditional_punishment.png",
        height = 6,
        width = 10)
-
 
 
 ###################################### Unused so far
@@ -1764,115 +1804,9 @@ ggsave(plot_ru,
 #         #   esoph_plot$.value[esoph_plot$condition == cond &
 #       #                       esoph_plot$Trust == num
 #       #   ], .width = 0.89)
-#       ci = .95)
-
-data <- data_rus
-data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
-data <- cbind(model.matrix( ~ condition - 1, data), data %>% select(starts_with("pol_")))
-IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
-mediation_calc(
-data = data,
-inst = pol[1],
-IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
-model = "ol",
-name = paste0("mediation_ru_pol_", nrow(data))
-)
-
-plotting_mediation <- tibble()
-condition <- c("conditionControl", "conditionJudicialPunishment",  "conditionPunishment")
-for (md in pol){
-  for (cn in condition){
-    tt <- bayestestR::mediation(ol_mediation_ru_pol_1226[[md]],
-                                treatment = cn,
-                                mediator = "pol_election",
-                                ci = .89)
-
-
-    plotting_mediation <- tt %>%
-      as_tibble() %>%
-      add_column(institution = md,
-                 treatment = cn,
-                 n = nrow(ol_mediation_ru_pol_1226[[md]]$data)) %>%
-      janitor::clean_names() %>%
-      slice(1:4) %>%
-      bind_rows(plotting_mediation)
-  }
-
-}
-
-
-
-plotting_mediation %>%
-  mutate(significant = ifelse(ci_low < 0 & ci_high > 0, "no", "yes"),
-         institution =
-      case_when(
-        institution == "pol_inst_armed" ~ "Armed Forces",
-        institution == "pol_inst_police" ~ "Police",
-        institution == "pol_inst_CEC" ~ "Central Electoral\nCommission",
-        institution == "pol_inst_gov" ~ "Government",
-        institution == "pol_inst_part" ~ "Parties",
-        institution == "pol_inst_parl" ~ "Parliament",
-        institution == "pol_inst_courts" ~ "Courts",
-        institution == "pol_inst_pres" ~ "President"
-      ),
-    # institution = as_factor(institution) %>%
-    #   fct_relevel(
-    #     "Central Electoral\nCommission",
-    #     "Parties",
-    #     "Parliament",
-    #     "Courts",
-    #     "President",
-    #     "Government",
-    #     "Police",
-    #     "Armed Forces"
-    #   ),
-    # opponent = ifelse(opponent == 1, "Opponents", "Supporters")
-    treatment = treatment %>%
-      str_remove("condition"),
-    treatment = case_when(treatment == "JudicialPunishment" ~ "Judicial Punishment",
-                          TRUE ~ treatment),
-    treatment = treatment %>%
-      factor(., levels = c(
-        "Control", "Punishment", "Judicial Punishment"
-      )
-  )) %>%
-  ggplot(aes(x = estimate, xmin = ci_low, xmax = ci_high,
-             y = effect,
-             shape = treatment,
-             color = treatment,
-             alpha = significant
-             )) +
-  geom_pointrange(
-  position = position_dodge(0.5),
-  size = 0.4
-  ) +
-  facet_wrap(
-    . ~ institution,
-    ncol = 4,
-    labeller = label_glue(
-      "{institution}, N = {plotting_mediation %>% select(institution, n) %>% distinct() %>% arrange(institution) %>% pull(n)}"
-    )
-  ) +
-  scale_color_viridis(
-    discrete = T,
-    option = "C",
-    end = 0.8
-  ) +
-  geom_vline(xintercept = 0,
-               linetype = 2,
-               color = "black",
-               alpha = 0.5
-             ) +
-  labs(y = "",
-       x = "Estimate",
-       alpha = "",
-       shape = "")+
-  guides(alpha = "none", color = "none")
-
-
-
-
-
+#       median_hdi(esoph_plot$.value[esoph_plot$condition == "Fraud" &
+#                                      esoph_plot$Trust == num
+#       ] -
 #         esoph_plot$.value[esoph_plot$condition == cond &
 #                             esoph_plot$Trust == num
 #         ], .width = 0.89)[1:3]

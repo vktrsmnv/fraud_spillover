@@ -146,3 +146,51 @@ model_calc <- function(data,
     }
   }
 }
+
+mediation_calc <- function(data,
+                           inst,
+                           IVs,
+                           model,
+                           iter = 10000,
+                           cores = 4,
+                           chains = 4,
+                           warmup = 7500,
+                           seed = 1201,
+                           name) {
+  # empty objects for storing
+  mods <- list()
+  # polinst_mods_ol <- npolinst_mods_ol <- list()
+
+  # transform variables to factors for OL model
+  data1 <- data %>%
+    mutate(across(starts_with("pol_inst_"), ~ as.numeric(.x)),
+           across(starts_with("npol_inst"), ~ as.numeric(.x))) #
+
+  # time <- format(Sys.time(), "%b%d_%H_%M_%S")
+  for (DV in inst) {
+    f1 <- bf(paste("pol_election", IVs, sep = "~"),
+             family = "cumulative")
+    f2 <- bf(paste(DV,
+                   paste("pol_election", IVs, sep = "+"),
+                   sep = "~"),
+             family = "cumulative")
+    mods[[DV]] <-
+      brm(
+        formula = f1 + f2 + set_rescor(FALSE),
+        data = data1,
+        family = cumulative("logit"),
+        iter = iter,
+        warmup = warmup,
+        chains = chains,
+        cores = cores,
+        seed = seed
+      )
+    write_rds(mods,
+              paste0("output/",
+                     model,
+                     "_",
+                     name,
+                     ".rds"))
+  }
+
+}
