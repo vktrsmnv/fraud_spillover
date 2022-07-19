@@ -70,7 +70,7 @@ data_rus <-
 #   )
 
 
-data_la <- read_csv(here("data/LA.csv")) %>%
+data_la <- read_csv(here("data/LA_1.csv")) %>%
   full_join(read_rds(here("data/toloka.rds")), .,
             by = c("case" = "CASE")) %>%
   filter(
@@ -133,7 +133,7 @@ model_calc(
 
 
 # Russia: restriction on data quality #1
-data <- data_rus %>% filter(response != 3)
+data <- data_rus %>% filter(attention_check != "Unacceptable")
 model_calc(
   data = data,
   inst = pol,
@@ -150,7 +150,7 @@ model_calc(
 )
 
 # Russia: restriction on data quality #2
-data <- data_rus %>% filter(response == 0)
+data <- data_rus %>% filter(attention_check == "Summary")
 
 model_calc(
   data = data,
@@ -187,7 +187,7 @@ model_calc(
 
 
 # LA: restriction on data quality #1
-data <- data_la %>% filter(response != 3)
+data <- data_la %>% filter(attention_check != "Unacceptable")
 model_calc(
   data = data,
   inst = pol,
@@ -204,9 +204,10 @@ model_calc(
 )
 
 # LA: restriction on data quality #2
-data <- data_la %>% filter(response == 0)
+data <- data_la %>% filter(attention_check == "Summary")
 
 model_calc(
+
   data = data,
   inst = pol,
   IVs = "condition",

@@ -66,7 +66,7 @@ data_rus %>%
   drop_after_treatment =
     case_when(
       drop_after_treatment == "1" ~ "Dropped Out",
-      drop_after_treatment == "0" ~ "Not"
+      drop_after_treatment == "0" ~ "Continued"
   )
   ) %>%
   filter(
@@ -99,7 +99,7 @@ data_la %>%
     drop_after_treatment =
       case_when(
         drop_after_treatment == "1" ~ "Dropped Out",
-        drop_after_treatment == "0" ~ "Not"
+        drop_after_treatment == "0" ~ "Continued"
       )
   ) %>%
   select(finished, drop_after_treatment, Condition = condition) %>%
@@ -114,16 +114,21 @@ Survey Data in Latin America",
 
 # time required ####
 data_rus %>%
-  filter(finished == 1) %>%
+  filter(finished == 1,
+         sd12 == 1,
+         age > 17) %>%
   mutate(condition = fct_relevel(
     condition,
     "Fraud",
     "Control",
     "Punishment",
     "Judicial Punishment"
-  )) %>%
-  select(Condition = condition, time_sum, time004, time005) %>%
-  modelsummary::datasummary_balance(
+  ) %>% fct_recode(.,
+    "Jud. Punishment" = "Judicial Punishment")) %>%
+  select(Condition = condition, Total = time_sum,
+         `Treatment text`= time004,
+         `Trust eval.` = time005) %>%
+  datasummary_balance(
     data = .,
     formula = ~Condition,
     fmt = 2,
@@ -133,15 +138,20 @@ data_rus %>%
   )
 
 data_la %>%
-  filter(finished == 1) %>%
+  filter(finished == 1,
+         sd12 == 1,
+         age > 17,) %>%
   mutate(condition = fct_relevel(
     condition,
     "Fraud",
     "Control",
     "Punishment",
     "Judicial Punishment"
-  )) %>%
-  select(Condition = condition, time_sum, time004, time005) %>%
+  ) %>% fct_recode(.,
+                   "Jud. Punishment" = "Judicial Punishment")) %>%
+  select(Condition = condition, Total = time_sum,
+         `Treatment text`= time004,
+         `Trust eval.` = time005) %>%
   modelsummary::datasummary_balance(
     data = .,
     formula = ~Condition,
@@ -374,7 +384,9 @@ data_la %>%
   mutate(rural = case_when(
     rural %in% 1:4 ~ "Urban",
     TRUE ~ "Rural"
-  ) %>% as.character()) %>%
+  ) %>% as.character(),
+  pol_election = as.numeric(pol_election),
+  polint = as.numeric(polint)) %>%
   select(
     starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
     "age":"involvement", "condition",
