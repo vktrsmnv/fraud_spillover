@@ -36,6 +36,12 @@
 \usepackage{subfiles} % Best loaded last in the preamble
 \usepackage{threeparttable}
 
+
+\usepackage{tikz, siunitx}
+\usetikzlibrary{positioning}
+\tikzset{mynode/.style={draw,text width=1.5in,align=center}
+}
+
 \setcitestyle{authoryear,open={(},close={)}}
 
 \author{
@@ -306,8 +312,8 @@ Changes in diffuse support among those respondents who do not expect party repre
 
 \subsection*{Statistical Modeling and Estimation}
 
-To test Hypothesis 1 (the effect of exposure to the information about electoral fraud on confidence in institutions), we estimate the mean difference between the control group (1) and treatment group (2) in table \ref{tab:treatments}, i.e. those individuals who have only received information about the status quo and about fraud respectively.
-To evaluate Hypotheses 2a and 2b (heterogeneous effects of punishment across supporters and opponents), we estimate the differences between group (2), which only received fraud information, and either group (3) or (4), who received punishment information on top of fraud information. We also allow for varying effects across supporters and opponents with the help of a pre-treatment party affiliation measure as a moderator variable. 
+To test Hypothesis 1 (the effect of exposure to the information about electoral fraud on confidence in institutions), we estimate the mean difference between the control group (1) and treatment group (2) in table \ref{tab:treatments}, i.e. those individuals who have only received information about the status quo and about fraud explicitly, respectively.
+To evaluate Hypotheses 2a and 2b (heterogeneous effects of punishment across supporters and opponents), we estimate the differences between group (2), which only received fraud information, and either group (3) or (4), who received punishment information on top of fraud information. We also allow for varying effects across supporters and opponents constructing a binary variable, based on the pre-treatment party affiliation measure, as a moderator variable. 
 
 % While the random assignment of respondents to treatment and the control groups allows for an unbiased estimate of our treatment effect, we present additional models alongside the raw effects and present adjusted mean differences which take into account a range of socio-demographic information which might influence responses to the outlined fraud treatments and political attitudes such as levels of diffuse support. 
 %Since research has provided consistent evidence that perceptions of electoral fairness are divided along partisan lines (c.f. \citealt{Cantu2015}), we include two measures of political support. 
@@ -457,6 +463,8 @@ The theory and evidence presented in this article have a number of significant i
 
 Second, our findings hold implications for the practice of election monitoring itself. Our article well aligns with a set of studies that have highlighted the cost among civil society when election observation missions expose cheating (\citealt{Daxecker2012}). Our preliminary findings suggest that when large-scale observation missions that are perceived and framed as credible players in the field claim election malpractice to be at place, such exposure may have detrimental effects that may hinder, rather than foster, the consolidation of a democratic society. This is especially relevant against the backdrop of widespread criticism that has been voiced against recent election observation missions proclaiming early conclusions about electoral malpractice that later do not uphold more intensive scrutiny (\citealt{Idrobo2020}). Our article suggests that the impact that such erroneous allegations about clean electoral process exerts on individuals should not be underestimated. 
 
+
+\clearpage
 \singlespace
 \bibliographystyle{apsr} 
 \bibliography{fraud_experiment}
@@ -731,7 +739,11 @@ Opponent & No & 57 & 25.7 & 51 & 24.8 & 51 & 23.8 & 56 & 26.4\\
 \clearpage
 \subsection{Data Quality}
 
-We have relied on the crowd-sourcing platforms for participant recruitment, which implies that participants are paid for completing the survey. Given that participants only received the payment upon completion of the survey, we have a 95\% completion rate in Russia and 92\% in Latin American countries. There seem to be no systematic differences in the dropout rates across the experimental conditions, i.e. dropout rates right after reading the treatment condition, as evidenced by the tables below. We are limiting the analysis to complete cases only. 
+\textbf{Survey Completion}
+
+We are limiting the analysis to complete cases only, which requires us to have a closer look at the dropout and sample response when discussing data quality. As we have relied on the crowd-sourcing platforms for participant recruitment, participants were paid for completing the survey. Given that participants only received the payment upon completion of the survey, we obtained a 95\% completion rate in Russia and 92\% in Latin American countries, which leaves us with 1278 and 922 observations respectively. 
+
+Apart from the absolute number of completed surveys, an important concern regarding dropout rate could be that it varies over our experimental conditions, introducing bias into the sampling procedure. There seem to be no systematic differences in the dropout rates across the experimental conditions, i.e. dropout rates right after reading the treatment condition, as evidenced by the tables below. 
 
 % \begin{table}[!htbp]
 % \centering
@@ -798,7 +810,10 @@ All & N & 991 & 7 & 998\\
 
 \vspace{1cm}
 
-Furthermore, we have excluded the cases where the interview was completed in under 3 minutes, as reading and answering all the questions in the shorter amount of time seems to be unrealistic. With this being post-treatment criteria, which may arise  we replicate the analysis without excluding any observations based on these criteria. 
+Furthermore, as per the pre-analysis plan, we have excluded cases where the survey was completed in under 3 minutes, as reading and answering all the questions meaningfully in the shorter amount of time seems to be unrealistic.
+For reference, we provide summary statistics for the time required for completing the treatment text page, which required summarizing the text, and statistics for institutional trust evaluation. While small variations in completing the treatment page may be related to small differences in the length of treatment conditions, yet we can conclude that the lower bound of 3 minutes seems reasonable for each condition. 
+
+% With this being post-treatment criteria, which may arise  we replicate the analysis without excluding any observations based on these criteria. 
 
 \begin{landscape}
 
@@ -836,13 +851,16 @@ Trust evaluation page & 80.29 & 41.60 & 92.77 & 92.15 & 96.41 & 138.06 & 93.03 &
 
 \end{landscape}
 
-Additionally, to evaluate the quality of our data, we have included a question asking to summarize the text of the experimental condition. We have then used responses to this question to filter the cases where the respondents failed to show meaningful engagement with the treatment text. Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text but rather some random characters were excluded. Similarly, the cases with summaries of a scenario different to the one given to the respondent in the current questionnaire, likely to arise due to the fact that people have multiple accounts on the platform, are treated as lack of meaningful engagement.  While the crowd-sourcing platforms aim to prevent users to have multiple accounts, eliminating such practices completely is not yet possible. 
 
-We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between correct summaries of the condition (\textit{0}), responses to the conditions which allowed us to concluded that the treatment text was read (\textit{1}), copy-paste of one or multiple paragraphs from the treatment text in the questionnaire (\textit{2}), and unacceptable answer (\textit{3}), indicating lack of meaningful engagement with the treatment. While we avoid removing any data in the main analysis due to potential introduction of post-treatment bias though case selection, we report the analysis on the restricted samples, which shows that our findings still hold. 
+% Additionally, to evaluate t\textit{}he quality of our data, we have included a question asking to summarize the text of the experimental condition. We have then used responses to this question to filter the cases where the respondents failed to show meaningful engagement with the treatment text. Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text but rather some random characters were excluded. Similarly, the cases with summaries of a scenario different to the one given to the respondent in the current questionnaire, likely to arise due to the fact that people have multiple accounts on the platform, are treated as lack of meaningful engagement.  While the crowd-sourcing platforms aim to prevent users to have multiple accounts, eliminating such practices completely is not yet possible. 
+
+We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between \textit{complete summaries}, which contained the condition-specific part of the treatment, \textit{incomplete summaries}, where the responses described only a part of the treatment message but lack the crucial info for that condition;  \textit{responses} of the conditions which allowed us to concluded that the treatment text was read; \textit{copy-paste} of one or multiple paragraphs from the treatment text in the questionnaire, and \textit{unacceptable answer}, which does not allow us to observe any meaningful engagement with the treatment (e.g., a sequence of random characters). While we avoid removing any data based on this criterion in the main analysis due to potential introduction of post-treatment bias though case selection, we report the analysis on the restricted samples in robustness section, and the results show that our findings hold also when relying on a more restrictive approach to data preparation. Furthermore, for the cases where we received complete summaries, i.e. we can be certain that the treatment was read, the effects are particularly pronounced. 
+
+
 % In the main analysis, we are only removing the cases that were assigned into the last category.  
-In Russia, that lead to exclusion of 23 completed in longer than 3 minutes interviews, which is less than 2\% of the cases. In our Latin American sample, this approach led to exclusion of 27 cases, comprising 3\% of the cases where the interview was finished in 3 minutes or more. 
+% In Russia, that lead to exclusion of 23 completed in longer than 3 minutes interviews, which is less than 2\% of the cases. In our Latin American sample, this approach led to exclusion of 27 cases, comprising 3\% of the cases where the interview was finished in 3 minutes or more. 
 
-Lastly, we excluded all the cases where the reported age of the respondent was below 18 years old (despite the crowd-sourcing platform restriction of 18 years old). 
+Lastly, we excluded all the cases where the reported age of the respondent was below 18 years old, which still occurred despite the crowd-sourcing platform restriction of 18 years old, and the cases where the respondent claimed to not be the citizen of the respective country. 
 
 
 % \subsection*{Cross-National Evidence: Descriptive Statistics}
@@ -880,7 +898,7 @@ Lastly, we excluded all the cases where the reported age of the respondent was b
 \newpage
 \subsection{Results}
 
-In the main text, we only present the plots with differences in probabilities for our results (see figures \ref{fig:main} and \ref{fig:het}). This section contains tables with models' estimates and additional figures with quantities of interest calculated with these models such raw probabilities for each treatment group. 
+In the main text, we only present the plots with differences in probabilities for our results (see figures \ref{fig:main} and \ref{fig:het}). This section contains tables with models' estimates and additional figures with quantities of interest calculated with these models such as raw probabilities for each treatment group. 
 
 \subsubsection*{Political Institutions}
 \subfile{tables/ol_main_la_pol_881}
@@ -979,25 +997,66 @@ We ask the respondents to evaluate their trust in non-political institutions as 
 \clearpage
 \subsection*{Mediation Analysis}
 
-In this section we further investigate the mechanisms of attitudes' updating via mediation analysis. The spillover theory implies that it is the changes in trust in elections and electoral process that are responsible for the differences in the confidence in institutions of the political system. We thus have included a separate question that accounts for trust in election system. We use answers to this question as a mediator to trace the effects of the treatment on political attitudes. 
+\onehalfspacing
+In this section we further investigate the mechanisms of attitudes' updating via mediation analysis. The spillover theory implies that it is the changes in trust in elections and electoral process that are responsible for the differences in the confidence in institutions of the political system. We thus have included a separate question that accounts for trust in election system after the treatment (the exact phrasing is: \textit{In this hypothetical scenario, how much confidence would you have in elections in [Mexico/Colombia/Russia]?}) We use answers to this question as a mediator to trace the effects of the fraud and punishment information on political attitudes. Figure below presents the argument graphically:
 
-We estimate the following models:
+\\
 
-% model equation for main
-% model equation for mediation 
-% plot for mediation?
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+    \node[mynode] (m){Confidence in Elections};
+    \node[mynode,below left=of m](a) {Fraud/Punishment Information};
+    \node[mynode,below right=of m](b) {Confidence in Institution};
+    \draw[-latex] (a.north) -- node[auto,font=\footnotesize] { } (m.west);
+    \draw[-latex] (m.east) -- node[auto,font=\footnotesize] { } (b.north);
+    \draw[-latex, dotted] (a.east) --
+            node[below=3mm,font=\footnotesize,align=center] {}
+                 (b.west);
+  \end{tikzpicture}
+    \end{figure}
+
+\noindent We estimate the ordered logit models specified as follows.
+
+\noindent Outcome model:
+\begin{equation}
+% \begin{split}
+\small
+ln \left (\frac{\text{Pr}(y_i \leq j)}{\text{Pr}(y_i > j)} \right) = \alpha_j - \underbrace{
+({\beta_1} {\text{ Control}_i} + 
+\beta_2 {\text{ Punishment}_i} + 
+\beta_3 {\text{ Judicial Punishment}_i})
+}_{\text{Treatment Variables}} +
+\underbrace{\beta_4 \text{ Trust in Elections}_i,}_{
+\text{Mediator}}
+% \end{split}
+\end{equation}
+
+\noindent Mediator model:
+\begin{equation}
+% \begin{split}
+\small
+ln \left (\frac{\text{Pr}(\text{Trust in Elections}_i \leq j)}{\text{Pr}(\text{Trust in Elections}_i > j)} \right) =\gamma_j - 
+({\delta_1} {\text{ Control}_i} + 
+\delta_2 {\text{ Punishment}_i} + 
+\delta_3 {\text{ Judicial Punishment}_i})
+\end{equation}
+
+
+\noindent where $y_i$ is the level of diffuse support of an individual $i$ with ($i=1,...,n$) for an institution, and Control, Punishment, and Judicial Punishment are binary indicators for membership in the experimental groups (2),  (3), and (4) \footnote{Individuals who only received fraud information serve as the reference category in our analysis.}. Trust in Elections$_i$ is the level of trust in electoral process in the country and is on the same scale as the main outcome variable, institutional trust. As in the main analysis, we analyze Russian and Latin American samples separately, using all available observations that fulfill the basic data-quality criteria, such as completing the questionnaire in lower than 3 minutes.
+    
+For each political institution, we estimate an ordered logit model for trust in elections and model institutional trust using the estimates from the ordered logit in the previous step. It is our expectation that \textit{direct effect} of treatment on institutional trust, once the model includes trust in elections, is close to zero, while the indirect effect, the \textit{average causal mediation effect}, would be different from zero and positive: as trust categories are both measured on the same scale of 1 to 4, we should expect a positive relationship between them, and in comparison to fraud alone, status quo information and the punishment would be expected to raise the trust. Figure \ref{fig:mediation} presents the results of the analysis for Latin American and Russian samples. 
+
+When we look at the effect of fraud information alone, we can observe that across all institutions, indirect effect, \textit{ACME}, is significantly different from zero and positive, which is in line with our expectations: increased (decreased) trust in elections is associated with increased (decreased) trust in political institutions. At the same time, the direct effect, i.e. the effect of treatment alone on confidence in institutions, is for most institutions, not different from zero, meaning that most of the changes in institutional confidence in response to treatment seem to be driven by the declines in trust in the elections. For the punishment information, we only observe the effects of treatment once the courts are reported to intervene , and the effect again is primarily existing via trust in elections. For punishment information alone, with no judicial intervention, we observe only the relationship between the trust in elections and trust in 
 
     \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/mediation_881.png}
     \caption{The Results of Mediation Analysis.  \\
-    %  \footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.\\
-    %  Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.\\
-    %  Data were collected in April-June 2021 via the original online survey. } 
+     \footnotesize{Notes: Depicted are the \textit{direct effect }(median value and 89\% highest-density continuous interval (HDCI) of posterior samples from treatment of the institutional trust model), \textit{mediator effect} (median value and 89\% HDCI of posterior samples from mediator, trust in elections, of the institutional trust model), \textit{indirect effect} (median value and 89\% HDCI of the multiplication of the posterior samples from mediator, trust in elections,  of the institutional trust model and the posterior samples from treatment of the trust in elections' model) and the \textit{total effect} (median value and 89\% HDCI of sums of posterior samples used for the direct and indirect effect).  } 
      }
     \singlespacing
     \raggedright
-    
     \label{fig:mediation}
     \end{figure}
 
