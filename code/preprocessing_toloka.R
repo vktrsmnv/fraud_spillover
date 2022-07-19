@@ -193,6 +193,7 @@ data <-
     ),
     pa12,
     pa17,
+    sd12,
     started = strptime(started, format = "%d-%m-%Y %H:%M:%S"),
     date = as.Date(started),
     maxpage,
