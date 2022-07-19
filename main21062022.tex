@@ -36,6 +36,12 @@
 \usepackage{subfiles} % Best loaded last in the preamble
 \usepackage{threeparttable}
 
+\makeatletter
+  \providecommand*\setfloatlocations[2]{\@namedef{fps@#1}{#2}}
+\makeatother
+\setfloatlocations{figure}{htbp}
+\setfloatlocations{table}{htbp}
+
 
 \usepackage{tikz, siunitx}
 \usetikzlibrary{positioning}
@@ -612,6 +618,7 @@ Table 2 presents the effect estimates. The first column presents na{\"i}ve estim
 \clearpage
 \section{Survey Experiment} 
 \subsection{Descriptive Statistics}
+\onehalfspacing
 
 
 Tables \ref{descr:russia} and \ref{descr:la} contain summary statistics for the survey responses in Russia and Latin America for the observations we used in the main analysis, for each treatment group. As per the pre-registration analysis plan, we exclude any unfinished interviews and cases where the interviews were finished in under 3 minutes to control for data quality. To represent the target population, i.e. potential voters, we also remove responses from respondents under 18 and non-citizens of target countries, which was also set as a restriction for participation at the recruitment stage. \footnote{While in PAP we also discuss the manual quality control using attention checks and removing cases that depict no meaningful engagement with treatment, for the main analysis, we refrain from excluding observations based on this post-treatment criteria. We replicate the analysis and explore data quality variation in the following section, and the results hold and the effects are more pronounced for the samples with higher-quality responses
@@ -625,17 +632,18 @@ Tables \ref{descr:russia} and \ref{descr:la} contain summary statistics for the 
 \clearpage
 \subsection{Data Quality}
 
-\textbf{Survey Completion}
+\onehalfspacing
 
-We are limiting the analysis to complete cases only, which requires us to have a closer look at the dropout and sample response when discussing data quality. As we have relied on the crowd-sourcing platforms for participant recruitment, participants were paid for completing the survey. Given that participants only received the payment upon completion of the survey, we obtained a 95\% completion rate in Russia and 92\% in Latin American countries, which leaves us with 1278 and 922 observations respectively. 
+Since our target population of study would be voting-eligible population in the countries of Mexico, Columbia, and Russia, our sampling strategy implies using these as pre-requisites for participation in the survey. Hence, we excluded all the cases where the reported age of the respondent was below 18 years old, which still occurred despite the crowd-sourcing platform restriction of 18 years old, and the cases where the respondent claimed to not be the citizen of the respective country, also occurring despite the restrictions set on the crowd-sourcing platform. 
 
-Apart from the absolute number of completed surveys, an important concern regarding dropout rate could be that it varies over our experimental conditions, introducing bias into the sampling procedure. There seem to be no systematic differences in the dropout rates across the experimental conditions, i.e. dropout rates right after reading the treatment condition, as evidenced by the tables below. 
+We are limiting the analysis to complete cases only, which requires us to have a closer look at the dropout and sample response when discussing data quality. As we have relied on the crowd-sourcing platforms for participant recruitment, participants were paid for completing the survey. Given that participants only received the payment upon completion of the survey, we obtained a 95\% completion rate in Russia and 92\% in Latin American countries.
 
+Apart from the absolute number of completed surveys, a valid concern regarding dropout rate could be that it varies over our experimental conditions, introducing bias into the sampling procedure and completed cases. As evidenced by the tables below, there seem to be no systematic differences in the dropout rates across the experimental conditions, i.e. dropout rates right after reading the treatment condition. 
 
 \subfile{tables/dropout_ru}
 \subfile{tables/dropout_la}
 
-\vspace{1cm}
+\clearpage
 
 Furthermore, as per the pre-analysis plan, we have excluded cases where the survey was completed in under 3 minutes, as reading and answering all the questions meaningfully in the shorter amount of time seems to be unrealistic.
 For reference, we provide summary statistics for the time required for completing the treatment text page, which required summarizing the text, and statistics for institutional trust evaluation. While small variations in completing the treatment page may be related to small differences in the length of treatment conditions, yet we can conclude that the lower bound of 3 minutes seems reasonable for each condition. 
@@ -646,101 +654,25 @@ For reference, we provide summary statistics for the time required for completin
 \subfile{tables/time_required_ru}
 \subfile{tables/time_required_la}
 
-
-% \begin{landscape}
-
-% \begin{table}
-% \centering
-% \caption{Time required for completion in seconds (finished interviews), Survey Data for Russia.} 
-% \begin{tabular}[t]{lllllllll}
-% \toprule
-% \multicolumn{1}{c}{ } & \multicolumn{2}{c}{Fraud (N=313)} & \multicolumn{2}{c}{Control (N=331)} & \multicolumn{2}{c}{Punishment (N=319)} & \multicolumn{2}{c}{Judicial Punishment (N=315)} \\
-% \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
-%   & Mean & Std. Dev. & Mean  & Std. Dev.  & Mean   & Std. Dev.   & Mean    & Std. Dev.   \\
-% \midrule
-% Total & 501.95 & 224.01 & 431.62 & 173.50 & 502.98 & 212.27 & 462.65 & 171.63\\
-% Treatment text page & 168.29 & 132.42 & 131.28 & 89.48 & 187.94 & 148.09 & 178.44 & 187.10\\
-% Trust evaluation page & 85.35 & 49.28 & 82.53 & 52.95 & 89.58 & 50.19 & 85.07 & 82.72\\
-% \bottomrule
-% \end{tabular}
-% \end{table}
-
-% \begin{table}
-% \centering
-% \caption{Time required for completion in seconds (finished interviews), Survey Data for Latin America.} 
-% \begin{tabular}[t]{lllllllll}
-% \toprule
-% \multicolumn{1}{c}{ } & \multicolumn{2}{c}{Fraud (N=231)} & \multicolumn{2}{c}{Control (N=230)} & \multicolumn{2}{c}{Punishment (N=227)} & \multicolumn{2}{c}{Judicial Punishment (N=234)} \\
-% \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
-%   & Mean & Std. Dev. & Mean  & Std. Dev.  & Mean   & Std. Dev.   & Mean    & Std. Dev.   \\
-% \midrule
-% Total & 482.29 & 211.27 & 501.05 & 242.38 & 504.22 & 204.63 & 520.68 & 247.58\\
-% Treatment text page & 153.46 & 159.90 & 157.40 & 151.35 & 157.21 & 104.88 & 185.70 & 211.06\\
-% Trust evaluation page & 80.29 & 41.60 & 92.77 & 92.15 & 96.41 & 138.06 & 93.03 & 121.45\\
-% \bottomrule
-% \end{tabular}
-% \end{table}
-
-% \end{landscape}
-
-
-% Additionally, to evaluate t\textit{}he quality of our data, we have included a question asking to summarize the text of the experimental condition. We have then used responses to this question to filter the cases where the respondents failed to show meaningful engagement with the treatment text. Meaningful engagement was measured via the question asking to briefly summarize the treatment; cases with answers that contained no meaningful text but rather some random characters were excluded. Similarly, the cases with summaries of a scenario different to the one given to the respondent in the current questionnaire, likely to arise due to the fact that people have multiple accounts on the platform, are treated as lack of meaningful engagement.  While the crowd-sourcing platforms aim to prevent users to have multiple accounts, eliminating such practices completely is not yet possible. 
+\clearpage
 
 We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between \textit{complete summaries}, which contained the condition-specific part of the treatment, \textit{incomplete summaries}, where the responses described only a part of the treatment message but lack the crucial info for that condition;  \textit{responses} of the conditions which allowed us to concluded that the treatment text was read; \textit{copy-paste} of one or multiple paragraphs from the treatment text in the questionnaire, and \textit{unacceptable answer}, which does not allow us to observe any meaningful engagement with the treatment (e.g., a sequence of random characters). While we avoid removing any data based on this criterion in the main analysis due to potential introduction of post-treatment bias though case selection, we report the analysis on the restricted samples in robustness section, and the results show that our findings hold also when relying on a more restrictive approach to data preparation. Furthermore, for the cases where we received complete summaries, i.e. we can be certain that the treatment was read, the effects are particularly pronounced. 
 
 \subfile{tables/manual_quality_ru}
 \subfile{tables/manual_quality_la}
 
-
-% In the main analysis, we are only removing the cases that were assigned into the last category.  
-% In Russia, that lead to exclusion of 23 completed in longer than 3 minutes interviews, which is less than 2\% of the cases. In our Latin American sample, this approach led to exclusion of 27 cases, comprising 3\% of the cases where the interview was finished in 3 minutes or more. 
-
-Lastly, we excluded all the cases where the reported age of the respondent was below 18 years old, which still occurred despite the crowd-sourcing platform restriction of 18 years old, and the cases where the respondent claimed to not be the citizen of the respective country. 
-
-
-% \subsection*{Cross-National Evidence: Descriptive Statistics}
-
-% \begin{table}[!htbp] \centering 
-%   \caption{Summary Statistics of Key Variables, World Values Survey Wave 7 (2017-2020).} 
-%   \label{} 
-% \begin{tabular}{@{\extracolsep{5pt}}lccccccc} 
-% \\[-1.8ex]\hline 
-% \hline \\[-1.8ex] 
-% Statistic & \multicolumn{1}{c}{N} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Pctl(25)} & \multicolumn{1}{c}{Pctl(75)} & \multicolumn{1}{c}{Max} \\ 
-% \hline \\[-1.8ex] 
-% Confidence in Armed Forces & 48,953 & 2.876 & 0.951 & 1 & 2 & 4 & 4 \\ 
-% Confidence in the Press & 48,953 & 2.320 & 0.880 & 1 & 2 & 3 & 4 \\ 
-% Confidence in the Police & 48,953 & 2.619 & 0.959 & 1 & 2 & 3 & 4 \\ 
-% Confidence in Courts & 48,953 & 2.558 & 0.962 & 1 & 2 & 3 & 4 \\ 
-% Confidence in Government & 48,953 & 2.385 & 0.996 & 1 & 2 & 3 & 4 \\ 
-% Confidence in Parliament & 48,953 & 2.182 & 0.948 & 1 & 1 & 3 & 4 \\ 
-% Confidence in Parties & 48,953 & 2.017 & 0.895 & 1 & 1 & 3 & 4 \\ 
-% Fraud Perception & 48,953 & 0.364 & 0.481 & 0 & 0 & 1 & 1 \\ 
-% Political Interest & 48,953 & 2.682 & 0.963 & 1 & 2 & 3 & 4 \\ 
-% Generalized Trust & 48,953 & 1.818 & 0.386 & 1 & 2 & 2 & 2 \\ 
-% Voting in National Elections & 48,953 & 1.557 & 0.822 & 1 & 1 & 2 & 4 \\ 
-% Sex & 48,953 & 1.512 & 0.500 & 1 & 1 & 2 & 2 \\ 
-% Age & 48,953 & 42.313 & 16.020 & 16 & 29 & 54 & 103 \\ 
-% Education & 48,953 & 4.043 & 1.479 & 1 & 3 & 5 & 6 \\ 
-% Employment Status & 48,953 & 3.192 & 2.044 & 1 & 1 & 5 & 8 \\ 
-% Household Income & 48,953 & 4.782 & 2.101 & 1 & 3 & 6 & 10 \\ 
-% Rural & 48,953 & 1.355 & 0.479 & 1 & 1 & 2 & 2 \\ 
-% Political Discussion & 48,953 & 2.220 & 0.647 & 1 & 2 & 3 & 3 \\ 
-% Perceived Political Corruption & 48,953 & 7.813 & 2.428 & 1 & 6 & 10 & 10 \\ 
-% \hline \\[-1.8ex] 
-% \end{tabular} 
-% \end{table} 
 \newpage
 \subsection{Results}
 
-In the main text, we only present the plots with differences in probabilities for our results (see figures \ref{fig:main} and \ref{fig:het}). This section contains tables with models' estimates and additional figures with quantities of interest calculated with these models such as raw probabilities for each treatment group. 
+
+In the main text, we only present the plots with the most relevant quantities of interest for our purposes (see figures \ref{fig:main} and \ref{fig:het}). This section contains further details on the results, such as tables with models' estimates for the reference purposes and additional figures with quantities of interest calculated with these models such as raw probabilities for each treatment group. 
 
 \subsubsection*{Political Institutions}
 \subfile{tables/ol_main_la_pol_881}
 
 \clearpage
 
-\subfile{tables/ol_main_ru_pol_1226}
+\subfile{tables/ol_main_ru_pol_1223}
 
 
 \subfile{tables/ol_cond_la_pol_881}
@@ -755,7 +687,6 @@ In the main text, we only present the plots with differences in probabilities fo
 Figures below present the intermediate quantity of interest--the probabilities of choosing one of four categories for trust--for each of the four conditions. These are the quantities we use to produce the main plots in the paper. Below are presented the quantities for the full sample (without any exclusions), while same plots for restricted samples are available in replication material (as the general trends persist). 
 
 Besides the trends discussed in the main text, we can observe that, oftentimes, trust in political institutions in our samples is low regardless of the treatment conditions: the probabilities corresponding to the highest trust category is, generally, the lowest for all institutions across all treatment conditions. The exceptions are trust in the President and Armed Forces in Russia, which is quite in line with the narrative observed in the media of that time. 
-
 
 \begin{figure}[H]
     \centering
@@ -778,20 +709,19 @@ Besides the trends discussed in the main text, we can observe that, oftentimes, 
 
 \subsubsection*{Non-Political Institutions}
 
-We ask the respondents to evaluate their trust in non-political institutions as well as in political upon reading the treatment text, which allows us to evaluate the limitations of the theory clearer. As we can observe from the estimates in the table below, the treatment groups do not differ significantly in their trust to non-political institutions in both Latin America and Russia. The only exception seems to the Russian sample and the effect of court intervention as response to fraud in comparison to fraud alone (i.e., the baseline condition). Judicial punishment information seems to increase trust in companies, banks, environmental organisations, and the World Trade Organisation, but not in the United Nations or the World Bank. One could argue that this is still a spillover effect, which goes beyond the political sphere and exists for entities that are not portrayed negatively and "pro-Western" in the media. The fact that we observe it specifically in Russia and only in response to the message about the intervention of another political institution could also be interpreted as evidence for the belief updating mechanism in evaluations. As this information may go against the general expectations of the systems' responses to election manipulation in an autocratic state, judicial interventions' consistent restorative effect on trust for various institutions indicates that respondents seem to have updated their beliefs rather than disregard the information that goes counter their current perceptions. 
+We ask the respondents to evaluate their trust in non-political institutions as well as in political upon reading the treatment text, which allows us to evaluate the limitations of the theory clearer. As we can observe from the estimates in the table below, the treatment groups do not differ significantly in their trust to non-political institutions in both Latin America and Russia. The only exception seems to the Russian sample and the effect of court intervention as response to fraud in comparison to fraud alone (i.e., the baseline condition). Judicial punishment information seems to increase trust in companies, banks, environmental organisations, and the World Trade Organisation, but not in the United Nations or the World Bank. One could argue that this could be an evidence of a spillover effect, which goes beyond the political sphere and exists for entities that are not portrayed negatively and "pro-Western" in the Russian media. The fact that we observe it specifically in Russia and only in response to the message about the intervention of another political institution could also be interpreted as evidence for the belief updating mechanism in evaluations. As this information may go against the general expectations of the systems' responses to election manipulation in an autocratic state, judicial interventions' consistent restorative effect on trust for various institutions indicates that respondents seem to have updated their beliefs rather than disregard the information that goes counter their current perceptions. 
 
 \subfile{tables/ol_main_la_npol_881}
 \subfile{tables/ol_main_ru_npol_1226}
 % \end{landscape
     
 
-\clearpage
-\subfile{tables/ol_main_ru_npol_1226}
-
 \normalsize
 
 \clearpage
-\section*{Robustness}
+\section*{Robustness Checks}
+
+This section presents the results of various robustness checks and investigation of the further observable implications.
 
 \subsection*{Data Quality Restrictions}
 
@@ -801,6 +731,7 @@ We ask the respondents to evaluate their trust in non-political institutions as 
 % \clearpage
 % \subfile{tables/ol_main_ru_pol_1203}
 
+As a first step, we only focus on the cases where the respondents in our survey have indicated some degree of meaningful involvement with the treatment text. We thus remove the few cases where we could not conclude that the respondent has read the text based on the attention check text, e.g. if the summary consisted of a sequence of random symbols. We replicate the main analyses, and the results seem to hold. 
 
 \begin{figure}[H]
     \centering
@@ -815,6 +746,9 @@ We ask the respondents to evaluate their trust in non-political institutions as 
     \label{fig:main-2}
     \end{figure}
     
+    
+Furthermore, our manual coding of attention checks allowed us to closely examine the cases where the respondents seemed to have read the treatment text closely and in full, as their responses include the treatment-specific scenario details. For such individuals, we should observe strongest effects should our theory hold, though this effect and drawn conclusions may be counteracted by the fact of smaller sample sizes. 
+
     \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/main_hdi89_3.png}
