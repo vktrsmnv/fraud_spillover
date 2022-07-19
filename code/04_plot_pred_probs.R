@@ -55,7 +55,7 @@ formals(scale_alpha_manual)$values <- c(0.5, 1)
 ## Political Institutions ####
 ### Full Sample ####
 ## Russia
-mpol <- read_rds("output/ol_main_ru_pol_1226.rds")
+mpol <- read_rds("output/ol_main_ru_pol_1223.rds")
 plotting4 <- tibble()
 pol <- names(mpol)
 for (i in pol) {
@@ -169,7 +169,7 @@ plot_ru <- plotting4 %>%
 # annotate("text", x = 0.42, y = 1.1, label = "little trust", size = 3, angle = -51) # annotation on all facets
 plot_ru
 ## LA
-mpol <- read_rds("output/ol_main_la_pol_881.rds")
+mpol <- read_rds("output/ol_main_la_pol_872.rds")
 plotting4 <- tibble()
 
 for (i in pol) {
@@ -289,10 +289,10 @@ ggsave(pp,
 )
 
 
-### Exclude Response = 3 #####
+### Exclude Attention Check == "Unacceptable" #####
 ## Russia
 
-mpol <- read_rds("output/ol_main_ru_pol_1203.rds")
+mpol <- read_rds("output/ol_main_ru_pol_1201.rds")
 plotting4 <- tibble()
 pol <- names(mpol)
 for (i in pol) {
@@ -406,7 +406,7 @@ plot_ru <- plotting4 %>%
 # annotate("text", x = 0.42, y = 1.1, label = "little trust", size = 3, angle = -51) # annotation on all facets
 plot_ru
 ## LA
-mpol <- read_rds("output/ol_main_la_pol_854.rds")
+mpol <- read_rds("output/ol_main_la_pol_847.rds")
 plotting4 <- tibble()
 
 for (i in pol) {
@@ -527,10 +527,10 @@ ggsave(pp,
 
 
 
-### Exclude Response = 3 & 2 #####
+### Only Correct Summaries #####
 ## Russia
 
-mpol <- read_rds("output/ol_main_ru_pol_1191.rds")
+mpol <- read_rds("output/ol_main_ru_pol_667.rds")
 plotting4 <- tibble()
 pol <- names(mpol)
 for (i in pol) {
@@ -644,7 +644,7 @@ plot_ru <- plotting4 %>%
 # annotate("text", x = 0.42, y = 1.1, label = "little trust", size = 3, angle = -51) # annotation on all facets
 plot_ru
 ## LA
-mpol <- read_rds("output/ol_main_la_pol_851.rds")
+mpol <- read_rds("output/ol_main_la_pol_376.rds")
 plotting4 <- tibble()
 
 for (i in pol) {

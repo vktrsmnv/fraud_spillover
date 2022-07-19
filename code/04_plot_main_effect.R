@@ -134,7 +134,7 @@ plotting_prep <- function(mpol_path = "output/ol_main_ru_pol_1226.rds"){
 }
 
 
-plotting <- plotting_prep(mpol_path = "output/ol_main_ru_pol_1226.rds")
+plotting <- plotting_prep(mpol_path = "output/ol_main_ru_pol_1223.rds")
 n_ru <- plotting %>% select(institution, n) %>% distinct() %>% arrange(institution) %>% pull(n)
 # plot_ru
 arrows <- data.frame(x1 = 0.19, x2 = 0.1,
@@ -233,7 +233,7 @@ plot_ru <- plotting %>%
 plot_ru
 
 # load the estimation results from main model
-plotting <- plotting_prep(mpol_path = "output/ol_main_la_pol_881.rds")
+plotting <- plotting_prep(mpol_path = "output/ol_main_la_pol_872.rds")
 
 plotting %>%
   filter(str_detect(string = condition, "Control")) %>% # only plot the control condition for main effects
@@ -320,9 +320,9 @@ ggsave(pp,
        width = 10)
 
 
-### Exclude Response = 3 #####
+### Exclude Attention Check == Unaccpetable #####
 
-plotting <- plotting_prep(mpol_path = "output/ol_main_ru_pol_1203.rds")
+plotting <- plotting_prep(mpol_path = "output/ol_main_ru_pol_1201.rds")
 n_ru <- plotting %>% select(institution, n) %>% distinct() %>% arrange(institution) %>% pull(n)
 # plot_ru
 arrows <- data.frame(x1 = 0.19, x2 = 0.1,
@@ -421,7 +421,7 @@ plot_ru <- plotting %>%
 plot_ru
 
 # load the estimation results from main model
-plotting <- plotting_prep(mpol_path = "output/ol_main_la_pol_854.rds")
+plotting <- plotting_prep(mpol_path = "output/ol_main_la_pol_847.rds")
 
 plotting %>%
   filter(str_detect(string = condition, "Control")) %>% # only plot the control condition for main effects
@@ -509,9 +509,9 @@ ggsave(pp,
        width = 10)
 
 
-### Exclude Response = 3 & 2 #####
+### Only Correct Summaries #####
 
-plotting <- plotting_prep(mpol_path = "output/ol_main_ru_pol_1191.rds")
+plotting <- plotting_prep(mpol_path = "output/ol_main_ru_pol_667.rds")
 n_ru <- plotting %>% select(institution, n) %>% distinct() %>% arrange(institution) %>% pull(n)
 # plot_ru
 arrows <- data.frame(x1 = 0.19, x2 = 0.1,
@@ -610,7 +610,7 @@ plot_ru <- plotting %>%
 plot_ru
 
 # load the estimation results from main model
-plotting <- plotting_prep(mpol_path = "output/ol_main_la_pol_851.rds")
+plotting <- plotting_prep(mpol_path = "output/ol_main_la_pol_376.rds")
 
 plotting %>%
   filter(str_detect(string = condition, "Control")) %>% # only plot the control condition for main effects
@@ -652,7 +652,7 @@ plotting %>%
   scale_color_viridis(discrete = T,
                       option = "C",
                       end = 0.8) +
-  xlim(-0.3, 0.3) +
+  # xlim(-0.3, 0.3) +
   geom_abline(intercept = 2.5,
               slope = -15,
               size = 0.5,

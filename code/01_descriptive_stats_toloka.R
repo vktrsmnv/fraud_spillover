@@ -305,60 +305,6 @@ colnames(table_ru) %<>%
           tab[(str_which(tab, pattern = "& N & ") + 1):length(tab)]),
         file = paste0("tables/descr_ru.tex"))
 
-# data_rus %>%
-#   dplyr::select(age,
-#                 sex,
-#                 education = edu_three_f,
-#                 employment = emplstat,
-#                 sector,
-#                 savings = savings_f,
-#                 rural,
-#                 trust = gentrust_f,
-#                 political_interest = polint_f,
-#                 corruption = polcorup,
-#                 # party = pa14,
-#                 opponent,
-#                 elections = pol_election,
-#                 armed_forces = pol_inst_armed,
-#                 police = pol_inst_police,
-#                 central_electoral_commission = pol_inst_CEC,
-#                 government = pol_inst_gov,
-#                 parties = pol_inst_part,
-#                 parliament = pol_inst_parl,
-#                 courts = pol_inst_courts,
-#                 president = pol_inst_pres,
-#                 companies = npol_inst_comp,
-#                 banks = npol_inst_banks,
-#                 environmental_organizations = npol_inst_env,
-#                 un = npol_inst_UN,
-#                 world_bank = npol_inst_WB,
-#                 WTO = npol_inst_WTO,
-#                 condition
-#   ) %>%
-#   dummy_columns(
-#     select_columns =c(
-#       "education",
-#       "sex",
-#       "employment",
-#       "sector",
-#       "savings",
-#       "trust",
-#       "political_interest"
-#       # "party"
-#     ),
-#     ignore_na = T,
-#     remove_selected_columns = T
-#   ) %>%
-#   clean_names(case = "title") %>%
-#   datasummary_balance(~Condition,
-#                       data = .,
-#                       dinm = F,
-#                       output = "tables/descr_rus_table.tex",
-#                       title = "Sample Balance: Russia"
-#   )
-
-
-
 data_la %>%
   filter(
     # response != 3,
