@@ -67,13 +67,19 @@ data_rus %>%
     rural %in% 1:4 ~ "Urban",
     TRUE ~ "Rural"
   ) %>%
-    as.character()
+    as.character(),
+  drop_after_treatment = as.character(drop_after_treatment),
+  drop_after_treatment =
+    case_when(
+      drop_after_treatment == "1" ~ "Yes",
+      drop_after_treatment == "0" ~ "No"
+  )
   ) %>%
   filter(
     # response != 3,
     # finished == 1,
-    age > 17,
-    time_sum > 180
+    # age > 17,
+    # time_sum > 180
   ) %>%
   select(drop_after_treatment, finished, condition) %>%
   # select(starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
