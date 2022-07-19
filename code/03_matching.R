@@ -28,8 +28,8 @@ setup <- function() {
     install.packages(p_to_install)
   }
   lapply(p_needed, require, character.only = TRUE)
+  options(mc.cores = parallel::detectCores()) # distribute chains across CPU cores
 
-  # setwd(dirname(getActiveDocumentContext()$path)) # set directory to the document
 }
 setup()
 
@@ -49,28 +49,25 @@ wvs_vdem[, c("edu_three", "emplstat", "poldiscu", "year")] <-
 set.seed(12345)
 
 # resource for model code: https://kevinstadler.github.io/notes/bayesian-ordinal-regression-with-random-effects-using-brms/
-options(mc.cores = parallel::detectCores()) # distribute chains across CPU cores
-
-x <- "fraud1d"
-contr <- c(
+vars <- c("fraud1d",
   "polint", "gentrust", "sex", "log(age)", "edu_three", "emplstat",
   "savings", "rural", "polcorup", "vdem_elections", "year", "(1|cntry)"
 )
-
-# summary statistics
-wvs_vdem <- wvs_vdem[, c(
-  "inst_armed", "inst_police", "inst_courts",
-  "inst_parl", "inst_gov", "inst_parties",
-  "inst_comp", "inst_UN", "inst_banks", "inst_wto", "inst_wb",
-  "fraud1d", "fraud1d1", "fraud1d2", "polint", "gentrust", "sex", "age", "edu_three", "emplstat",
-  "savings", "rural", "polcorup", "vdem_elections", "cntry", "year"
-)]
-wvs_vdem <- wvs_vdem[complete.cases(wvs_vdem), ]
-
-
-stargazer(wvs_vdem,
-          summary = T
-)
+#
+# # summary statistics
+# wvs_vdem <- wvs_vdem[, c(
+#   "inst_armed", "inst_police", "inst_courts",
+#   "inst_parl", "inst_gov", "inst_parties",
+#   "inst_comp", "inst_UN", "inst_banks", "inst_wto", "inst_wb",
+#   "fraud1d", "fraud1d1", "fraud1d2", "polint", "gentrust", "sex", "age", "edu_three", "emplstat",
+#   "savings", "rural", "polcorup", "vdem_elections", "cntry", "year"
+# )]
+# wvs_vdem <- wvs_vdem[complete.cases(wvs_vdem), ]
+#
+#
+# stargazer(wvs_vdem,
+#           summary = T
+# )
 
 ## 2.1. Institutions:  spillover ###############################################
 
@@ -80,7 +77,7 @@ y_spill <- c("inst_armed", "inst_police", "inst_courts",
 model_calc(data = wvs_vdem,
           inst = y_spill,
           model = "ol",
-          IVs = paste0(contr, collapse = " + "),
+          IVs = paste0(vars, collapse = " + "),
           name = "basic_wvs")
 
 
@@ -104,8 +101,10 @@ n_algorithms <- 3
 n_institutions <- 11
 n_post_samples <- 12000
 warmup <- 2000
-att_data <- as.data.frame(matrix(NA, nrow = n_institutions * n_algorithms * 10000, ncol = 5))
-colnames(att_data) <- c("y_var", "algorithm", "att_lin", "att_ord", "type")
+att_data <- as.data.frame(matrix(NA,
+                                 nrow = n_institutions * n_algorithms * 10000,
+                                 ncol = 4))
+colnames(att_data) <- c("y_var", "algorithm", "att_ord", "type")
 att_data$y_var <- c(
   rep("inst_armed", n_algorithms * 10000),
   rep("inst_police", n_algorithms * 10000),
@@ -131,22 +130,23 @@ att_data$algorithm <- rep(c("nearest", "exact", "cem"), 110000)
 
 set.seed(54321)
 
-# make sure to include all controls
-print(contr)
-
 # calculate PS model
 ps_model <- brm(
-  formula = as.formula("fraud1d ~ polint + gentrust + sex + log(age) + edu_three +
-              emplstat + savings + rural + polcorup + vdem_elections + year"),
+  formula = (
+    "fraud1d ~ polint + gentrust + sex + log(age) + edu_three +
+              emplstat + savings + rural + polcorup + vdem_elections + year"
+  ),
   data = wvs_vdem,
   family = bernoulli(link = "logit"),
-  warmup = 2000,
-  iter = 2250,
+  warmup = 4000,
+  iter = 4250,
   chains = 4,
-  inits = "0",
+  init = "0",
   cores = 4,
   seed = 12345
 )
+
+saveRDS(ps_model, file = "outout/ps_model.RDS")
 
 # get all posterior samples from first chain
 post_samples <- as.data.frame(as.mcmc(ps_model, combine_chains = T))
@@ -173,6 +173,8 @@ post_samples <- post_samples %>%
 # object to save case selection for matching for reproduction
 cnts <- list()
 
+data <- wvs_vdem %>%
+  mutate(across(starts_with("inst_"), ~ as.factor(.x)))
 
 for (sample in 1:nrow(post_samples)) {
   if (sample > 1) {
@@ -199,7 +201,7 @@ for (sample in 1:nrow(post_samples)) {
     wvs_vdem[matched_cases$cnts == 1, ]
   ))
   cnts[[sample]] <- which(matched_cases$cnts == 1)
-
+  mm <- list()
   # calculate ATE
   y_vars <- c(
     "inst_armed", "inst_police", "inst_courts", "inst_parl",
@@ -209,15 +211,28 @@ for (sample in 1:nrow(post_samples)) {
 
   for (y_var in y_vars) {
 
-    # linear regression
-    model_lin <- lmer(as.formula(paste(y_var, "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
-    att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_lin[sample] <-
-      mean(coef(model_lin)$cntry[, 2])
+  #   # linear regression
+  #   model_lin <- lmer(as.formula(paste(y_var, "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
+  #   att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_lin[sample] <-
+  #     mean(coef(model_lin)$cntry[, 2])
+  #
+  #   # ordinal regression
+  #   model_ord <- clmm(as.formula(paste(str_c("as.factor(", y_var, ")"), "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
+  #   att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_ord[sample] <-
+  #     coef(model_ord)[4]
+  # }
 
-    # ordinal regression
-    model_ord <- clmm(as.formula(paste(str_c("as.factor(", y_var, ")"), "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
-    att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_ord[sample] <-
-      coef(model_ord)[4]
+  mm[y_var] <- brm(
+    formula = bf(as.formula(paste0("as.factor(", y_var, ") ~ fraud1d + (1|cntry)"))),
+    data = wvs_vdem,
+    family = cumulative("logit"),
+    warmup = 3500,
+    iter = 6000,
+    chains = 4,
+    inits = "0",
+    cores = 4,
+    seed = 1201
+  )
   }
 
   # store att_data to folder
