@@ -39,7 +39,7 @@ data <-
          !case %in% c(1429, 793, 1406, 3525, 1637, 4450, 1372, 1465)) %>%
   # remove Mexico MTurk cases
   transmute(
-    case,
+    case = as.numeric(case),
     questnnr,
     time_sum,
     time004,
@@ -59,17 +59,19 @@ data <-
     npol_inst_UN = tr05_05,
     npol_inst_WB = tr05_06,
     npol_inst_WTO = tr05_07,
-    pol_election = coalesce(tr03, tr16),
-    pol_election = case_when(
-      pol_election == 1 ~ 4, # None at all
-      pol_election == 2 ~ 3,
-      pol_election == 3 ~ 2,
-      pol_election == 4 ~ 1 # A great deal
-    ),
+    pol_election = coalesce(tr03, tr16) %>%
+      as_factor() %>%
+      fct_rev(),
+    # pol_election = case_when(
+    #   pol_election == 1 ~ 4, # None at all
+    #   pol_election == 2 ~ 3,
+    #   pol_election == 3 ~ 2,
+    #   pol_election == 4 ~ 1 # A great deal
+    # ),
     condition = coalesce(rg02_01, rg12_01, rg11_01),
-    rg02_01,
-    rg12_01,
-    rg11_01,
+    # rg02_01,
+    # rg12_01,
+    # rg11_01,
     fraud = case_when(
       condition %in% 2:4 ~ 1,
       TRUE ~ 0
@@ -90,14 +92,16 @@ data <-
       "Punishment" = "3",
       "Judicial Punishment" = "4"
     ),
-    polint = coalesce(pa01, pa18),
-    polint = case_when(
-      polint == 1 ~ 4, # Not at all interested
-      polint == 2 ~ 3,
-      polint == 3 ~ 2,
-      polint == 4 ~ 1 # Very interested
-    ),
-    polint_f = as_factor(polint) %>%
+    polint = coalesce(pa01, pa18) %>%
+      as_factor() %>%
+      fct_rev() %>%
+    # polint = case_when(
+    #   polint == 1 ~ 4, # Not at all interested
+    #   polint == 2 ~ 3,
+    #   polint == 3 ~ 2,
+    #   polint == 4 ~ 1 # Very interested
+    # ),
+    # polint_f = as_factor(polint) %>%
       fct_recode(
         "Very interested" = "4",
         "Somewhat interested" = "3",
@@ -126,13 +130,13 @@ data <-
       sd04 %in% 1:3 ~ 1,
       sd04 %in% 4:7 ~ 2,
       sd04 %in% 8:11 ~ 3,
-      TRUE ~ sd04
+      # TRUE ~ sd04
     ),
     sd14_three = case_when(
       sd14 %in% 1:3 ~ 1,
       sd14 %in% 4:6 ~ 2,
       sd14 %in% 7:9 ~ 3,
-      TRUE ~ sd14
+      # TRUE ~ sd14
     ),
     edu_three = coalesce(sd04_three, sd14_three),
     edu_three_f = as_factor(edu_three),
@@ -170,10 +174,10 @@ data <-
     rural = coalesce(sd09, sd17),
     polcorup = coalesce(pa08_01, pa23_01),
     opponent = case_when(
-      pa14 %in% c(2, 15, 16) ~ 1,
-      pa12 %in% c(1, 2, 3, 4, 6, 9, 10) ~ 1,
-      pa17 %in% c(1, 4, 6, 7, 10, 12, 13, 14, 15) ~ 1,
-      TRUE ~ 0
+      pa14 %in% c(2, 15, 16) ~ "Yes",
+      pa12 %in% c(1, 2, 3, 4, 6, 9, 10) ~ "Yes",
+      pa17 %in% c(1, 4, 6, 7, 10, 12, 13, 14, 15) ~ "Yes",
+      TRUE ~ "No"
     ),
     involvement = coalesce(tr06, tr17),
     involvement = case_when(
@@ -198,7 +202,8 @@ data <-
     date = as.Date(started),
     maxpage,
     lastpage
-  )
+  ) %>%
+  select(-"sd04_three", -"sd14_three")
 
 write_rds(data, "data/toloka.rds")
 
