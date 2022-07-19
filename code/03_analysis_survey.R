@@ -40,9 +40,10 @@ data_rus <-
     questnnr == "russia",
     # response != 3,
     # response != 2,
-    finished == 1, # as per PAP, only work with finished cases
+    finished == 1,
+    sd12 == 1,
     age > 17,
-    time_sum > 180, # as per PAP, exclude shorter than 3 minutes response times
+    time_sum >= 180
   ) %>%
   select(-pa12, -pa17) %>%
   mutate(opponent = as.character(opponent),
@@ -74,12 +75,10 @@ data_la <- read_csv(here("data/LA.csv")) %>%
             by = c("case" = "CASE")) %>%
   filter(
     questnnr != "russia",
-    # response != 3,
-    # response != 2,
     finished == 1,
+    sd12 == 1,
     age > 17,
-    time_sum > 180,
-    # time_sum > 210, # 10th quantile
+    time_sum >= 180
   ) %>%
   select(-pa14) %>%
   mutate(opponent = as.character(opponent),
@@ -151,7 +150,7 @@ model_calc(
 )
 
 # Russia: restriction on data quality #2
-data <- data_rus %>% filter(response != 3,  response != 2)
+data <- data_rus %>% filter(response == 0)
 
 model_calc(
   data = data,
@@ -205,7 +204,7 @@ model_calc(
 )
 
 # LA: restriction on data quality #2
-data <- data_la %>% filter(response != 3,  response != 2)
+data <- data_la %>% filter(response == 0)
 
 model_calc(
   data = data,
@@ -296,7 +295,7 @@ model_calc(
 )
 
 
-data <- data_rus %>% filter(response != 3, response != 2)
+data <- data_rus %>% filter(response == 0)
 model_calc(
   data = data,
   inst = pol,
@@ -348,7 +347,7 @@ model_calc(
 )
 
 
-data <- data_la %>% filter(response != 3, response != 2)
+data <- data_la %>% filter(response == 0)
 model_calc(
   data = data,
   inst = pol,
@@ -384,7 +383,7 @@ model_calc(
   model = "ol",
   name = paste0("involvement_ru_pol_", nrow(data))
 )
-data <- data_rus%>% filter(response != 3, response != 2)
+data <- data_rus%>% filter(response == 0)
 model_calc(
   data = data,
   inst = pol,
