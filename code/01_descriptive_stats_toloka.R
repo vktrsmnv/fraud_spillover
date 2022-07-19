@@ -259,7 +259,7 @@ colnames(table_ru) %<>%
     formula = ~ Condition,
     dinm = FALSE,
     output = "tables/descr_ru.tex",
-    title = "Summary Statistics of Key Variables, Survey Data for Russia",
+    title = "Summary Statistics of Key Variables, Survey Data for Russia}\\label{descr:russia",
     label = "descr:russia"
   )
 
@@ -287,10 +287,12 @@ colnames(table_ru) %<>%
     tab[str_which(tab, pattern = "& N & Pct.")] %>%
     str_replace_all(pattern = "Pct.",
                 replacement = "\\\\%")
+  tab[1] <- "\\begin{table}[!htbp]"
 
-  write(c(tab[1:str_which(tab, pattern = "& N & Pct.")],
+
+  write(c(tab[1:str_which(tab, pattern = "& N & ")],
           "\\midrule",
-          tab[(str_which(tab, pattern = "& N & Pct.") + 1):length(tab)]),
+          tab[(str_which(tab, pattern = "& N & ") + 1):length(tab)]),
         file = paste0("tables/descr_ru.tex"))
 
 # data_rus %>%
@@ -406,18 +408,19 @@ colnames(table_la) %<>%
     data = table_la,
     formula = ~Condition,
     dinm = FALSE,
-    title = "Summary Statistics of Key Variables, Survey Data for Latin America",
-    label = "descr:la",
+    title = "Summary Statistics of Key Variables, Survey Data for Latin America}\\label{descr:la",
     output = "tables/descr_la.tex"
   )
 
   tab <- readLines("tables/descr_la.tex")
+  tab[1] <- "\\begin{table}[!htbp]"
   tab_tabular <-
     tab[str_detect(tab, pattern = "begin\\{tabular\\}")]
   tab[tab == tab_tabular] <-
     "\\resizebox{\\columnwidth}{!}{\\begin{tabular}[t]{llcccccccc}"
   tab[tab == tab[str_detect(tab, pattern = "end\\{tabular\\}")]] <-
     "\\end{tabular}}"
+
 
   midrules <- str_which(tab, "^\\\\midrule")
   numeric_vars <- tab[(midrules[1] + 1):(midrules[2] - 1)]
@@ -435,7 +438,7 @@ colnames(table_la) %<>%
     str_replace_all(pattern = "Pct.",
                     replacement = "\\\\%")
 
-  write(c(tab[1:str_which(tab, pattern = "& N & Pct.")],
+  write(c(tab[1:str_which(tab, pattern = "& N & ")],
           "\\midrule",
-          tab[(str_which(tab, pattern = "& N & Pct.") + 1):length(tab)]),
+          tab[(str_which(tab, pattern = "& N & ") + 1):length(tab)]),
         file = paste0("tables/descr_la.tex"))
