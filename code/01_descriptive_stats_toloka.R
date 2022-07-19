@@ -220,7 +220,9 @@ data_rus %>%
   mutate(rural = case_when(
     rural %in% 1:4 ~ "Urban",
     TRUE ~ "Rural"
-  ) %>% as.character()) %>%
+  ) %>% as.character(),
+  pol_election = as.numeric(pol_election),
+  polint = as.numeric(polint)) %>%
   select(
     starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
     "age":"involvement", "condition",
@@ -232,7 +234,7 @@ colnames(table_ru) %<>%
   str_replace("armed", "Armed Forced") %>%
   str_replace("gov", "Government") %>%
   str_replace("part", "Parties") %>%
-  str_replace("parl", "Pariament") %>%
+  str_replace("parl", "Parliament") %>%
   str_replace("pres", "President") %>%
   str_replace("election", "Elections") %>%
   str_replace("comp", "Companies") %>%
@@ -242,7 +244,8 @@ colnames(table_ru) %<>%
   janitor::make_clean_names("title") %>%
   str_replace("Un", "UN") %>%
   str_replace("Wto", "WTO") %>%
-  str_replace("Ub", "World Bank") %>%
+  str_replace("Wb", "World Bank") %>%
+  str_replace("Cec", "CEC") %>%
   str_replace("Edu Three f", "Education") %>%
   str_replace("Emplstat", "Empl. Status") %>%
   str_replace("Sector", "Empl. Sector") %>%
@@ -259,6 +262,36 @@ colnames(table_ru) %<>%
     title = "Summary Statistics of Key Variables, Survey Data for Russia",
     label = "descr:russia"
   )
+
+
+  tab <- readLines("tables/descr_ru.tex")
+  tab_tabular <-
+    tab[str_detect(tab, pattern = "begin\\{tabular\\}")]
+  tab[tab == tab_tabular] <-
+    "\\resizebox{\\columnwidth}{!}{\\begin{tabular}[t]{llcccccccc}"
+  tab[tab == tab[str_detect(tab, pattern = "end\\{tabular\\}")]] <-
+    "\\end{tabular}}"
+
+  midrules <- str_which(tab, "^\\\\midrule")
+  numeric_vars <- tab[(midrules[1] + 1):(midrules[2] - 1)]
+  tab[(midrules[1] + 1):(midrules[2] - 1)] <- paste0(
+    "\\multicolumn{2}{l}{",
+    str_extract(numeric_vars,
+                pattern = "^([:alnum:]|[:space:]|\\.)+(?=&)"),
+    "}",
+    str_extract(numeric_vars,
+                pattern = "&.+") %>% str_remove("&")
+  )
+
+  tab[str_which(tab, pattern = "& N & Pct.")] <-
+    tab[str_which(tab, pattern = "& N & Pct.")] %>%
+    str_replace_all(pattern = "Pct.",
+                replacement = "\\\\%")
+
+  write(c(tab[1:str_which(tab, pattern = "& N & Pct.")],
+          "\\midrule",
+          tab[(str_which(tab, pattern = "& N & Pct.") + 1):length(tab)]),
+        file = paste0("tables/descr_ru.tex"))
 
 # data_rus %>%
 #   dplyr::select(age,
@@ -378,3 +411,31 @@ colnames(table_la) %<>%
     output = "tables/descr_la.tex"
   )
 
+  tab <- readLines("tables/descr_la.tex")
+  tab_tabular <-
+    tab[str_detect(tab, pattern = "begin\\{tabular\\}")]
+  tab[tab == tab_tabular] <-
+    "\\resizebox{\\columnwidth}{!}{\\begin{tabular}[t]{llcccccccc}"
+  tab[tab == tab[str_detect(tab, pattern = "end\\{tabular\\}")]] <-
+    "\\end{tabular}}"
+
+  midrules <- str_which(tab, "^\\\\midrule")
+  numeric_vars <- tab[(midrules[1] + 1):(midrules[2] - 1)]
+  tab[(midrules[1] + 1):(midrules[2] - 1)] <- paste0(
+    "\\multicolumn{2}{l}{",
+    str_extract(numeric_vars,
+                pattern = "^([:alnum:]|[:space:]|\\.)+(?=&)"),
+    "}",
+    str_extract(numeric_vars,
+                pattern = "&.+") %>% str_remove("&")
+  )
+
+  tab[str_which(tab, pattern = "& N & Pct.")] <-
+    tab[str_which(tab, pattern = "& N & Pct.")] %>%
+    str_replace_all(pattern = "Pct.",
+                    replacement = "\\\\%")
+
+  write(c(tab[1:str_which(tab, pattern = "& N & Pct.")],
+          "\\midrule",
+          tab[(str_which(tab, pattern = "& N & Pct.") + 1):length(tab)]),
+        file = paste0("tables/descr_la.tex"))
