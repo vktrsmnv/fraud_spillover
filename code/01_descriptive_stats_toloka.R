@@ -65,8 +65,8 @@ data_rus %>%
   drop_after_treatment = as.character(drop_after_treatment),
   drop_after_treatment =
     case_when(
-      drop_after_treatment == "1" ~ "Yes",
-      drop_after_treatment == "0" ~ "No"
+      drop_after_treatment == "1" ~ "Dropped Out",
+      drop_after_treatment == "0" ~ "Not"
   )
   ) %>%
   filter(
@@ -75,12 +75,12 @@ data_rus %>%
     # age > 17,
     # time_sum > 180
   ) %>%
-  select(drop_after_treatment, finished, condition) %>%
+  select(drop_after_treatment, finished, Condition = condition) %>%
   modelsummary::datasummary_crosstab(
     data = .,
     title = "Dropout Rates right after Reading the Treatment across Experimental Conditions,
 Survey Data in Russia.",
-    formula = condition ~ drop_after_treatment,
+    formula = Condition ~ drop_after_treatment,
     fmt = 2,
     output = "tables/dropout_ru.tex"
   )
@@ -95,11 +95,17 @@ data_la %>%
       "Judicial Punishment"
     ),
     drop_after_treatment = ifelse(maxpage == 4, 1, 0),
+    drop_after_treatment = as.character(drop_after_treatment),
+    drop_after_treatment =
+      case_when(
+        drop_after_treatment == "1" ~ "Dropped Out",
+        drop_after_treatment == "0" ~ "Not"
+      )
   ) %>%
-  select(finished, drop_after_treatment, condition) %>%
+  select(finished, drop_after_treatment, Condition = condition) %>%
   modelsummary::datasummary_crosstab(
     data = .,
-    formula = condition ~ drop_after_treatment,
+    formula = Condition ~ drop_after_treatment,
     fmt = 2,
     title = "Dropout Rates right after Reading the Treatment across Experimental Conditions,
 Survey Data in Latin America",
@@ -116,10 +122,10 @@ data_rus %>%
     "Punishment",
     "Judicial Punishment"
   )) %>%
-  select(condition, time_sum, time004, time005) %>%
+  select(Condition = condition, time_sum, time004, time005) %>%
   modelsummary::datasummary_balance(
     data = .,
-    formula = ~condition,
+    formula = ~Condition,
     fmt = 2,
     dinm = FALSE,
     output = "tables/time_required_ru.tex",
@@ -135,10 +141,10 @@ data_la %>%
     "Punishment",
     "Judicial Punishment"
   )) %>%
-  select(condition, time_sum, time004, time005) %>%
+  select(Condition = condition, time_sum, time004, time005) %>%
   modelsummary::datasummary_balance(
     data = .,
-    formula = ~condition,
+    formula = ~Condition,
     fmt = 2,
     dinm = FALSE,
     output = "tables/time_required_la.tex",
@@ -217,7 +223,7 @@ data_rus %>%
   ) %>% as.character()) %>%
   select(
     starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
-    "age":"involvement", "condition", -"sd04_three", -"sd14_three",
+    "age":"involvement", "condition",
     -"edu_three", -"edu"
   ) -> table_ru
 
@@ -336,7 +342,7 @@ data_la %>%
   ) %>% as.character()) %>%
   select(
     starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
-    "age":"involvement", "condition", -"sd04_three", -"sd14_three",
+    "age":"involvement", "condition",
     -"edu_three", -"edu"
   ) -> table_la
 
