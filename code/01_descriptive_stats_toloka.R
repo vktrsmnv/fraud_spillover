@@ -377,3 +377,4 @@ colnames(table_la) %<>%
     label = "descr:la",
     output = "tables/descr_la.tex"
   )
+
