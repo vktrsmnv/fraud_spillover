@@ -53,7 +53,7 @@ setup <- function() {
 setup()
 
 # re-estimate the models?
-estimate <- FALSE
+estimate <- TRUE
 
 # 1. Loading Data ####
 
@@ -64,10 +64,11 @@ data_rus <-
   ) %>%
   filter(
     questnnr == "russia",
-    finished == 1, # as per PAP, only work with finished cases
+    finished == 1,
+    sd12 == 1,
     age > 17,
-    time_sum > 180, # as per PAP, exclude shorter than 3 minutes response times
-  ) %>%
+    time_sum >= 180
+    ) %>%
   select(-pa12, -pa17) %>%
   mutate(
     opponent = as.character(opponent),
@@ -86,7 +87,7 @@ data_rus <-
   )
 
 
-data_la <- read_csv(here("data/LA.csv")) %>%
+data_la <- read_csv(here("data/LA_1.csv")) %>%
   full_join(read_rds(here("data/toloka.rds")), .,
     by = c("case" = "CASE")
   ) %>%
@@ -95,8 +96,9 @@ data_la <- read_csv(here("data/LA.csv")) %>%
     # response != 3,
     # response != 2,
     finished == 1,
+    sd12 == 1,
     age > 17,
-    time_sum > 180,
+    time_sum >= 180
     # time_sum > 210, # 10th quantile
   ) %>%
   select(-pa14) %>%
@@ -129,7 +131,8 @@ source("code/functions.R")
 ## 2.1. Estimation ####
 
 if (estimate) {
-  data <- data_rus
+  data <- data_rus %>%
+    mutate(pol_election = as.numeric(as.character(pol_election)))
 
   data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
   data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
@@ -142,8 +145,35 @@ if (estimate) {
     name = paste0("mediation_ru_pol_", nrow(data))
   )
 
+  data <- data_rus %>% filter(attention_check == "Summary") %>%
+    mutate(pol_election = as.numeric(as.character(pol_election)))
+  data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
+  data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
+  IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
+  mediation_calc(
+    data = data,
+    inst = pol,
+    IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
+    model = "ol",
+    name = paste0("mediation_ru_pol_", nrow(data))
+  )
 
-  data <- data_la
+
+  data <- data_la %>%
+    mutate(pol_election = as.numeric(as.character(pol_election)))
+  data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
+  data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
+  IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
+  mediation_calc(
+    data = data,
+    inst = pol,
+    IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
+    model = "ol",
+    name = paste0("mediation_la_pol_", nrow(data))
+  )
+
+  data <- data_la %>% filter(attention_check == "Summary") %>%
+    mutate(pol_election = as.numeric(as.character(pol_election)))
   data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
   data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
   IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"

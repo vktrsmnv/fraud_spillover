@@ -55,14 +55,14 @@ vars <- c("fraud1d",
 )
 #
 # # summary statistics
-# wvs_vdem <- wvs_vdem[, c(
-#   "inst_armed", "inst_police", "inst_courts",
-#   "inst_parl", "inst_gov", "inst_parties",
-#   "inst_comp", "inst_UN", "inst_banks", "inst_wto", "inst_wb",
-#   "fraud1d", "fraud1d1", "fraud1d2", "polint", "gentrust", "sex", "age", "edu_three", "emplstat",
-#   "savings", "rural", "polcorup", "vdem_elections", "cntry", "year"
-# )]
-# wvs_vdem <- wvs_vdem[complete.cases(wvs_vdem), ]
+wvs_vdem <- wvs_vdem[, c(
+  "inst_armed", "inst_police", "inst_courts",
+  "inst_parl", "inst_gov", "inst_parties",
+  "inst_comp", "inst_UN", "inst_banks", "inst_wto", "inst_wb",
+  "fraud1d", "fraud1d1", "fraud1d2", "polint", "gentrust", "sex", "age", "edu_three", "emplstat",
+  "savings", "rural", "polcorup", "vdem_elections", "cntry", "year"
+)]
+wvs_vdem <- wvs_vdem[complete.cases(wvs_vdem), ]
 #
 #
 # stargazer(wvs_vdem,
@@ -146,7 +146,7 @@ ps_model <- brm(
   seed = 12345
 )
 
-saveRDS(ps_model, file = "outout/ps_model.RDS")
+saveRDS(ps_model, file = "output/ps_model.RDS")
 
 # get all posterior samples from first chain
 post_samples <- as.data.frame(as.mcmc(ps_model, combine_chains = T))
@@ -164,7 +164,7 @@ ps_data <- ps_data %>%
   )
 
 post_samples <- post_samples %>%
-  dplyr::select(-lp__)
+  dplyr::select(-lp__, -lprior)
 
 ### iterate over rows in ps_data, construct ps for each case based on first posterior sample
 ### construct a matched data set using matching-function of arm package (below)
@@ -173,8 +173,6 @@ post_samples <- post_samples %>%
 # object to save case selection for matching for reproduction
 cnts <- list()
 
-data <- wvs_vdem %>%
-  mutate(across(starts_with("inst_"), ~ as.factor(.x)))
 
 for (sample in 1:nrow(post_samples)) {
   if (sample > 1) {
@@ -201,6 +199,7 @@ for (sample in 1:nrow(post_samples)) {
     wvs_vdem[matched_cases$cnts == 1, ]
   ))
   cnts[[sample]] <- which(matched_cases$cnts == 1)
+
   mm <- list()
   # calculate ATE
   y_vars <- c(
@@ -223,21 +222,22 @@ for (sample in 1:nrow(post_samples)) {
   # }
 
   mm[y_var] <- brm(
-    formula = bf(as.formula(paste0("as.factor(", y_var, ") ~ fraud1d + (1|cntry)"))),
-    data = wvs_vdem,
+    formula = (as.formula(paste0(y_var, "~ fraud1d + (1|cntry)"))),
+    data = data_nearest,
     family = cumulative("logit"),
     warmup = 3500,
     iter = 6000,
     chains = 4,
-    inits = "0",
+    init = "0",
     cores = 4,
     seed = 1201
   )
   }
 
   # store att_data to folder
-  saveRDS(att_data, file = "att_data.rds")
-  saveRDS(cnts, file = "cnts.rds")
+  saveRDS(att_data, file = "output/att_data.rds")
+  saveRDS(cnts, file = "output/cnts.rds")
+  saveRDS(mm, file = paste0("output/mm/", sample, ".rds"))
 
   print(str_c("NN matching, sample ", sample, " of ", nrow(post_samples), " done."))
 }
