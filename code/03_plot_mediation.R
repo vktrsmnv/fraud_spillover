@@ -123,70 +123,7 @@ npol <- data_rus %>%
   dplyr::select(starts_with("npol_inst")) %>%
   colnames()
 
-# 2. Main Analysis ####
-## 2.0. Calculation Function ####
-
-source("code/functions.R")
-
-## 2.1. Estimation ####
-
-if (estimate) {
-  data <- data_rus %>%
-    mutate(pol_election = as.numeric(as.character(pol_election)))
-
-  data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
-  data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
-  IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
-  mediation_calc(
-    data = data,
-    inst = pol,
-    IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
-    model = "ol",
-    name = paste0("mediation_ru_pol_", nrow(data))
-  )
-
-  data <- data_rus %>% filter(attention_check == "Summary") %>%
-    mutate(pol_election = as.numeric(as.character(pol_election)))
-  data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
-  data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
-  IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
-  mediation_calc(
-    data = data,
-    inst = pol,
-    IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
-    model = "ol",
-    name = paste0("mediation_ru_pol_", nrow(data))
-  )
-
-
-  data <- data_la %>%
-    mutate(pol_election = as.numeric(as.character(pol_election)))
-  data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
-  data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
-  IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
-  mediation_calc(
-    data = data,
-    inst = pol,
-    IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
-    model = "ol",
-    name = paste0("mediation_la_pol_", nrow(data))
-  )
-
-  data <- data_la %>% filter(attention_check == "Summary") %>%
-    mutate(pol_election = as.numeric(as.character(pol_election)))
-  data$condition <- str_replace_all(string = data$condition, pattern = " ", replacement = "")
-  data <- cbind(model.matrix(~ condition - 1, data), data %>% select(starts_with("pol_")))
-  IVs <- "conditionControl + conditionJudicialPunishment + conditionPunishment"
-  mediation_calc(
-    data = data,
-    inst = pol,
-    IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
-    model = "ol",
-    name = paste0("mediation_la_pol_", nrow(data))
-  )
-}
-
-# 3. Plotting ####
+# 2. Plotting ####
 
 model_files <- list.files("output", pattern = "ol_mediation_[a-z]+_pol_[0-9]")
 
@@ -306,16 +243,27 @@ for (i in model_files) {
 }
 
 
-pp <- eval(parse(text = paste0("plot_", str_remove(model_files, ".rds"), collapse = "/"))) +
+pp <- eval(parse(text = paste0("plot_", str_remove(model_files[c(2,3)], ".rds"), collapse = "/"))) +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 pp
 ggsave(pp,
   filename = paste0(
-    "figs/",
-    str_remove(model_files[1], "ol_") %>% str_remove("_[a-z]+_pol") %>% str_remove(".rds"),
-    ".png"
+    "figs/mediation.png"
   ),
   height = 10,
   width = 10
 )
+
+pp <- eval(parse(text = paste0("plot_", str_remove(model_files[c(1,4)], ".rds"), collapse = "/"))) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+pp
+ggsave(pp,
+       filename = paste0(
+         "figs/mediation_correct.png"
+       ),
+       height = 10,
+       width = 10
+)
+
