@@ -354,7 +354,7 @@ colnames(table_la) %<>%
   janitor::make_clean_names("title") %>%
   str_replace("Un", "UN") %>%
   str_replace("Wto", "WTO") %>%
-  str_replace("Ub", "World Bank") %>%
+  str_replace("Wb", "World Bank") %>%
   str_replace("Edu Three f", "Education") %>%
   str_replace("Emplstat", "Empl. Status") %>%
   str_replace("Sector", "Empl. Sector") %>%
@@ -400,3 +400,4 @@ colnames(table_la) %<>%
           "\\midrule",
           tab[(str_which(tab, pattern = "& N & ") + 1):length(tab)]),
         file = paste0("tables/descr_la.tex"))
+
