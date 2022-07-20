@@ -656,7 +656,7 @@ For reference, we provide summary statistics for the time required for completin
 
 \clearpage
 
-We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between \textit{complete summaries}, which contained the condition-specific part of the treatment, \textit{incomplete summaries}, where the responses described only a part of the treatment message but lack the crucial info for that condition;  \textit{responses} of the conditions which allowed us to concluded that the treatment text was read; \textit{copy-paste} of one or multiple paragraphs from the treatment text in the questionnaire, and \textit{unacceptable answer}, which does not allow us to observe any meaningful engagement with the treatment (e.g., a sequence of random characters). While we avoid removing any data based on this criterion in the main analysis due to potential introduction of post-treatment bias though case selection, we report the analysis on the restricted samples in robustness section, and the results show that our findings hold also when relying on a more restrictive approach to data preparation. Furthermore, for the cases where we received complete summaries, i.e. we can be certain that the treatment was read, the effects are particularly pronounced. 
+We have also manually coded the summaries to differentiate the responses by the levels of engagement to allow for robustness checks. We have distinguished between \textit{complete summaries}, which contained the condition-specific part of the treatment, \textit{incomplete summaries}, where the responses described only a part of the treatment message but lack the crucial info for that condition;  \textit{responses} to the texts which allowed us to expect that the treatment text was read; \textit{copy-paste} of one or multiple paragraphs from the treatment text in the questionnaire, and \textit{unacceptable answer}, which does not allow us to observe any meaningful engagement with the treatment (e.g., a sequence of random characters). While we avoid removing any data based on this criterion in the main analysis due to potential introduction of post-treatment bias though case selection, we report the analysis on the restricted samples in robustness section, and the results show that our findings hold also when relying on a more restrictive approach to data preparation. Furthermore, for the cases where we received complete summaries, i.e. we can be certain that the treatment was read, the effects are particularly pronounced. 
 
 \subfile{tables/manual_quality_ru}
 \subfile{tables/manual_quality_la}
@@ -685,39 +685,32 @@ In the main text, we only present the plots with the most relevant quantities of
 
 \clearpage
 
-Figures below present the intermediate quantity of interest--the probabilities of choosing one of four categories for trust--for each of the four conditions. These are the quantities we use to produce the main plots in the paper. Below are presented the quantities for the full sample (without any exclusions), while same plots for restricted samples are available in replication material (as the general trends persist). 
+Figures below present the intermediate quantity of interest--the probabilities of choosing one of four categories for trust--for each of the four conditions. These were obtained from the  draws from the expectation of the posterior predictive distributions, and we show the 89\% highest-density continuous interval for probabilities of choosing respective categories. These are the quantities we used to produce the main plots in the paper based on models in tables \ref{tab:ol}, yet exploring the raw probabilities may also be of interest.  (without any exclusions), while same plots for restricted samples are available in replication material (as the general trends persist). 
 
-Besides the trends discussed in the main text, we can observe that, oftentimes, trust in political institutions in our samples is low regardless of the treatment conditions: the probabilities corresponding to the highest trust category is, generally, the lowest for all institutions across all treatment conditions. The exceptions are trust in the President and Armed Forces in Russia, which is quite in line with the narrative observed in the media of that time. 
+Besides the trends discussed in the main text, we can observe that, oftentimes, trust in political institutions in our samples is low regardless of the treatment conditions: the probabilities corresponding to the highest trust category is, generally, the lowest for all institutions across all treatment conditions. The exceptions are trust in the President and Armed Forces in Russia, which is in line with the narrative observed in the media of that time. 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/probs_hdi89_1.png}
 	\caption{The Effect of Exposure to Fraud and Punishment Information on Confidence in Political Institutions.  \\
-		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for probabilities of choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.
+		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for probabilities of choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates described in main analysis.
 			Transparent point ranges include zero in the 89\% HDCI.
-	Data were collected in April-June 2021 via the original online survey. } }
+	} }
 	\singlespacing
 	\raggedright
-	\label{fig:main-2}
 \end{figure}
     
     
-    
-% \subfile{tables/la_pol2}
-% \subfile{tables/ru_pol2}
 
-% % \end{landscape}
-% \begin{landscape}
 \clearpage
 
 \subsubsection*{Non-Political Institutions}
 
-We ask the respondents to evaluate their trust in non-political institutions as well as in political upon reading the treatment text, which allows us to evaluate the limitations of the theory clearer. As we can observe from the estimates in the table below, the treatment groups do not differ significantly in their trust to non-political institutions in both Latin America and Russia. The only exception seems to the Russian sample and the effect of court intervention as response to fraud in comparison to fraud alone (i.e., the baseline condition). Judicial punishment information seems to increase trust in companies, banks, environmental organisations, and the World Trade Organisation, but not in the United Nations or the World Bank. One could argue that this could be an evidence of a spillover effect, which goes beyond the political sphere and exists for entities that are not portrayed negatively and "pro-Western" in the Russian media. The fact that we observe it specifically in Russia and only in response to the message about the intervention of another political institution could also be interpreted as evidence for the belief updating mechanism in evaluations. As this information may go against the general expectations of the systems' responses to election manipulation in an autocratic state, judicial interventions' consistent restorative effect on trust for various institutions indicates that respondents seem to have updated their beliefs rather than disregard the information that goes counter their current perceptions. 
+We ask the respondents to evaluate their trust in non-political institutions as well as in political upon reading the treatment text, which allows us to evaluate the limitations of the theory clearer. As we can observe from the estimates in the table below, the treatment groups do not differ significantly in their confidence in non-political institutions in both Latin America and Russia. The only exception seems to the Russian sample and the effect of court intervention as response to fraud in comparison to fraud alone (i.e., the baseline condition). Judicial punishment information seems to increase trust in companies, banks, environmental organisations, and the World Trade Organisation, but not in the United Nations or the World Bank. One could argue that this could be an evidence of a spillover effect, which goes beyond the political sphere and exists for entities that are not portrayed negatively and "pro-Western" in the Russian media. The fact that we observe it specifically in Russia and only in response to the message about the intervention of another political institution could also be interpreted as evidence for the belief updating mechanism in evaluations. As this information may go against the general expectations of the systems' responses to election manipulation in an autocratic state, judicial interventions' consistent restorative effect on trust for various institutions indicates that respondents seem to have updated their beliefs rather than disregard the information that goes counter their current perceptions. 
 
 \subfile{tables/ol_main_la_npol_872}
-% \subfile{tables/ol_main_ru_npol_1223}
-% \end{landscape
-    
+\subfile{tables/ol_main_ru_npol_1223}
+
 
 \normalsize
 
@@ -734,7 +727,7 @@ This section contains the results of various robustness checks and investigation
 % \clearpage
 % \subfile{tables/ol_main_ru_pol_1203}
 
-As a first step, we only focus on the cases where the respondents in our survey have indicated at least minimal degree of meaningful involvement with the treatment text. We thus remove the few cases where we could not conclude that the respondent has read the text based on the attention check text, e.g. if the summary consisted of a sequence of random symbols. We replicate the main analyses, and figures \ref{fig:main-2} and \ref{fig:main-6} contains the results. As we can see, in both countries the results from the main analysis hold. 
+First, we only focus on the cases where the respondents in our survey have indicated at least minimal degree of meaningful involvement with the treatment text. We thus remove the few cases where we could not conclude that the respondent has read the text based on the attention check text, e.g. if the summary consisted of a sequence of random symbols. We replicate the main analyses, and figures \ref{fig:main-2} and \ref{fig:main-6} contains the results. As we can see, in both countries the results from the main analysis hold. 
 
 \begin{figure}[H]
 	\centering
@@ -742,7 +735,7 @@ As a first step, we only focus on the cases where the respondents in our survey 
 	\caption{The Effects of Exposure to Fraud Information on Confidence in Political Institutions (samples exclude responses classified as irrelevant).  \\
 		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.\\
 			Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.\\
-	Data were collected in April-June 2021 via the original online survey. } }
+	} }
 	\singlespacing
 	\raggedright
 	\label{fig:main-2}
@@ -751,10 +744,10 @@ As a first step, we only focus on the cases where the respondents in our survey 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/main_hdi89_6.png}
-	\caption{The Effects of Exposure to Fraud Information on Confidence in Political Institutions (samples exclude responses classified as irrelevant).  \\
+	\caption{The Effects of Exposure to Fraud Information on Confidence in Non-political Institutions (samples exclude responses classified as irrelevant).  \\
 		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.\\
 			Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.\\
-	Data were collected in April-June 2021 via the original online survey. } }
+	} }
 	\singlespacing
 	\raggedright
 	\label{fig:main-6}
@@ -763,15 +756,17 @@ As a first step, we only focus on the cases where the respondents in our survey 
     
 \clearpage
 
-Furthermore, our manual coding of attention checks allowed us to closely examine the cases where the respondents seemed to have read the treatment text closely and in full, as their responses include the treatment-specific scenario details. For such individuals, we should observe strongest effects should our theory hold, though this effect could be counteracted by the fact of smaller sample sizes. Still, we observe stronger effects for more political institutions than in the full sample. In fact, we find strong evidence for the spillover effects of fraud in both countries for this subsample (figure \ref{fig:main-5}). At the same time, we also find some significant differences for banks and companies among the non-political institutions (figure \ref{fig:main-7}). However, the median value of size of these differences relative to medians for political institutions in this subsample is very modest, which still allows us to conclude that spillover effects occur to a varying extent for political institutions and entities with weaker connections to politics. 
+Furthermore, our manual coding of attention checks allowed us to closely examine the cases where the respondents seemed to have read the treatment text closely and in full, as their responses include the treatment-specific scenario details. For such individuals, we should observe strongest effects should our theory hold, though this effect could be counteracted by the fact of smaller sample sizes. Still, we observe stronger effects for more political institutions than in the full sample. In fact, we find strong evidence for the spillover effects of fraud in both countries for this subsample (figure \ref{fig:main-3}). At the same time, we also find some significant differences for banks and companies among the non-political institutions (figure \ref{fig:main-7}). However, the median value of size of these differences relative to medians for political institutions in this subsample is very modest, which still allows us to conclude that spillover effects occur to a varying extent for political institutions and entities with weaker connections to politics. 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/main_hdi89_3.png}
 	\caption{The Effects of Exposure to Fraud Information on Confidence in Political Institutions (only complete summaries of treatment texts).  \\
 		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.\\
-			Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.\\
-	Data were collected in April-June 2021 via the original online survey. } }
+			Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. 
+% 			Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. 
+Transparent point ranges include zero in the 89\% HDCI.\\
+	} }
 	\singlespacing
 	\raggedright
 	    
@@ -781,10 +776,12 @@ Furthermore, our manual coding of attention checks allowed us to closely examine
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/main_hdi89_7.png}
-	\caption{The Effects of Exposure to Fraud Information on Confidence in Political Institutions (only complete summaries of treatment texts).  \\
+	\caption{The Effects of Exposure to Fraud Information on Confidence in Non-political Institutions (only complete summaries of treatment texts).  \\
 		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous interval for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated based on ordered logit model estimates.\\
-			Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.\\
-	Data were collected in April-June 2021 via the original online survey. } }
+			Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. 
+% 			Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. 
+Transparent point ranges include zero in the 89\% HDCI.\\
+	} }
 	\singlespacing
 	\raggedright
 	    
@@ -807,8 +804,6 @@ While our main hypothesis for fraud's effect refers to the complete sample, it m
 
 \onehalfspacing
 In this section we further investigate the mechanisms of attitudes' updating via mediation analysis. The spillover theory implies that it is the changes in trust in elections and electoral process that are responsible for the differences in the confidence in institutions of the political system. We thus have included a separate question that accounts for trust in election system after the treatment (the exact phrasing is: \textit{In this hypothetical scenario, how much confidence would you have in elections in [Mexico/Colombia/Russia]?}) We use answers to this question as a mediator to trace the effects of the fraud and punishment information on political attitudes. Figure below presents the argument graphically:
-
-\\
 
 \begin{figure}[H]
 	\centering
