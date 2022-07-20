@@ -213,7 +213,7 @@ data_rus %>%
     age > 17,
     time_sum >= 180,
   ) %>%
-  select(-pa14) %>%
+  select(-pa14, -savings) %>%
   mutate(
     opponent = as.character(opponent),
     fraud = as.character(fraud),
@@ -234,7 +234,7 @@ data_rus %>%
   pol_election = as.numeric(pol_election),
   polint = as.numeric(polint)) %>%
   select(
-    starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
+    starts_with("pol_"), starts_with("npol"), "polint", "gentrust_f",
     "age":"involvement", "condition",
     -"edu_three", -"edu"
   ) -> table_ru
@@ -250,7 +250,7 @@ colnames(table_ru) %<>%
   str_replace("comp", "Companies") %>%
   str_replace("env", "Environmental Organizations") %>%
   str_replace("polint", "Political Interest") %>%
-  str_replace("gentrust", "Generalized Trust") %>%
+  str_replace("gentrust_f", "Generalized Trust") %>%
   janitor::make_clean_names("title") %>%
   str_replace("Un", "UN") %>%
   str_replace("Wto", "WTO") %>%
@@ -259,7 +259,7 @@ colnames(table_ru) %<>%
   str_replace("Edu Three f", "Education") %>%
   str_replace("Emplstat", "Empl. Status") %>%
   str_replace("Sector", "Empl. Sector") %>%
-  str_replace("Savings f", "Last year") %>%
+  str_replace("Savings f", "Savings: Last year") %>%
   str_replace("Rural", "Set. Type ") %>%
   str_replace("Polcorup", "Pol. Corruption")
 
@@ -313,7 +313,7 @@ data_la %>%
     sd12 == 1,
     time_sum >= 180,
   ) %>%
-  select(-pa14) %>%
+  select(-pa14, -savings, -gentrust) %>%
   mutate(
     opponent = as.character(opponent),
     fraud = as.character(fraud),
@@ -334,7 +334,7 @@ data_la %>%
   pol_election = as.numeric(pol_election),
   polint = as.numeric(polint)) %>%
   select(
-    starts_with("pol_"), starts_with("npol"), "polint", "gentrust",
+    starts_with("pol_"), starts_with("npol"), "polint", "gentrust_f",
     "age":"involvement", "condition",
     -"edu_three", -"edu"
   ) -> table_la
@@ -350,15 +350,16 @@ colnames(table_la) %<>%
   str_replace("comp", "Companies") %>%
   str_replace("env", "Environmental Organizations") %>%
   str_replace("polint", "Political Interest") %>%
-  str_replace("gentrust", "Generalized Trust") %>%
+  str_replace("gentrust_f", "Generalized Trust") %>%
   janitor::make_clean_names("title") %>%
+  str_replace("Cec", "CEC") %>%
   str_replace("Un", "UN") %>%
   str_replace("Wto", "WTO") %>%
   str_replace("Wb", "World Bank") %>%
   str_replace("Edu Three f", "Education") %>%
   str_replace("Emplstat", "Empl. Status") %>%
   str_replace("Sector", "Empl. Sector") %>%
-  str_replace("Savings f", "Last year") %>%
+  str_replace("Savings f", "Savings: Last year") %>%
   str_replace("Rural", "Set. Type ") %>%
   str_replace("Polcorup", "Pol. Corruption")
 
