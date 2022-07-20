@@ -284,7 +284,7 @@ pp <- plot_la / plot_ru +
 pp
 ggsave(pp,
   filename = paste0("figs/probs_hdi89_", 1, ".png"),
-  height = 10,
+  height = 11,
   width = 10
 )
 
@@ -521,7 +521,7 @@ pp <- plot_la / plot_ru +
 pp
 ggsave(pp,
   filename = paste0("figs/probs_hdi89_", 2, ".png"),
-    height = 10,
+    height = 11,
   width = 10
 )
 
@@ -758,6 +758,6 @@ pp <- plot_la / plot_ru +
 pp
 ggsave(pp,
   filename = paste0("figs/probs_hdi89_", 3, ".png"),
-    height = 10,
+    height = 11,
   width = 10
 )
