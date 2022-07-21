@@ -246,26 +246,6 @@ model_calc(
   name = "main_la_pol_colombia"
 )
 
-### Russia: Multilevel Model ####
-data <- data_rus
-model_calc(
-  data = data,
-  inst = pol,
-  IVs = "1 + (1|condition)",
-  model = "ol",
-  name = paste0("main_ru_pol_ml_", nrow(data))
-)
-
-### LA: Multilevel Model ####
-data <- data_la
-model_calc(
-  data = data,
-  inst = pol,
-  IVs = "1 + (1|condition)",
-  model = "ol",
-  name = paste0("main_la_pol_ml_", nrow(data))
-)
-
 
 ## 2.2. Conditional Effects with Opposition to Regime ####
 
@@ -533,6 +513,8 @@ model_calc(
   inst = pol,
   IVs = IVs,
   model = "ol",
+  iter = 15000,
+  warmup = 12500,
   name = paste0("polint_la_pol_", nrow(data))
 )
 
