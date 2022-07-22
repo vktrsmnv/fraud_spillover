@@ -52,166 +52,166 @@ formals(plasma)$end <- 0.8
 formals(scale_color_viridis)$end <- 0.8
 formals(scale_alpha_manual)$values <- c(0.2, 1)
 
-
-prep_plotting <- function(mpol_path = "output/ol_cond_ru_pol_1223.rds") {
-  mpol <- read_rds(mpol_path)
-  pol <- names(mpol)
-  plotting <- tibble()
-
-  for (inst in pol) {
-    esoph_plot <- mpol$pol_inst_armed$data %>%
-      data_grid(condition, opponent) %>%
-      add_epred_draws(mpol[[inst]],
-                       category = "Trust"
-      )
-    plot_categories <- tibble(
-      median = rep(NA, 12 * 2),
-      lower = rep(NA, 12 * 2),
-      upper = rep(NA, 12 * 2),
-      category = rep(1:4, 3 * 2),
-      condition = rep(c(
-        "Control",
-        "Punishment",
-        "Judicial Punishment",
-        "Control_Opponent",
-        "Punishment_Opponent",
-        "Judicial Punishment_Opponent"
-      ),
-      each = 4
-      )
-    ) %>%
-      as.data.frame()
-
-    plot_categories$n <- nrow(mpol[[inst]]$data)
-
-    # for (cond in plot_categories$condition[1:3]){
-    for (num in 1:4) {
-      # plot_categories[plot_categories$category == num &
-      #                   plot_categories$condition == "Control", 1:3] <-
-      #   median_hdci(
-      #     esoph_plot$.epred[esoph_plot$condition == "Fraud" &
-      #                         esoph_plot$opponent == "No" &
-      #                         esoph_plot$Trust == num] -
-      #       esoph_plot$.epred[esoph_plot$condition == "Control" &
-      #                           esoph_plot$opponent == "No" &
-      #                           esoph_plot$Trust == num],
-      #     .width = 0.89
-      #   )[1:3]
-      # plot_categories[plot_categories$category == num &
-      #                   plot_categories$condition == "Control_Opponent", 1:3] <-
-      #   median_hdci(
-      #     esoph_plot$.epred[esoph_plot$condition == "Fraud" &
-      #                         esoph_plot$opponent == "Yes" &
-      #                         esoph_plot$Trust == num] -
-      #       esoph_plot$.epred[esoph_plot$condition == "Control" &
-      #                           esoph_plot$opponent == "Yes" &
-      #                           esoph_plot$Trust == num],
-      #     .width = 0.89
-      #   )[1:3]
-
-      plot_categories[plot_categories$category == num &
-                        plot_categories$condition == "Punishment", 1:3] <-
-          median_hdci(
-            esoph_plot$.epred[esoph_plot$condition == "Fraud" &
-                                esoph_plot$opponent == "No" &
-                                esoph_plot$Trust == num] -
-              esoph_plot$.epred[esoph_plot$condition == "Punishment" &
-                                  esoph_plot$opponent == "No" &
-                                  esoph_plot$Trust == num],
-            .width = 0.89
-        )[1:3]
-      plot_categories[plot_categories$category == num &
-                        plot_categories$condition == "Punishment_Opponent", 1:3] <-
-        median_hdci(
-          esoph_plot$.epred[esoph_plot$condition == "Fraud" &
-                              esoph_plot$opponent == "Yes" &
-                              esoph_plot$Trust == num] -
-            esoph_plot$.epred[esoph_plot$condition == "Punishment" &
-                                esoph_plot$opponent == "Yes" &
-                                esoph_plot$Trust == num],
-          .width = 0.89
-        )[1:3]
-
-      plot_categories[plot_categories$category == num &
-                        plot_categories$condition == "Judicial Punishment", 1:3] <-
-        median_hdci(
-          esoph_plot$.epred[esoph_plot$condition == "Fraud" &
-                              esoph_plot$opponent == "No" &
-                              esoph_plot$Trust == num] -
-            esoph_plot$.epred[esoph_plot$condition == "Judicial Punishment" &
-                                esoph_plot$opponent == "No" &
-                                esoph_plot$Trust == num],
-          .width = 0.89
-        )[1:3]
-      plot_categories[plot_categories$category == num &
-                        plot_categories$condition == "Judicial Punishment_Opponent", 1:3] <-
-        median_hdci(
-          esoph_plot$.epred[esoph_plot$condition == "Fraud" &
-                              esoph_plot$opponent == "Yes" &
-                              esoph_plot$Trust == num] -
-            esoph_plot$.epred[esoph_plot$condition == "Judicial Punishment" &
-                                esoph_plot$opponent == "Yes" &
-                                esoph_plot$Trust == num],
-          .width = 0.89
-        )[1:3]
-      plot_categories$institution <- inst
-    }
-    # }
-    plotting <- bind_rows(plot_categories, plotting)
-  }
-
-
-  plotting %>%
-    mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
-    mutate(
-      institution = case_when(
-        institution == "pol_inst_pres" ~ "President",
-        institution == "pol_inst_police" ~ "Police",
-        institution == "pol_inst_CEC" ~ "Central Electoral\nCommission",
-        institution == "pol_inst_gov" ~ "Government",
-        institution == "pol_inst_part" ~ "Political Parties",
-        institution == "pol_inst_parl" ~ "Parliament",
-        institution == "pol_inst_courts" ~ "Courts",
-        institution == "pol_inst_armed" ~ "Armed Forces",
-      ),
-      institution = as_factor(institution) %>%
-        fct_relevel(
-          "Central Electoral\nCommission",
-          "Political Parties",
-          "Parliament",
-          "Courts",
-          "President",
-          "Government",
-          "Police",
-          "Armed Forces"
-        ),
-      Condition = str_remove(condition, "_Opponent") %>%
-        factor(., levels = c(
-          "Control", "Punishment", "Judicial Punishment"
-        )),
-      condition = condition %>%
-        factor(
-          .,
-          levels = c(
-            "Judicial Punishment",
-            "Judicial Punishment_Opponent",
-            "Punishment",
-            "Punishment_Opponent",
-            "Control",
-            "Control_Opponent"
-          )
-        ),
-      opponent = ifelse(
-        str_detect(condition, pattern = "Opponent"),
-        "Opponent",
-        "Supporter"
-      ),
-      significant_opponent = paste0(significant, "_", opponent)
-    ) %>%
-    filter(!str_detect("Control", string = condition)) -> plotting
-
-  return(plotting)
-}
+#
+# prep_plotting <- function(mpol_path = "output/ol_cond_ru_pol_1223.rds") {
+#   mpol <- read_rds(mpol_path)
+#   pol <- names(mpol)
+#   plotting <- tibble()
+#
+#   for (inst in pol) {
+#     esoph_plot <- mpol$pol_inst_armed$data %>%
+#       data_grid(condition, opponent) %>%
+#       add_epred_draws(mpol[[inst]],
+#                        category = "Trust"
+#       )
+#     plot_categories <- tibble(
+#       median = rep(NA, 12 * 2),
+#       lower = rep(NA, 12 * 2),
+#       upper = rep(NA, 12 * 2),
+#       category = rep(1:4, 3 * 2),
+#       condition = rep(c(
+#         "Control",
+#         "Punishment",
+#         "Judicial Punishment",
+#         "Control_Opponent",
+#         "Punishment_Opponent",
+#         "Judicial Punishment_Opponent"
+#       ),
+#       each = 4
+#       )
+#     ) %>%
+#       as.data.frame()
+#
+#     plot_categories$n <- nrow(mpol[[inst]]$data)
+#
+#     # for (cond in plot_categories$condition[1:3]){
+#     for (num in 1:4) {
+#       # plot_categories[plot_categories$category == num &
+#       #                   plot_categories$condition == "Control", 1:3] <-
+#       #   median_hdci(
+#       #     esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+#       #                         esoph_plot$opponent == "No" &
+#       #                         esoph_plot$Trust == num] -
+#       #       esoph_plot$.epred[esoph_plot$condition == "Control" &
+#       #                           esoph_plot$opponent == "No" &
+#       #                           esoph_plot$Trust == num],
+#       #     .width = 0.89
+#       #   )[1:3]
+#       # plot_categories[plot_categories$category == num &
+#       #                   plot_categories$condition == "Control_Opponent", 1:3] <-
+#       #   median_hdci(
+#       #     esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+#       #                         esoph_plot$opponent == "Yes" &
+#       #                         esoph_plot$Trust == num] -
+#       #       esoph_plot$.epred[esoph_plot$condition == "Control" &
+#       #                           esoph_plot$opponent == "Yes" &
+#       #                           esoph_plot$Trust == num],
+#       #     .width = 0.89
+#       #   )[1:3]
+#
+#       plot_categories[plot_categories$category == num &
+#                         plot_categories$condition == "Punishment", 1:3] <-
+#           median_hdci(
+#             esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+#                                 esoph_plot$opponent == "No" &
+#                                 esoph_plot$Trust == num] -
+#               esoph_plot$.epred[esoph_plot$condition == "Punishment" &
+#                                   esoph_plot$opponent == "No" &
+#                                   esoph_plot$Trust == num],
+#             .width = 0.89
+#         )[1:3]
+#       plot_categories[plot_categories$category == num &
+#                         plot_categories$condition == "Punishment_Opponent", 1:3] <-
+#         median_hdci(
+#           esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+#                               esoph_plot$opponent == "Yes" &
+#                               esoph_plot$Trust == num] -
+#             esoph_plot$.epred[esoph_plot$condition == "Punishment" &
+#                                 esoph_plot$opponent == "Yes" &
+#                                 esoph_plot$Trust == num],
+#           .width = 0.89
+#         )[1:3]
+#
+#       plot_categories[plot_categories$category == num &
+#                         plot_categories$condition == "Judicial Punishment", 1:3] <-
+#         median_hdci(
+#           esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+#                               esoph_plot$opponent == "No" &
+#                               esoph_plot$Trust == num] -
+#             esoph_plot$.epred[esoph_plot$condition == "Judicial Punishment" &
+#                                 esoph_plot$opponent == "No" &
+#                                 esoph_plot$Trust == num],
+#           .width = 0.89
+#         )[1:3]
+#       plot_categories[plot_categories$category == num &
+#                         plot_categories$condition == "Judicial Punishment_Opponent", 1:3] <-
+#         median_hdci(
+#           esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+#                               esoph_plot$opponent == "Yes" &
+#                               esoph_plot$Trust == num] -
+#             esoph_plot$.epred[esoph_plot$condition == "Judicial Punishment" &
+#                                 esoph_plot$opponent == "Yes" &
+#                                 esoph_plot$Trust == num],
+#           .width = 0.89
+#         )[1:3]
+#       plot_categories$institution <- inst
+#     }
+#     # }
+#     plotting <- bind_rows(plot_categories, plotting)
+#   }
+#
+#
+#   plotting %>%
+#     mutate(significant = ifelse(lower < 0 & upper > 0, "no", "yes")) %>%
+#     mutate(
+#       institution = case_when(
+#         institution == "pol_inst_pres" ~ "President",
+#         institution == "pol_inst_police" ~ "Police",
+#         institution == "pol_inst_CEC" ~ "Central Electoral\nCommission",
+#         institution == "pol_inst_gov" ~ "Government",
+#         institution == "pol_inst_part" ~ "Political Parties",
+#         institution == "pol_inst_parl" ~ "Parliament",
+#         institution == "pol_inst_courts" ~ "Courts",
+#         institution == "pol_inst_armed" ~ "Armed Forces",
+#       ),
+#       institution = as_factor(institution) %>%
+#         fct_relevel(
+#           "Central Electoral\nCommission",
+#           "Political Parties",
+#           "Parliament",
+#           "Courts",
+#           "President",
+#           "Government",
+#           "Police",
+#           "Armed Forces"
+#         ),
+#       Condition = str_remove(condition, "_Opponent") %>%
+#         factor(., levels = c(
+#           "Control", "Punishment", "Judicial Punishment"
+#         )),
+#       condition = condition %>%
+#         factor(
+#           .,
+#           levels = c(
+#             "Judicial Punishment",
+#             "Judicial Punishment_Opponent",
+#             "Punishment",
+#             "Punishment_Opponent",
+#             "Control",
+#             "Control_Opponent"
+#           )
+#         ),
+#       opponent = ifelse(
+#         str_detect(condition, pattern = "Opponent"),
+#         "Opponent",
+#         "Supporter"
+#       ),
+#       significant_opponent = paste0(significant, "_", opponent)
+#     ) %>%
+#     filter(!str_detect("Control", string = condition)) -> plotting
+#
+#   return(plotting)
+# }
 
 ## Political Institutions ####
 ### All Cases #####
@@ -1068,6 +1068,80 @@ ggsave(pp,
        filename = paste0("figs/cond_hdi89_", 3, ".png"),
        height = 10,
        width = 10)
+
+## Pooled Sample with Interaction #####
+pp <-  prep_plotting("output/ol_main_pol.rds",
+                     output = "diffs",
+                    model = "condition + questnnr" # works with an interaction effect too
+                    )
+
+for (cnd in levels(data_rus$condition)[-1]) {
+  lst <- list()
+  for (gr in 1:2) {
+    temp_n <- length(pp$institution %>% levels()) %/% 2
+
+    if (gr == 1){
+      instss <- levels(pp$institution)[1:temp_n]
+    }else{
+      instss <- levels(pp$institution)[(temp_n + 1):length(levels(pp$institution))]
+    }
+
+    lst[[gr]] <- pp %>%
+      filter(condition == cnd,
+             institution %in% instss) %>%
+      mutate(questnnr = str_to_title(questnnr)) %>%
+      ggplot() +
+      geom_pointrange(
+        aes(
+          x = median,
+          xmin = lower,
+          xmax = upper,
+          y = category,
+          color = questnnr,
+          alpha = significant
+        ),
+        position = position_dodge(1),
+        size = 0.4
+      ) +
+      facet_grid(
+        rows = vars(questnnr),
+        cols = vars(institution)
+      ) +
+      scale_color_viridis(
+        discrete = T,
+        option = "C",
+        end = 0.8
+      ) +
+      scale_shape_manual(values = c(16, 15, 17, 8)) +
+      labs(
+        y = "Confidence",
+        x = paste0(
+          "Probability(Category|Fraud) - Probability(Category|",
+          cnd,
+          ")"
+        ),
+        shape = "",
+        color = "",
+        title = ""
+      ) +
+      geom_vline(
+        xintercept = 0,
+        alpha = 0.5
+      ) +
+      guides(color = "none", alpha = "none")
+  }
+
+  plt <- lst[[1]] / lst[[2]] +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  ggsave(plt,
+         filename = paste0("figs/diffs_all_", cnd, ".png"),
+         height = 12,
+         width = 10
+  )
+}
+plt
+
 
 
 prep_plotting <- function(mpol_path = "output/ol_cond_ru_pol_1223.rds") {

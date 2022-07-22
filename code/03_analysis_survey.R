@@ -214,18 +214,27 @@ model_calc(
 model_calc(
   data = data_la,
   inst = pol,
-  IVs = "condition + questnnr",
+  IVs = "condition * questnnr",
   model = "ol",
-  name = "main_pol_fe"
+  name = "main_pol_la_int"
 )
 
 ### Full combined sample ####
 model_calc(
   data = data_la %>% bind_rows(., data_rus),
   inst = pol,
-  IVs = "condition + questnnr",
+  IVs = "condition",
   model = "ol",
   name = "main_pol"
+)
+
+### Full combined sample ####
+model_calc(
+  data = data_la %>% bind_rows(., data_rus),
+  inst = pol,
+  IVs = "condition * questnnr",
+  model = "ol",
+  name = "main_pol_int"
 )
 
 ### Mexico only ####
@@ -244,6 +253,34 @@ model_calc(
   IVs = "condition",
   model = "ol",
   name = "main_la_pol_colombia"
+)
+
+### Russia: hierarchical ####
+data <- data_rus %>%
+  mutate(condition = as.character(condition))
+
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = "(1 | condition)",
+  model = "ol",
+  iter = 15000,
+  warmup = 12500,
+  name = paste0("main_ru_pol_ml_", nrow(data))
+)
+
+### LA: hierarchical ####
+data <- data_la %>%
+  mutate(condition = as.character(condition))
+
+model_calc(
+  data = data,
+  inst = pol,
+  IVs = "(1 | condition)",
+  model = "ol",
+  iter = 15000,
+  warmup = 12500,
+  name = paste0("main_la_pol_ml_", nrow(data))
 )
 
 

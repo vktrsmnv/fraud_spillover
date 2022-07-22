@@ -1492,7 +1492,76 @@ plotting_prep <-
 ### All Cases ####
 
 plotting <-
-  plotting_prep(mpol_path = "output/ol_main_ru_npol_1223.rds")
+  prep_plotting(path = "output/ol_main_ru_npol_1223.rds")
+
+
+for (cnd in levels(plotting$condition)[-1]) {
+  lst <- list()
+  for (gr in 1:2) {
+    temp_n <- length(pp$institution %>% levels()) %/% 2
+
+    if (gr == 1){
+      instss <- levels(pp$institution)[1:temp_n]
+    }else{
+      instss <- levels(pp$institution)[(temp_n + 1):length(levels(pp$institution))]
+    }
+
+    lst[[gr]] <- pp %>%
+      filter(condition == cnd,
+             institution %in% instss) %>%
+      mutate(questnnr = str_to_title(questnnr)) %>%
+      ggplot() +
+      geom_pointrange(
+        aes(
+          x = median,
+          xmin = lower,
+          xmax = upper,
+          y = category,
+          color = questnnr,
+        ),
+        position = position_dodge(1),
+        size = 0.4
+      ) +
+      facet_grid(
+        rows = vars(questnnr),
+        cols = vars(institution)
+      ) +
+      scale_color_viridis(
+        discrete = T,
+        option = "C",
+        end = 0.8
+      ) +
+      scale_shape_manual(values = c(16, 15, 17, 8)) +
+      labs(
+        y = "Confidence",
+        x = paste0(
+          "Probability(Category|",
+          cnd,
+          ")"
+        ),
+        shape = "",
+        color = "",
+        title = ""
+      ) +
+      geom_vline(
+        xintercept = 0,
+        alpha = 0.5
+      ) +
+      guides(color = "none", alpha = "none")
+  } +
+    xlim(0, 0.8)
+
+  plt <- lst[[1]] / lst[[2]] +
+    plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+  ggsave(plt,
+         filename = paste0("figs/probs_all_", cnd, ".png"),
+         height = 12,
+         width = 10
+  )
+}
+
+
 n_ru <-
   plotting %>%
   select(institution, n) %>%

@@ -450,6 +450,14 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
       arrange(institution) %>%
       mutate(institution_facet_name = fct_inorder(institution_facet_name))
   }
+
+  if (str_detect(model, pattern = "opponent")){
+    plotting %<>%
+      mutate(opponent = ifelse(
+        opponent == "Yes",   "Opponent",
+        "Supporter"
+      ))
+  }
   return(plotting)
 }
 
