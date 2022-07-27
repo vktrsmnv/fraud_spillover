@@ -27,7 +27,7 @@ We use Bayesian approach for the analysis and estimate ordered logistic regressi
 ![](figs/model_equation.png)
 
 
-For many political institutions, we find that probability of expressing more trust in them is lower when the respondent learns about fraud during the elections, and, conversely, the probabilities for expressing less trust are higher. We also relied on Bayes factor for hypothesis testing, such that:  <img src="https://bit.ly/3cP40CN" align="center" border="0" alt="BF= \dfrac{Pr( \text{Data} | \beta_1 \in (0, +\infty))}{ Pr( \text{Data} |\beta_1 \in (-\infty, 0])}" width="218" height="43" />. 
+For many political institutions, we find that probability of expressing more trust in them is lower when the respondent learns about fraud during the elections, and, conversely, the probabilities for expressing less trust are higher. We also relied on Bayes factor for hypothesis testing, such that:  <img src="figs/bf.png" align="center" border="0" alt="BF= \dfrac{Pr( \text{Data} | \beta_1 \in (0, +\infty))}{ Pr( \text{Data} |\beta_1 \in (-\infty, 0])}" width="218" height="43" />. 
 
 
 <img src="figs/diffs_pooled_control.png" align="center">
