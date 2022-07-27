@@ -12,7 +12,7 @@ model_files <- list.files("output",
   mutate(V5 = as.numeric(V5)) %>%
   arrange(V3, -V5) %>%
   select(-V6) %>%
-  mutate(sample = rep(c("full", "no_unaceptable", "only_correct"), 2))
+  mutate(sample = rep(c("full", "acceptable", "only_correct"), 2))
 
 for (s in unique(model_files$sample)){
   pths <- model_files %>%
@@ -77,7 +77,7 @@ model_files <- list.files("output",
   mutate(V5 = as.numeric(V5)) %>%
   arrange(V3, -V5) %>%
   select(-V6) %>%
-  mutate(sample = rep(c("full", "no_unaceptable", "only_correct"), 2))
+  mutate(sample = rep(c("full", "acceptable", "only_correct"), 2))
 
 for (s in unique(model_files$sample)){
   pths <- model_files %>%
@@ -330,7 +330,7 @@ model_files <- list.files("output",
   arrange(V3, -V5) %>%
   select(-V6) %>%
   mutate(sample = rep(c("full",
-                        "no_unaceptable",
+                        "acceptable",
                         "only_correct"), 2))
 #
 # for (s in unique(model_files$sample)){
@@ -400,6 +400,7 @@ for (gr in 1:2) {
 plt <- lst[[1]] / lst[[2]] +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
+plt
 ggsave(
   plt,
   filename = paste0("figs/probs_cond_", 1, ".png"),

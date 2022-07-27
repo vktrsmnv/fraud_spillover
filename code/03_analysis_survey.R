@@ -57,7 +57,7 @@ npol <- data_rus %>%
 # 2. Main Analysis ####
 ## 2.0. Calculation Function ####
 
-source("code/functions.R")
+# source("code/functions.R")
 
 ## 2.1. Main Specification ####
 

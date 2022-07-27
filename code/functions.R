@@ -40,12 +40,13 @@ model_calc <- function(data,
                        inst,
                        IVs,
                        model = "ol",
-                       iter = 6000,
+                       iter = 20000,
                        cores = 4,
                        chains = 4,
-                       warmup = 3500,
+                       warmup = 10000,
                        seed = 1201,
-                       name) {
+                       name,
+                       prior) {
   # empty objects for storing
   mods <- list()
   # polinst_mods_ol <- npolinst_mods_ol <- list()
@@ -61,29 +62,6 @@ model_calc <- function(data,
 
   for (DV in inst) {
     if (match(DV, inst) == 1) {
-      if (model == "lm") {
-        mods[[DV]] <-
-          first <-
-          brm(
-            formula = paste(DV, IVs, sep = "~"),
-            data = data,
-            iter = iter,
-            warmup = warmup,
-            chains = chains,
-            cores = cores,
-            seed = seed
-          )
-        write_rds(
-          mods,
-          paste0(
-            "output/",
-            model,
-            "_",
-            name,
-            ".rds"
-          )
-        )
-      }
       if (model == "ol") {
         mods[[DV]] <-
           first <-
@@ -95,7 +73,8 @@ model_calc <- function(data,
             warmup = warmup,
             chains = chains,
             cores = cores,
-            seed = seed
+            seed = seed,
+            prior = prior
           )
         write_rds(
           mods,
@@ -109,23 +88,6 @@ model_calc <- function(data,
         )
       }
     } else {
-      if (model == "lm") {
-        mods[[DV]] <-
-          update(first,
-            formula. = paste(DV, IVs, sep = "~"),
-            newdata = data
-          )
-        write_rds(
-          mods,
-          paste0(
-            "output/",
-            model,
-            "_",
-            name,
-            ".rds"
-          )
-        )
-      }
       if (model == "ol") {
         mods[[DV]] <-
           update(first,
@@ -151,10 +113,10 @@ mediation_calc <- function(data,
                            inst,
                            IVs,
                            model,
-                           iter = 10000,
+                           iter = 20000,
                            cores = 4,
                            chains = 4,
-                           warmup = 7500,
+                           warmup = 10000,
                            seed = 1201,
                            name) {
   # empty objects for storing
@@ -206,7 +168,9 @@ mediation_calc <- function(data,
 prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
                           model = "condition",
                           output = "diffs",
-                          ci = 0.89) {
+                          ci = 0.89,
+                          PD = TRUE,
+                          BF = FALSE) {
   models <- read_rds(path)
   insts <- names(models)
   plotting <- tibble()
@@ -258,6 +222,24 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           lower = NA,
           upper = NA,
           condition,
+          opponent,
+          category = 1:4
+        )
+    }
+    if (model == "condition + opponent + questnnr"){
+      esoph_plot <- models[[inst]]$data %>%
+        data_grid(condition, opponent, questnnr) %>%
+        add_epred_draws(models[[inst]],
+                        category = "Trust"
+        )
+
+      plot_categories <- models[[inst]]$data %>%
+        data_grid(
+          median = NA,
+          lower = NA,
+          upper = NA,
+          condition,
+          questnnr,
           opponent,
           category = 1:4
         )
@@ -314,6 +296,27 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           }
         }
       }
+      if (model == "condition + opponent + questnnr"){
+        for (num in 1:4) {
+          for (cntr in unique(plot_categories$questnnr)) {
+            for (cnd in unique(plot_categories$condition)) {
+              for (tp in unique(plot_categories$opponent)){
+              plot_categories[plot_categories$category == num &
+                                plot_categories$questnnr == cntr &
+                                plot_categories$opponent == tp &
+                                plot_categories$condition == cnd, 1:3] <-
+                median_hdci(esoph_plot$.epred[esoph_plot$condition == cnd &
+                                                esoph_plot$questnnr == cntr &
+                                                esoph_plot$opponent == tp &
+                                                esoph_plot$Trust == num],
+                            .width = ci
+                )[1:3]
+
+              plot_categories$institution <- inst
+            }}
+          }
+        }
+      }
     }
     if (output == "diffs") {
       if (model == "condition + questnnr") {
@@ -336,6 +339,45 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
         }
         plot_categories %<>% filter(condition != "Fraud")
       }
+      if (model == "condition + opponent + questnnr") {
+        for (num in 1:4) {
+          for (cntr in unique(plot_categories$questnnr)) {
+            for (cnd in unique(plot_categories$condition)) {
+              for (tp in unique(plot_categories$opponent)){
+              plot_categories[plot_categories$category == num &
+                                plot_categories$questnnr == cntr &
+                                plot_categories$opponent == tp &
+                                plot_categories$condition == cnd, 1:3] <-
+                median_hdci(esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+                                                esoph_plot$questnnr == cntr &
+                                                esoph_plot$opponent == tp &
+                                                esoph_plot$Trust == num] -
+                              esoph_plot$.epred[esoph_plot$condition == cnd &
+                                                  esoph_plot$opponent == tp &
+                                                  esoph_plot$questnnr == cntr &
+                                                  esoph_plot$Trust == num],
+                            .width = ci
+                )[1:3]
+            }
+          }
+          }
+        }
+        plot_categories %<>% filter(condition != "Fraud")
+      }
+      if (model == "condition") {
+        for (num in 1:4) {
+          for (cnd in unique(plot_categories$condition)) {
+            plot_categories[plot_categories$category == num &
+              plot_categories$condition == cnd, 1:3] <-
+              median_hdci(esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+                esoph_plot$Trust == num] -
+                esoph_plot$.epred[esoph_plot$condition == cnd &
+                  esoph_plot$Trust == num],
+              .width = ci
+              )[1:3]
+          }
+        }
+      }
       if (model == "condition + opponent") {
         for (num in 1:4) {
           for (cntr in unique(plot_categories$opponent)) {
@@ -356,24 +398,46 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
         }
         plot_categories %<>% filter(condition != "Fraud")
       }
-      if (model == "condition") {
-        for (num in 1:4) {
-          for (cnd in unique(plot_categories$condition)) {
-            plot_categories[plot_categories$category == num &
-              plot_categories$condition == cnd, 1:3] <-
-              median_hdci(esoph_plot$.epred[esoph_plot$condition == "Fraud" &
-                esoph_plot$Trust == num] -
-                esoph_plot$.epred[esoph_plot$condition == cnd &
-                  esoph_plot$Trust == num],
-              .width = ci
-              )[1:3]
-          }
-        }
-      }
       plot_categories %<>% filter(condition != "Fraud")
+
     }
 
     plot_categories$institution <- inst
+
+    stats <- tibble()
+
+    if (BF) {
+    # calculate the Bayes factor for H0: beta <= 0 (ie HA: beta > 0)
+    bf <- bayesfactor_parameters(models[[inst]], null = c(-Inf, 0)) %>%
+      as_tibble() %>%
+      mutate(inst = colnames(models[[inst]]$data)[1],
+             BF = paste0(insight::format_bf(exp(log_BF), protect_ratio = T), ":\n",
+                         effectsize::interpret_bf(exp(log_BF), include_value = F))) %>%
+      pivot_wider(names_from = Parameter,
+                  values_from = c(log_BF, BF)) %>%
+      clean_names() %>%
+      select(-effects, -component)
+    stats <- bf
+    }
+
+    if (PD) {
+      pds <- models[[inst]] %>%
+        pd() %>%
+        as_tibble() %>%
+        mutate(inst = colnames(models[[inst]]$data)[1]) %>%
+        pivot_wider(names_from = Parameter, values_from = pd) %>%
+        clean_names()
+      stats <- pds
+    }
+
+    if (BF & PD){
+      stats <- pds %>% left_join(bf, .)
+      }
+
+    if(nrow(stats) > 0) {
+      plot_categories %<>% bind_cols(stats)
+    }
+
     plotting <- bind_rows(plot_categories, plotting)
   }
 
@@ -404,7 +468,8 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
       ) %>%
       arrange(institution) %>%
       mutate(institution_facet_name = fct_inorder(institution_facet_name))
-  } else {
+
+    } else {
     plotting %<>%
       mutate(
         significant = ifelse(lower < 0 & upper > 0, "no", "yes"),
