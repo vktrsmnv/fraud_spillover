@@ -309,7 +309,7 @@ plt <- pp %>%
       xmax = upper,
       y = category,
       color = condition,
-      shape = condition,
+      # shape = condition,
       alpha = significant
     ),
     position = position_dodge(1),
@@ -469,7 +469,7 @@ plt <- pp %>%
                 label = paste0(bf_b_condition_control %>%
                   str_replace("evidence ", "evidence\n"), " H1"),
                 y = "None\nat all"),
-            size = 2.1,
+            size = 2.7,
             nudge_y = -0.18,
             label.size = 0.05,
             lineheight = 0.8,
