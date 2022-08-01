@@ -555,7 +555,8 @@ setup <- function() {
     "tidybayes",
     "tidyverse",
     "tikzDevice",
-    "viridis"
+    "viridis",
+    "ggh4x"
   )
 
   packages <- rownames(installed.packages())

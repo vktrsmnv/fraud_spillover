@@ -138,6 +138,67 @@ for (s in unique(model_files$sample)){
 
 ## Pooled Sample ####
 ### Political ####
+
+## Pooled Sample (Full) ####
+### Political ####
+pp <-
+  prep_plotting("output/ol_main_pol.rds",
+                output = "probs",
+                model = "condition",
+                BF = FALSE
+  )
+
+plt <- pp %>%
+  filter(condition %in% c("Fraud", "Control")) %>%
+  # mutate(condition = factor(condition, levels = c("Control",
+  #                                                 "Fraud",
+  #                                                 "Punishment",
+  #                                                 "Judicial Punishment"))) %>%
+  ggplot() +
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = condition,
+      # shape = condition,
+      # alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
+  facet_wrap(
+    . ~(institution_facet_name),
+    # rows = vars(condition),
+    ncol = 4
+  ) +
+  scale_color_manual(values = plasma(4, end = 0.8)[c(1, 2, 4:3)]) +
+  scale_shape_manual(values = c(16, 15, 17, 8)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category)"
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  guides(
+    color = "none",
+    alpha = "none",
+    shape = "none"
+  )
+
+plt
+ggsave(plt,
+       filename = paste0("figs/probs_pooled.png"),
+       height = 5,
+       width = 10
+)
+
+
 pp <-
   prep_plotting("output/ol_main_pol.rds",
                 output = "probs",
@@ -967,6 +1028,65 @@ sensitivity_to_prior(mpol$pol_inst_CEC)
 #   width = 10
 # )
 
+pp <-
+  prep_plotting("output/ol_cond_pol_int.rds",
+                output = "probs",
+                model = "condition + opponent + questnnr",
+                BF = FALSE,
+                PD = TRUE
+  )
 
+plt <- pp %>%
+  filter(
+    condition %in% c("Control", "Fraud"),
+    institution %in% levels(pp$institution)
+  ) %>%
+  mutate(questnnr = str_to_title(questnnr), condition = fct_recode(condition, "Judicial\nPunishment" = "Judicial Punishment")) %>%
+  ggplot() +
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = condition,
+      shape = opponent,
+      alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
+  facet_grid(
+    vars(institution_facet_name),
+    rows = vars(questnnr, opponent),
+    # ncol = 4
+  ) +
+  scale_color_viridis(
+    discrete = T,
+    option = "C",
+    end = 0.8
+  ) +
+  scale_shape_manual(values = c(15, 17, 16)) +
+  scale_alpha_manual(values = c(1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category|Fraud) - Probability(Category|Condition)"
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  geom_vline(
+    xintercept = 0,
+    alpha = 0.5
+  ) +
+  guides(
+    # color = "none",
+    alpha = "none",
+    shape = "none"
+  )
+
+plt
 
 # Conditional Effect: Political Institutions ####
