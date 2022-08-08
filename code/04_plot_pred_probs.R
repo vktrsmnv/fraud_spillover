@@ -186,7 +186,7 @@ plt <- pp %>%
     title = ""
   ) +
   guides(
-    color = "none",
+    # color = "none",
     alpha = "none",
     shape = "none"
   )
@@ -1071,15 +1071,11 @@ plt <- pp %>%
   labs(
     y = "Confidence",
     x = paste0(
-      "Probability(Category|Fraud) - Probability(Category|Condition)"
+      "Probability(Category)"
     ),
     shape = "",
     color = "",
     title = ""
-  ) +
-  geom_vline(
-    xintercept = 0,
-    alpha = 0.5
   ) +
   guides(
     # color = "none",
@@ -1088,5 +1084,10 @@ plt <- pp %>%
   )
 
 plt
+ggsave(plt,
+       filename = paste0("figs/probs_pooled_int.png"),
+       height = 10,
+       width = 10
+)
 
 # Conditional Effect: Political Institutions ####

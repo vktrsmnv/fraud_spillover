@@ -844,7 +844,7 @@ plt <- pp %>%
 plt
 ggsave(plt,
   filename = paste0("figs/diffs_pooled_int.png"),
-  height = 10,
+  height = 12,
   width = 10
 )
 

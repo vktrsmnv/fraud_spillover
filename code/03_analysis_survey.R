@@ -462,6 +462,8 @@ model_calc(
     prior(normal(0, 5), class = "Intercept")
 )
 
+### Correct cases only sample ####
+
 model_calc(
   data = data_la %>%
     bind_rows(., data_rus) %>%
@@ -481,10 +483,23 @@ model_calc(
   inst = pol,
   IVs = "condition * opponent + questnnr",
   model = "ol",
-  name = paste0("cond_pol_fe"),
+  name = paste0("cond_pol_int_fe"),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
+
+model_calc(
+  data = data_la %>% bind_rows(., data_rus) %>%
+    filter(attention_check == "Summary"),
+  inst = pol,
+  IVs = "condition * opponent + questnnr",
+  model = "ol",
+  name = paste0("cond_pol_int_fe_correct"),
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+### Full combined sample with interaction ####
 
 model_calc(
   data = data_la %>% bind_rows(., data_rus),
@@ -493,7 +508,7 @@ model_calc(
   model = "ol",
   iter = 15000,
   warmup = 12500,
-  name = paste0("cond_pol_int"),
+  name = paste0("cond_pol_ints"),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
@@ -507,7 +522,7 @@ model_calc(
   model = "ol",
   iter = 15000,
   warmup = 12500,
-  name = paste0("cond_pol_int_correct"),
+  name = paste0("cond_pol_ints_correct"),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
