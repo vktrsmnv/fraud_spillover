@@ -367,7 +367,7 @@ We run a set of four Markov chains out of which we discard the first 3,500 as wa
 \subsection*{Empirical Results}
 
 Due to the nature of the dependent variable, we use ordered logistic regression to evaluate the effects of fraud and punishment information on trust in institutions. 
-To facilitate the substantive interpretation of the estimates, we calculate individuals' probabilities of selecting each of the four answer categories, from \textit{A great deal} to \textit{None at all}, in evaluating institutional trust using draws from expectation of the posterior predictive distributions. Figures \ref{fig:probs-1} and \ref{fig:probs-2} depict these quantities. 
+To facilitate the substantive interpretation of the estimates, we calculate individuals' probabilities of selecting each of the four answer categories, from \textit{A great deal} to \textit{None at all}, in evaluating institutional trust using draws from expectation of the posterior predictive distributions. Figures \ref{fig:probs_ol_main_pol} and \ref{fig:probs-2} depict these quantities. 
 To test the hypotheses, we then calculate the differences in probabilities for each of the answer-category between those respondents who received fraud information alone and those assigned to another condition--control or one of the punishment conditions. 
 These quantities allow us to compare the effects substantively to our main scenario of interest--exposure to explicit fraud information alone--and evaluate the spillover and compare its sizes in a meaningful way. 
 Computed differences between the control and fraud condition serve to evaluate the first hypothesis: negative effect of explicit fraud information would be depicted as negative values for high-trust categories and positive values for low-trust categories. 
@@ -381,25 +381,25 @@ Differences for the two punishment conditions calculated separately for opponent
 
 % Given that for one of the punishment conditions another institution of a political system is explicitly mentioned, extrapolation may be more likely to occur there, which is why we treat these conditions separately in the analysis. 
 
-We present the results for pooled data from all three countries under investigation: figure \ref{fig:probs-pooled} contains the raw probabilities of selecting an answer-category for the full sample of over 2000 respondents, and the main specification from equation \ref{eq:specification}. 
+We present the results for pooled data from all three countries under investigation: figure \ref{fig:probs_ol_main_pol} contains the raw probabilities of selecting an answer-category for the full sample of over 2000 respondents, and the main specification from equation \ref{eq:specification}. 
 The sample size varies with the number of complete observations per institution. 
 We can spot that lower trust categories are more likely to be selected in both conditions, meaning that pre-existing confidence in institutions is not likely to be high. 
+We also observe some variation in trust across the institutions: in general, confidence in the President and armed forces seems to be the highest among political institutions for respondents in both the \textit{Control} and \textit{Fraud} conditions. 
+
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth,trim=4 4 4 4,clip]{figs/probs_pooled.png}
 	\caption{The Effects of Exposure to Fraud Information on Confidence in Political Institutions.  \\
-		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous intervals for differences in probabilities for choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated with ordered logit model estimates.
-			%  Positive values on the horizontal axis indicate that the probability of selecting a category is higher in fraud condition than in the other one. Conversely, negative values mean that respondent's probability to choose this was lower in fraud condition. 
-			Dashed line schematically depicts the hypothesized relationship between categories, i.e. point estimates would loosely follow the pattern of the dashed line if the relationship between trust and fraud information is as expected. Transparent point ranges include zero in the 89\% HDCI.
-	Data were collected in April-June 2021 via an original online survey. } }
+		\footnotesize{Notes: Plots depict medians and 89\% highest-density continuous intervals for probabilities of choosing respective categories based on draws from the expectation of the posterior predictive distributions. Probabilities are calculated with ordered logit model estimates.
+		Transparent point ranges include zero in the 89\% HDCI. } }
 	\singlespacing
 	\raggedright
-	\label{fig:main}
+	\label{fig:probs_ol_main_pol}
 \end{figure}
 
 
-Figure \ref{fig:diffs-pooled} thus depicts the respective differences between conditions. 
+To further explore the effect of treatments, figure \ref{fig:diffs-pooled} depicts the respective differences between conditions. 
 The dashed line schematically depicts the hypothesized effect, i.e. the point estimates should be somewhat following this trend if the hypothesis is supported by the data. 
 Transparent point ranges include zero in the 89\% highest-density continuous intervals (HDCI). 
 
@@ -419,14 +419,14 @@ Transparent point ranges include zero in the 89\% highest-density continuous int
 \end{figure}
 
 
-The results presented in figure \ref{fig:main} are in line with the expectation of the detrimental effect of fraud information on diffuse support for political institutions, consistent with hypothesis 1. 
+The results are in line with the expectation of the detrimental effect of fraud information on diffuse support for political institutions, consistent with hypothesis 1. 
 Though somewhat modest in size, point estimates for differences are negative for categories indicating higher levels of trust, i.e. the probability of demonstrating more confidence in institutions is higher when being exposed to the control condition than when exposed to the fraud information, and vice versa for the categories for lower trust. 
-While unsurprisingly, the largest differences are present for the central electoral commissions, directly associated with conduct of elections, the differences for all but one political institution--the police--are significantly different from zero, basing on a 89\% HDCIs, which points toward the presence of spillover effects. 
-We would expect an average respondent to have little direct contact with most political institutions we study, yet one could argue that the police, is, potentially, the institution with which respondents are more likely to interact directly in their daily life. 
-For that reason, trust in police may be impacted through these experiences stronger than trust in other institutions, making the spillover for the police less pronounced. 
+While unsurprisingly, the largest differences are present for the central electoral commissions, which are directly associated with conduct of elections, the differences for all but one political institution--the police--are significantly different from zero, basing on a 89\% HDCIs, which points toward the presence of spillover effects. 
+We would expect an average respondent to have little direct contact with most political institutions we study, yet one could argue that the police, is, potentially, the institution with which respondents are more likely to interact in their daily life. 
+For that reason, trust in police may be impacted through these experiences, or the sheer possibility of them, stronger than trust in other institutions, making the spillover for the police less pronounced. 
 
 Stepping back from the quantities of interest to the coefficients, for all of these models, the probability of direction of the effect for the \textit{Control} variable, computed as the percentage of the portion of the posterior of the same sign as median represents (\citealt{Makowski2019}) ranges from 0.91 to 1.0, which indicates high certainty in the effect's existence.
-The Bayes factor calculated for the directional null and complimentary hypotheses (\citealt{_sectionGill2020, Morey2014}), i.e. $BF= \dfrac{P( \text{Data} | \beta_1 \in (0, +\infty))}{ P( \text{Data} |\beta_1 \in (-\infty, 0])}$,  provides further evidence for negative effect of fraud on trust in various political institutions (figure \ref{fig:main} contains the exact Bayes factor values and the relative interpretations based on \citealt{Jeffreys1998}). Overall, we can conclude that on average, our data provides evidence for fraud information hindering confidence in political system.  
+The Bayes factor calculated for the directional null and complimentary hypotheses (\citealt{_sectionGill2020, Morey2014}), i.e. $BF= \dfrac{P( \text{Data} | \beta_1 \in (0, +\infty))}{ P( \text{Data} |\beta_1 \in (-\infty, 0])}$,  provides further evidence for negative effect of fraud on trust in various political institutions (figure \ref{fig:main} contains the exact Bayes factor values and the relative interpretations based on \citealt{Jeffreys1998}). Overall, we can conclude that our data provides evidence for the hindering effect of fraud information on confidence in political system's elements.  
 
 In addition to main analysis, we explore the relationship between fraud information and confidence in more detail. 
 First, we find some variation across the countries in our sample when it comes to the effect of fraud once we allow for heterogeneous effects of conditions across the three countries with an interaction effect (figure \ref{fig:diffs-pooled-int} in Appendix contains the results): while in one of the new democracies, Colombia, we only observe the effects of fraud for the electoral commission and the president, in autocratic Russia and, even more so in democratic Mexico we find more widespread consequences of fraud information. 
