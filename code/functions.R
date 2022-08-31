@@ -168,12 +168,14 @@ mediation_calc <- function(data,
 prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
                           model = "condition",
                           output = "diffs",
+                          baseline = "Fraud",
                           ci = 0.89,
                           PD = TRUE,
                           BF = FALSE) {
   models <- read_rds(path)
   insts <- names(models)
   plotting <- tibble()
+  sup_opp <- tibble()
 
   for (inst in insts) {
     if (model == "condition") {
@@ -184,6 +186,14 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
         )
 
       plot_categories <- models[[inst]]$data %>%
+        data_grid(
+          median = NA,
+          lower = NA,
+          upper = NA,
+          condition,
+          category = 1:4
+        )
+      sup_op_diff <- models[[inst]]$data %>%
         data_grid(
           median = NA,
           lower = NA,
@@ -208,6 +218,14 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           questnnr,
           category = 1:4
         )
+      sup_op_diff <- models[[inst]]$data %>%
+        data_grid(
+          median = NA,
+          lower = NA,
+          upper = NA,
+          condition,
+          category = 1:4
+        )
     }
     if (model == "condition + opponent") {
       esoph_plot <- models[[inst]]$data %>%
@@ -223,6 +241,15 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           upper = NA,
           condition,
           opponent,
+          category = 1:4
+        )
+
+      sup_op_diff <- models[[inst]]$data %>%
+        data_grid(
+          median = NA,
+          lower = NA,
+          upper = NA,
+          condition,
           category = 1:4
         )
     }
@@ -241,6 +268,14 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           condition,
           questnnr,
           opponent,
+          category = 1:4
+        )
+      sup_op_diff <- models[[inst]]$data %>%
+        data_grid(
+          median = NA,
+          lower = NA,
+          upper = NA,
+          condition,
           category = 1:4
         )
     }
@@ -326,7 +361,7 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
               plot_categories[plot_categories$category == num &
                 plot_categories$questnnr == cntr &
                 plot_categories$condition == cnd, 1:3] <-
-                median_hdci(esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+                median_hdci(esoph_plot$.epred[esoph_plot$condition == baseline &
                   esoph_plot$questnnr == cntr &
                   esoph_plot$Trust == num] -
                   esoph_plot$.epred[esoph_plot$condition == cnd &
@@ -337,7 +372,7 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
             }
           }
         }
-        plot_categories %<>% filter(condition != "Fraud")
+        plot_categories %<>% filter(condition != baseline)
       }
       if (model == "condition + opponent + questnnr") {
         for (num in 1:4) {
@@ -348,7 +383,7 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
                                 plot_categories$questnnr == cntr &
                                 plot_categories$opponent == tp &
                                 plot_categories$condition == cnd, 1:3] <-
-                median_hdci(esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+                median_hdci(esoph_plot$.epred[esoph_plot$condition == baseline &
                                                 esoph_plot$questnnr == cntr &
                                                 esoph_plot$opponent == tp &
                                                 esoph_plot$Trust == num] -
@@ -362,14 +397,14 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           }
           }
         }
-        plot_categories %<>% filter(condition != "Fraud")
+        plot_categories %<>% filter(condition != baseline)
       }
       if (model == "condition") {
         for (num in 1:4) {
           for (cnd in unique(plot_categories$condition)) {
             plot_categories[plot_categories$category == num &
               plot_categories$condition == cnd, 1:3] <-
-              median_hdci(esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+              median_hdci(esoph_plot$.epred[esoph_plot$condition == baseline &
                 esoph_plot$Trust == num] -
                 esoph_plot$.epred[esoph_plot$condition == cnd &
                   esoph_plot$Trust == num],
@@ -385,7 +420,7 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
               plot_categories[plot_categories$category == num &
                                 plot_categories$opponent == cntr &
                                 plot_categories$condition == cnd, 1:3] <-
-                median_hdci(esoph_plot$.epred[esoph_plot$condition == "Fraud" &
+                median_hdci(esoph_plot$.epred[esoph_plot$condition == baseline &
                                                 esoph_plot$opponent == cntr &
                                                 esoph_plot$Trust == num] -
                               esoph_plot$.epred[esoph_plot$condition == cnd &
@@ -396,9 +431,33 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
             }
           }
         }
-        plot_categories %<>% filter(condition != "Fraud")
+
+        plot_categories %<>% filter(condition != baseline)
+
+        for (num in 1:4) {
+          for (cnd in unique(sup_op_diff$condition)) {
+            sup_op_diff[sup_op_diff$category == num &
+                          sup_op_diff$condition == cnd, 1:3] <-
+              median_hdci((esoph_plot$.epred[esoph_plot$condition == baseline &
+                                              esoph_plot$opponent == "Yes" &
+                                              esoph_plot$Trust == num] -
+                            esoph_plot$.epred[esoph_plot$condition == cnd &
+                                                esoph_plot$opponent == "Yes" &
+                                                esoph_plot$Trust == num]) -
+                            (esoph_plot$.epred[esoph_plot$condition == baseline &
+                                              esoph_plot$opponent == "No" &
+                                              esoph_plot$Trust == num] -
+                            esoph_plot$.epred[esoph_plot$condition == cnd &
+                                                esoph_plot$opponent == "No" &
+                                                esoph_plot$Trust == num]),
+                          .width = ci
+              )[1:3]
+          }
+        }
+        sup_op_diff$institution <- inst
+
       }
-      plot_categories %<>% filter(condition != "Fraud")
+      plot_categories %<>% filter(condition != baseline)
 
     }
 
@@ -439,6 +498,7 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
     }
 
     plotting <- bind_rows(plot_categories, plotting)
+    sup_opp <- bind_rows(sup_op_diff, sup_opp)
   }
 
   if (str_detect(string = insts[1], pattern = "npol")) {
@@ -523,8 +583,8 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
         "Supporter"
       ))
   }
-  return(plotting)
-}
+  return(list("plotting" = plotting, "sup_opp" = sup_opp))
+  }
 
 setup <- function() {
   p_needed <- c(
