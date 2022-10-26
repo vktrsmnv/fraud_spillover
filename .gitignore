@@ -4,3 +4,5 @@
 .Ruserdata
 output
 .DS_Store
+.RDataTmp
+history.Rhistory

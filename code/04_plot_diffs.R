@@ -374,16 +374,12 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled.png"),
+  filename = paste0("figs/diffs_ol_main_pol.png"),
   height = 5,
   width = 10
 )
 
-### Political: Control Condition Only ####
-# pp <-
-#   prep_plotting("output/ol_main_pol.rds",
-#                 output = "diffs",
-#                 model = "condition")
+### * Political: Control Condition Only ####
 
 arrows <- data.frame(
   x1 = 0.19,
@@ -513,7 +509,7 @@ plt <- pp %>%
 plt
 
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled_control.png"),
+  filename = paste0("figs/diffs_ol_main_pol_control.png"),
   height = 6,
   width = 10
 )
@@ -574,7 +570,7 @@ plt <- pp %>%
   scale_alpha_manual(values = c(0.4, 1))
 plt
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled_npol.png"),
+  filename = paste0("figs/diffs_ol_main_npol.png"),
   height = 6,
   width = 10
 )
@@ -843,7 +839,7 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled_int.png"),
+  filename = paste0("figs/diffs_ol_main_pol_int.png"),
   height = 12,
   width = 10
 )
@@ -902,7 +898,7 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled_int_control.png"),
+  filename = paste0("figs/diffs_ol_main_pol_int_control.png"),
   height = 6,
   width = 10
 )
@@ -978,7 +974,7 @@ pp <-
   prep_plotting("output/ol_main_pol_correct.rds",
                 output = "diffs",
                 model = "condition",
-                # BF = TRUE
+                BF = TRUE
   )
 
 plt <- pp %>%
@@ -1030,7 +1026,7 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-       filename = paste0("figs/diffs_pooled_correct.png"),
+       filename = paste0("figs/diffs_ol_main_pol_correct.png"),
        height = 6,
        width = 10
 )
@@ -1072,7 +1068,7 @@ plt <- pp %>%
       xmax = upper,
       y = category,
       color = condition,
-      shape = condition,
+      # shape = condition,
       alpha = significant
     ),
     position = position_dodge(1),
@@ -1084,7 +1080,7 @@ plt <- pp %>%
     # rows = vars(condition),
     ncol = 4
   ) +
-  # scale_color_manual(values = plasma(4, end = 0.8)[c(1, 4:3)]) +
+  scale_color_manual(values = plasma(4, end = 0.8)[c(1, 4:3)]) +
   # scale_color_viridis(
   #   discrete = T,
   #   option = "C",
@@ -1152,11 +1148,11 @@ plt <- pp %>%
     nudge_y = 0.1,
     color = plasma(1, 0.7)
   ) +
-  xlim(-0.25, 0.25) +
+  # xlim(-0.25, 0.25) +
   geom_label(aes(
     x = -0.25,
     label = paste0(bf_b_condition_control %>%
-                     str_replace("evidence ", "evidence\n"), " H1"),
+                     str_replace("evidence ", "\nevidence\n"), " H1"),
     y = "None\nat all"
   ),
   size = 2.7,
@@ -1170,7 +1166,7 @@ plt <- pp %>%
 plt
 
 ggsave(plt,
-       filename = paste0("figs/diffs_pooled_control.png"),
+       filename = paste0("figs/diffs_ol_main_pol_correct_control.png"),
        height = 6,
        width = 10
 )
@@ -1236,11 +1232,70 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-       filename = paste0("figs/diffs_pooled_int_correct.png"),
+       filename = paste0("figs/diffs_ol_main_pol_int_correct.png"),
        height = 10.5,
        width = 10
 )
 
+### Political: Control Condition Only ####
+
+plt <- pp %>%
+  mutate(questnnr = str_to_title(questnnr),
+         condition = fct_recode(condition,
+                                "Judicial\nPunishment" = "Judicial Punishment")) %>%
+  filter(condition == "Control") %>%
+  ggplot() +
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = condition,
+      # shape = condition,
+      alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
+  facet_nested(
+    vars(institution_facet_name),
+    rows = vars(questnnr),
+    # ncol = 4
+  ) +
+  # scale_color_viridis(
+  #   discrete = T,
+  #   option = "C",
+  #   end = 0.8
+  # ) +
+  scale_color_manual(values = plasma(4, end = 0.8)[c(1, 4:3)]) +
+  scale_shape_manual(values = c(16, 15, 17, 8)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category|Fraud) - Probability(Category|Condition)"
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  geom_vline(
+    xintercept = 0,
+    alpha = 0.5
+  ) +
+  guides(
+    color = "none",
+    alpha = "none",
+    shape = "none"
+  )
+
+plt
+ggsave(plt,
+       filename = paste0("figs/diffs_ol_main_pol_int_correct_control.png"),
+       height = 6,
+       width = 10
+)
 # Conditional Effect ####
 
 ## Split Sample Analysis ####
@@ -1717,8 +1772,8 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled_cond.png"),
-  height = 6,
+  filename = paste0("figs/diffs_ol_cond_pol.png"),
+  height = 10,
   width = 10
 )
 
@@ -2028,7 +2083,7 @@ ggsave(plt,
 ## Pooled Sample with Interaction ####
 ### Political: Control ####
 pp <-
-  prep_plotting("output/ol_cond_pol_int.rds",
+  prep_plotting("output/ol_cond_pol_ints.rds",
     output = "diffs",
     model = "condition + opponent + questnnr",
     BF = FALSE,
@@ -2088,7 +2143,7 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled_cond_int_control.png"),
+  filename = paste0("figs/diffs_ol_cond_pol_ints_control.png"),
   height = 8,
   width = 10
 )
@@ -2109,7 +2164,7 @@ plt <- pp %>%
       xmax = upper,
       y = category,
       color = condition,
-      # shape = opponent,
+      shape = opponent,
       alpha = significant
     ),
     position = position_dodge(1),
@@ -2120,12 +2175,7 @@ plt <- pp %>%
     rows = vars(questnnr, opponent),
     # ncol = 4
   ) +
-  scale_color_viridis(
-    discrete = T,
-    option = "C",
-    end = 0.8,
-    direction = -1
-  ) +
+  scale_color_manual(values = plasma(4, end = 0.8)[c(4, 2)]) +
   # scale_shape_manual(values = c(15, 17)) +
   scale_alpha_manual(values = c(0.4, 1)) +
   labs(
@@ -2149,7 +2199,7 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-  filename = paste0("figs/diffs_pooled_cond_int_punishment.png"),
+  filename = paste0("figs/diffs_ol_cond_pol_ints_punishment.png"),
   height = 8,
   width = 10
 )
@@ -2216,4 +2266,137 @@ ggsave(plt,
   filename = paste0("figs/diffs_pooled_cond.png"),
   height = 6,
   width = 10
+)
+
+
+## Pooled Sample with Interaction (Correct Only)####
+### Political: Control ####
+pp <-
+  prep_plotting("output/ol_cond_pol_ints_correct.rds",
+                output = "diffs",
+                model = "condition + opponent + questnnr",
+                BF = FALSE,
+                PD = TRUE
+  )
+
+plt <- pp %>%
+  filter(
+    condition == "Control",
+    institution %in% levels(pp$institution)
+  ) %>%
+  mutate(questnnr = str_to_title(questnnr), condition = fct_recode(condition, "Judicial\nPunishment" = "Judicial Punishment")) %>%
+  ggplot() +
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = condition,
+      shape = opponent,
+      alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
+  facet_grid(
+    vars(institution_facet_name),
+    rows = vars(questnnr, opponent),
+    # ncol = 4
+  ) +
+  scale_color_viridis(
+    discrete = T,
+    option = "C",
+    end = 0.8
+  ) +
+  scale_shape_manual(values = c(15, 17, 16)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category|Fraud) - Probability(Category|Condition)"
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  geom_vline(
+    xintercept = 0,
+    alpha = 0.5
+  ) +
+  guides(
+    color = "none",
+    alpha = "none",
+    shape = "none"
+  )
+
+plt
+ggsave(plt,
+       filename = paste0("figs/diffs_pooled_cond_int_control_correct.png"),
+       height = 8,
+       width = 10
+)
+
+## Pooled Sample with Threeway Interaction ####
+pp <-
+  prep_plotting("output/ol_cond_pol_ints_threeway.rds",
+                output = "diffs",
+                model = "condition + opponent + questnnr",
+                BF = FALSE,
+                PD = TRUE
+  )
+
+plt <- pp %>%
+  filter(
+    condition != "Control",
+    institution %in% levels(pp$institution)
+  ) %>%
+  mutate(questnnr = str_to_title(questnnr),
+         condition = fct_recode(condition, "Judicial\nPunishment" = "Judicial Punishment")) %>%
+  ggplot() +
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = condition,
+      shape = opponent,
+      alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
+  facet_grid(
+    vars(institution_facet_name),
+    rows = vars(questnnr, opponent, condition),
+    # ncol = 4
+  ) +
+  scale_color_manual(values = plasma(4, end = 0.8)[c(4, 2)]) +
+  scale_shape_manual(values = c(15, 17, 16)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category|Fraud) - Probability(Category|Condition)"
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  geom_vline(
+    xintercept = 0,
+    alpha = 0.5
+  ) +
+  guides(
+    color = "none",
+    alpha = "none",
+    shape = "none"
+  )
+
+plt
+ggsave(plt,
+       filename = paste0("figs/diffs_pooled_cond_int_threeway_control_correct.png"),
+       height = 8,
+       width = 10
 )

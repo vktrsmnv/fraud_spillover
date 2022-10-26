@@ -21,6 +21,12 @@ data_rus <-
          fraud = as.character(fraud),
          punishment = as.character(punishment),
          judicial_punishment = as.character(judicial_punishment),
+         pol_election = case_when(
+           pol_election == 1 ~ 4, # None at all
+           pol_election == 2 ~ 3,
+           pol_election == 3 ~ 2,
+           pol_election == 4 ~ 1 # A great deal
+         ),
          condition = fct_relevel(condition,
                                  "Fraud",
                                  "Control",
@@ -41,6 +47,7 @@ data_la <- read_csv(here("data/LA_1.csv")) %>%
   mutate(opponent = as.character(opponent),
          fraud = as.character(fraud),
          punishment = as.character(punishment),
+         pol_election = as.numeric(pol_election),
          judicial_punishment = as.character(judicial_punishment),
          condition = fct_relevel(condition,
                                  "Fraud",
@@ -48,11 +55,17 @@ data_la <- read_csv(here("data/LA_1.csv")) %>%
                                  "Punishment",
                                  "Judicial Punishment"))
 pol <- data_rus %>%
-  dplyr::select(starts_with("pol_inst")) %>%
+  dplyr::select(starts_with("pol_")) %>%
   colnames()
 npol <- data_rus %>%
   dplyr::select(starts_with("npol_inst")) %>%
   colnames()
+
+
+data_comb <- data_la %>% bind_rows(., data_rus) %>%
+  mutate(condition = fct_collapse(condition,
+                                  Punishment = c("Punishment",
+                                                 "Judicial Punishment")))
 
 # 2. Main Analysis ####
 ## 2.0. Calculation Function ####
@@ -68,6 +81,7 @@ model_calc(
   inst = pol,
   IVs = "condition",
   model = "ol",
+  seed = 191022,
   name = paste0("main_ru_pol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
@@ -78,34 +92,35 @@ model_calc(
   IVs = "condition",
   inst = npol,
   model = "ol",
+  seed = 191022,
   name = paste0("main_ru_npol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
 
+#
+# ### Russia: restriction on data quality #1
+# data <- data_rus %>% filter(attention_check != "Unacceptable")
+# model_calc(
+#   data = data,
+#   inst = pol,
+#   IVs = "condition",
+#   model = "ol",
+#   name = paste0("main_ru_pol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+# model_calc(
+#   data = data,
+#   inst = npol,
+#   IVs = "condition",
+#   model = "ol",
+#   name = paste0("main_ru_npol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
 
-### Russia: restriction on data quality #1 ####
-data <- data_rus %>% filter(attention_check != "Unacceptable")
-model_calc(
-  data = data,
-  inst = pol,
-  IVs = "condition",
-  model = "ol",
-  name = paste0("main_ru_pol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-model_calc(
-  data = data,
-  inst = npol,
-  IVs = "condition",
-  model = "ol",
-  name = paste0("main_ru_npol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-
-### Russia: restriction on data quality #2 ####
+### Russia: only correct summaries ####
 data <- data_rus %>% filter(attention_check == "Summary")
 
 model_calc(
@@ -117,6 +132,7 @@ model_calc(
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
+
 model_calc(
   data = data,
   inst = npol,
@@ -126,6 +142,21 @@ model_calc(
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
+
+### Russia: full sample (one punishment) ####
+# model_calc(
+#   data = data_rus,
+#   inst = pol,
+#   cores = 4,
+#   IVs = "condition",
+#   model = "ol",
+#   name = "main_ru_pol_collapsed",
+#   prior = prior(normal(0, 5),
+#                 class = "b") +
+#     prior(normal(0, 5),
+#           class = "Intercept")
+# )
+
 
 ### LA: full sample ####
 data <- data_la
@@ -149,29 +180,42 @@ model_calc(
     prior(normal(0, 5), class = "Intercept")
 )
 
-
-### LA: restriction on data quality #1 ####
-data <- data_la %>% filter(attention_check != "Unacceptable")
+### LA: full sample (one punishment) ####
 model_calc(
-  data = data,
+  data = data_la,
   inst = pol,
+  cores = 4,
   IVs = "condition",
   model = "ol",
-  name = paste0("main_la_pol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-model_calc(
-  data = data,
-  inst = npol,
-  IVs = "condition",
-  model = "ol",
-  name = paste0("main_la_npol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
+  name = "main_la_pol_collapsed",
+  prior = prior(normal(0, 5),
+                class = "b") +
+    prior(normal(0, 5),
+          class = "Intercept")
 )
 
-### LA: restriction on data quality #2 ####
+# ### LA: restriction on data quality #1
+# data <- data_la %>% filter(attention_check != "Unacceptable")
+# model_calc(
+#   data = data,
+#   inst = pol,
+#   IVs = "condition",
+#   model = "ol",
+#   name = paste0("main_la_pol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+# model_calc(
+#   data = data,
+#   inst = npol,
+#   IVs = "condition",
+#   model = "ol",
+#   name = paste0("main_la_npol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+
+### LA: only correct summaries ####
 data <- data_la %>% filter(attention_check == "Summary")
 
 model_calc(
@@ -193,7 +237,18 @@ model_calc(
     prior(normal(0, 5), class = "Intercept")
 )
 
-### LA: dummy for country ####
+### LA: fixed effects ####
+model_calc(
+  data = data_la,
+  inst = pol,
+  IVs = "condition + questnnr",
+  model = "ol",
+  name = "main_pol_la_fe",
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+### LA: country-varying effects ####
 model_calc(
   data = data_la,
   inst = pol,
@@ -204,13 +259,15 @@ model_calc(
     prior(normal(0, 5), class = "Intercept")
 )
 
-### Full combined sample ####
+
+### Full sample ####
 model_calc(
   data = data_la %>% bind_rows(., data_rus),
   inst = pol,
   IVs = "condition",
   model = "ol",
   name = "main_pol",
+  seed = 191022,
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
@@ -221,37 +278,89 @@ model_calc(
   IVs = "condition",
   model = "ol",
   name = "main_npol",
+  seed = 191022,
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
-
-### Full combined sample with FE ####
 model_calc(
-  data = data_la %>% bind_rows(., data_rus),
+  data = data_la %>%
+    bind_rows(., data_rus) %>%
+    filter(attention_check != "Unacceptable"),
   inst = pol,
-  IVs = "condition + questnnr",
+  IVs = "condition",
   model = "ol",
-  name = "main_pol_fe",
+  seed = 191022,
+  name = "main_pol_cut",
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
 
 model_calc(
-  data = data_la %>% bind_rows(., data_rus),
+  data = data_la %>%
+    bind_rows(., data_rus) %>%
+    filter(attention_check != "Unacceptable"),
   inst = npol,
-  IVs = "condition + questnnr",
+  IVs = "condition",
   model = "ol",
-  name = "main_npol_fe",
+  seed = 191022,
+  name = "main_npol_cut",
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
 
-### Full combined sample with interaction ####
+
+# ### Full sample (one punishment) ####
+# model_calc(
+#   data = data_comb,
+#   inst = pol,
+#   cores = 4,
+#   IVs = "condition",
+#   model = "ol",
+#   name = "main_pol_collapsed",
+#   prior = prior(normal(0, 5),
+#                 class = "b") +
+#     prior(normal(0, 5),
+#           class = "Intercept")
+# )
+#
+# model_calc(
+#   data = data_la %>% bind_rows(., data_rus),
+#   inst = npol,
+#   IVs = "condition",
+#   model = "ol",
+#   name = "main_npol",
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+#
+# ### Full sample with FE
+# model_calc(
+#   data = data_la %>% bind_rows(., data_rus),
+#   inst = pol,
+#   IVs = "condition + questnnr",
+#   model = "ol",
+#   name = "main_pol_fe",
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+#
+# model_calc(
+#   data = data_la %>% bind_rows(., data_rus),
+#   inst = npol,
+#   IVs = "condition + questnnr",
+#   model = "ol",
+#   name = "main_npol_fe",
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+
+### Full sample with interaction ####
 model_calc(
   data = data_la %>% bind_rows(., data_rus),
   inst = pol,
   IVs = "condition * questnnr",
   model = "ol",
+  seed = 191022,
   name = "main_pol_int",
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
@@ -262,32 +371,62 @@ model_calc(
   inst = npol,
   IVs = "condition * questnnr",
   model = "ol",
+  seed = 191022,
   name = "main_npol_int",
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
 
-### Mexico only ####
+
+### Full sample  (correct only) ####
+
 model_calc(
-  data = data_la[data_la$questnnr == "mexico",],
+  data = data_la %>% bind_rows(., data_rus) %>%
+    filter(attention_check == "Summary"),
   inst = pol,
+  cores = 4,
+  seed = 191022,
   IVs = "condition",
   model = "ol",
-  name = "main_la_pol_mexico",
+  name = "main_pol_correct",
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
 
-### Colombia only ####
+### Full combined sample with interaction (correct only) ####
 model_calc(
-  data = data_la[data_la$questnnr == "colombia",],
+  data = data_la %>% bind_rows(., data_rus) %>%
+    filter(attention_check == "Summary"),
   inst = pol,
-  IVs = "condition",
+  IVs = "condition * questnnr",
   model = "ol",
-  name = "main_la_pol_colombia",
+  seed = 191022,
+  name = "main_pol_int_correct",
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
+#
+# ### Mexico only
+# model_calc(
+#   data = data_la[data_la$questnnr == "mexico",],
+#   inst = pol,
+#   IVs = "condition",
+#   model = "ol",
+#   name = "main_la_pol_mexico",
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+#
+# ### Colombia only
+# model_calc(
+#   data = data_la[data_la$questnnr == "colombia",],
+#   inst = pol,
+#   IVs = "condition",
+#   model = "ol",
+#   name = "main_la_pol_colombia",
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
 
 ### Russia: hierarchical ####
 data <- data_rus %>%
@@ -298,10 +437,7 @@ model_calc(
   inst = pol,
   IVs = "(1 | condition)",
   model = "ol",
-  name = paste0("main_ru_pol_ml_", nrow(data)),
-  prior = prior(normal(0, 5), class = "r") +
-    prior(normal(0, 5), class = "Intercept") +
-    prior(normal(0, 5), class = "b")
+  name = paste0("main_ru_pol_ml_", nrow(data))
 )
 
 ### LA: hierarchical ####
@@ -313,10 +449,7 @@ model_calc(
   inst = pol,
   IVs = "(1 | condition)",
   model = "ol",
-  name = paste0("main_la_pol_ml_", nrow(data)),
-  prior = prior(normal(0, 5), class = "r") +
-    prior(normal(0, 5), class = "Intercept") +
-    prior(normal(0, 5), class = "b")
+  name = paste0("main_la_pol_ml_", nrow(data))
 )
 
 
@@ -331,36 +464,38 @@ model_calc(
   inst = pol,
   IVs = IVs,
   model = "ol",
+  seed = 191022,
   name =  paste0("cond_ru_pol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
+# model_calc(
+#   data = data,
+#   inst = npol,
+#   IVs = IVs,
+#   model = "ol",
+#   name = paste0("cond_ru_npol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+#
+# ### Russia: restriction on data quality #1
+# data <- data_rus %>% filter(attention_check != "Unacceptable")
+# model_calc(
+#   data = data,
+#   inst = pol,
+#   IVs = IVs,
+#   model = "ol",
+#   name =  paste0("cond_ru_pol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
 model_calc(
   data = data,
   inst = npol,
   IVs = IVs,
   model = "ol",
-  name = paste0("cond_ru_npol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-
-### Russia: restriction on data quality #1 ####
-data <- data_rus %>% filter(attention_check != "Unacceptable")
-model_calc(
-  data = data,
-  inst = pol,
-  IVs = IVs,
-  model = "ol",
-  name =  paste0("cond_ru_pol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-model_calc(
-  data = data,
-  inst = npol,
-  IVs = IVs,
-  model = "ol",
+  seed = 191022,
   name = paste0("cond_ru_npol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
@@ -373,19 +508,20 @@ model_calc(
   inst = pol,
   IVs = IVs,
   model = "ol",
+  seed = 191022,
   name =  paste0("cond_ru_pol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
-model_calc(
-  data = data,
-  inst = npol,
-  IVs = IVs,
-  model = "ol",
-  name = paste0("cond_ru_npol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
+# model_calc(
+#   data = data,
+#   inst = npol,
+#   IVs = IVs,
+#   model = "ol",
+#   name = paste0("cond_ru_npol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
 
 ### LA: full sample ####
 data <- data_la
@@ -394,40 +530,41 @@ model_calc(
   inst = pol,
   IVs = IVs,
   model = "ol",
+  seed = 191022,
   name =  paste0("cond_la_pol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
-model_calc(
-  data = data,
-  inst = npol,
-  IVs = IVs,
-  model = "ol",
-  name = paste0("cond_la_npol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
+# model_calc(
+#   data = data,
+#   inst = npol,
+#   IVs = IVs,
+#   model = "ol",
+#   name = paste0("cond_la_npol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
 
-### LA: restriction on data quality #1 ####
-data <- data_la %>% filter(attention_check != "Unacceptable")
-model_calc(
-  data = data,
-  inst = pol,
-  IVs = IVs,
-  model = "ol",
-  name =  paste0("cond_la_pol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-model_calc(
-  data = data,
-  inst = npol,
-  IVs = IVs,
-  model = "ol",
-  name = paste0("cond_la_npol_", nrow(data)),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
+# ### LA: restriction on data quality #1
+# data <- data_la %>% filter(attention_check != "Unacceptable")
+# model_calc(
+#   data = data,
+#   inst = pol,
+#   IVs = IVs,
+#   model = "ol",
+#   name =  paste0("cond_la_pol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+# model_calc(
+#   data = data,
+#   inst = npol,
+#   IVs = IVs,
+#   model = "ol",
+#   name = paste0("cond_la_npol_", nrow(data)),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
 
 ### LA: restriction on data quality #2 ####
 data <- data_la %>% filter(attention_check == "Summary")
@@ -436,6 +573,7 @@ model_calc(
   inst = pol,
   IVs = IVs,
   model = "ol",
+  seed = 191022,
   name =  paste0("cond_la_pol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
@@ -450,14 +588,26 @@ model_calc(
     prior(normal(0, 5), class = "Intercept")
 )
 
-
-### Full combined sample ####
+### Full Sample: collapsed ####
 model_calc(
-  data = data_la %>% bind_rows(., data_rus),
+  data = data_comb,
+  inst = pol,
+  IVs = IVs,
+  model = "ol",
+  name =  paste0("cond_pol_collapsed"),
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+### Full sample ####
+model_calc(
+  data = data_la %>%
+    bind_rows(., data_rus),
   inst = pol,
   IVs = "condition * opponent",
   model = "ol",
   name = "cond_pol",
+  seed = 191022,
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
@@ -471,44 +621,71 @@ model_calc(
   inst = pol,
   IVs = "condition * opponent",
   model = "ol",
+  seed = 191022,
   name = "cond_pol_correct",
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
 
+#
+# ### Full combined sample with interaction ####
+# model_calc(
+#   data = data_la %>% bind_rows(., data_rus),
+#   inst = pol,
+#   IVs = "condition * opponent + questnnr",
+#   model = "ol",
+#   name = paste0("cond_pol_int_fe"),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+#
+# model_calc(
+#   data = data_la %>% bind_rows(., data_rus) %>%
+#     filter(attention_check == "Summary"),
+#   inst = pol,
+#   IVs = "condition * opponent + questnnr",
+#   model = "ol",
+#   name = paste0("cond_pol_int_fe_correct"),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+#
+# ### Full combined sample with interaction ####
+#
+# model_calc(
+#   data = data_la %>% bind_rows(., data_rus),
+#   inst = pol,
+#   IVs = "condition * opponent + condition * questnnr",
+#   model = "ol",
+#   iter = 15000,
+#   warmup = 12500,
+#   name = paste0("cond_pol_ints"),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
+#
+# model_calc(
+#   data = data_la %>%
+#     bind_rows(., data_rus) %>%
+#     filter(attention_check == "Summary"),
+#   inst = pol,
+#   IVs = "condition * opponent + condition * questnnr",
+#   model = "ol",
+#   iter = 15000,
+#   warmup = 12500,
+#   name = paste0("cond_pol_ints_correct"),
+#   prior = prior(normal(0, 5), class = "b") +
+#     prior(normal(0, 5), class = "Intercept")
+# )
 
-### Full combined sample with interaction ####
+### Full combined sample with triple interaction ####
+
 model_calc(
   data = data_la %>% bind_rows(., data_rus),
   inst = pol,
-  IVs = "condition * opponent + questnnr",
+  IVs = "condition * opponent * questnnr",
   model = "ol",
-  name = paste0("cond_pol_int_fe"),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-
-model_calc(
-  data = data_la %>% bind_rows(., data_rus) %>%
-    filter(attention_check == "Summary"),
-  inst = pol,
-  IVs = "condition * opponent + questnnr",
-  model = "ol",
-  name = paste0("cond_pol_int_fe_correct"),
-  prior = prior(normal(0, 5), class = "b") +
-    prior(normal(0, 5), class = "Intercept")
-)
-
-### Full combined sample with interaction ####
-
-model_calc(
-  data = data_la %>% bind_rows(., data_rus),
-  inst = pol,
-  IVs = "condition * opponent + condition * questnnr",
-  model = "ol",
-  iter = 15000,
-  warmup = 12500,
-  name = paste0("cond_pol_ints"),
+  name = paste0("cond_pol_ints_threeway"),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
@@ -518,15 +695,14 @@ model_calc(
     bind_rows(., data_rus) %>%
     filter(attention_check == "Summary"),
   inst = pol,
-  IVs = "condition * opponent + condition * questnnr",
+  IVs = "condition * opponent * questnnr",
   model = "ol",
   iter = 15000,
   warmup = 12500,
-  name = paste0("cond_pol_ints_correct"),
+  name = paste0("cond_pol_ints_threeway_correct"),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
-
 
 # 3. Additional Specifications ####
 ## 3.1. With involvement ####
@@ -534,11 +710,12 @@ model_calc(
 IVs <- c("condition*involvement")
 data <- data_rus
 model_calc(
-  data = data,
+  data = data_la %>% bind_rows(., data_rus),
   inst = pol,
   IVs = IVs,
   model = "ol",
-  name = paste0("involvement_ru_pol_", nrow(data)),
+  seed = 191022,
+  name = paste0("involvement_pol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
@@ -591,6 +768,7 @@ model_calc(
   data = data,
   inst = pol,
   IVs = IVs,
+  seed = 191022,
   model = "ol",
   name = paste0("controls_ru_pol_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
@@ -618,6 +796,7 @@ model_calc(
   data = data_la %>% bind_rows(., data_rus),
   inst = pol,
   IVs = IVs,
+  seed = 191022,
   model = "ol",
   name = paste0("controls_pooled"),
   prior = prior(normal(0, 5), class = "b") +
@@ -626,13 +805,15 @@ model_calc(
 
 
 ## 3.3. Opponent Specification ######
-IVs <- c("condition*UR")
+IVs <- c("condition*opponent")
 
-data <- data_rus
+data <- data_rus %>%
+  mutate(opponent = UR)
 model_calc(
   data = data,
   inst = pol,
   IVs = IVs,
+  seed = 191022,
   model = "ol",
   name =  paste0("cond_ru_pol_UR_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
@@ -642,11 +823,13 @@ model_calc(
 data <- data_rus %>%
   filter(attention_check == "Summary")
 model_calc(
-  data = data,
+  data = data %>%
+    filter(attention_check == "Summary"),
   inst = pol,
   IVs = IVs,
+  seed = 191022,
   model = "ol",
-  name =  paste0("cond_ru_pol_UR_", nrow(data)),
+  name =  paste0("cond_ru_pol_UR_corect_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
     prior(normal(0, 5), class = "Intercept")
 )
@@ -654,11 +837,13 @@ model_calc(
 IVs <- c("condition*pa14")
 
 data <- data_rus %>%
-  mutate(pa14 = as.character(pa14))
+  mutate(pa14 = as.character(pa14),
+         opponent = pa14)
 model_calc(
   data = data,
   inst = pol,
   IVs = IVs,
+  seed = 191022,
   model = "ol",
   name =  paste0("cond_ru_pol_pa14_", nrow(data)),
   prior = prior(normal(0, 5), class = "b") +
@@ -874,4 +1059,79 @@ mediation_calc(
   IVs = "conditionControl + conditionJudicialPunishment + conditionPunishment",
   model = "ol",
   name = paste0("mediation_la_pol_", nrow(data))
+)
+
+
+# 5. Elections ####
+
+model_calc(
+  data = data_la %>% bind_rows(., data_rus) %>%
+    mutate(pol_election = as.numeric(as.character(pol_election))),
+  inst = pol[9],
+  IVs = "condition",
+  model = "ol",
+  name = "main_pol_election",
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+model_calc(
+  data = data_la %>% bind_rows(., data_rus) %>%
+    mutate(pol_election = as.numeric(as.character(pol_election))) %>%
+    filter(attention_check == "Summary"),
+  inst = pol[9],
+  IVs = "condition",
+  model = "ol",
+  name = "main_pol_correct_election",
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+data <- data_rus %>%
+  mutate(pol_election = as.numeric(as.character(pol_election)))
+model_calc(
+  data = data,
+  inst = pol[9],
+  IVs = "condition",
+  model = "ol",
+  name = paste0("main_ru_pol_election_", nrow(data)),
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+data <- data_la %>%
+  mutate(pol_election = as.numeric(as.character(pol_election)))
+model_calc(
+  data = data,
+  inst = pol[9],
+  IVs = "condition",
+  model = "ol",
+  name = paste0("main_la_pol_election_", nrow(data)),
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+model_calc(
+  data = data_la %>%
+    bind_rows(., data_rus) %>%
+    mutate(pol_election = as.numeric(as.character(pol_election))),
+  inst = pol[9],
+  IVs = "condition * opponent",
+  model = "ol",
+  name = "cond_pol_election",
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
+)
+
+model_calc(
+  data = data_la %>%
+    bind_rows(., data_rus) %>%
+    mutate(pol_election = as.numeric(as.character(pol_election))) %>%
+    filter(attention_check == "Summary"),
+  inst = pol[9],
+  IVs = "condition * opponent",
+  model = "ol",
+  name = "cond_pol_correct_election",
+  prior = prior(normal(0, 5), class = "b") +
+    prior(normal(0, 5), class = "Intercept")
 )

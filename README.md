@@ -9,7 +9,7 @@ Consciousness of election fraud has been shown to let individuals withdraw suppo
 ---
 ### Our Survey Experiment
 
-We conducted an online survey experiment in Russia and two Latin American countries, Colombia and Mexico, in March-June 2021 with a total of 2042 participants recruited via a crowdsourcing platform [Yandex.Toloka](https://toloka.yandex.com/). Within each country, we randomize within current regime's opponents and supporters groups. 
+We conducted an online survey experiment in Russia and two Latin American countries, Colombia and Mexico, in March-June 2021 with a total of 2095 participants recruited via a crowd-sourcing platform [Yandex.Toloka](https://toloka.yandex.com/). Within each country, we randomize within current regime's opponents and supporters groups. 
 
 Our respondents were randomly assigned into one of four treatment conditions:  
 
