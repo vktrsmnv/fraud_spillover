@@ -513,7 +513,7 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           institution == "npol_inst_WB" ~ "World Bank",
           institution == "npol_inst_WTO" ~ "WTO"
         ),
-        institution_facet_name = paste0(institution, "\n N = ", n),
+        institution_facet_name = paste0(institution, "\nN = ", n),
         Condition = condition %>%
           factor(., levels = c(
             "Control", "Fraud", "Punishment", "Judicial Punishment"
@@ -542,19 +542,22 @@ prep_plotting <- function(path = "output/ol_main_ru_pol_1223.rds",
           institution == "pol_inst_parl" ~ "Parliament",
           institution == "pol_inst_courts" ~ "Courts",
           institution == "pol_inst_armed" ~ "Armed Forces",
+          institution == "pol_election" ~ "Elections",
+
         ),
         institution = as_factor(institution) %>%
           fct_relevel(
+            "Elections",
             "Central Electoral\nCommission",
             "Political Parties",
             "Parliament",
-            "Courts",
             "President",
             "Government",
+            "Courts",
             "Police",
             "Armed Forces"
           ),
-        institution_facet_name = paste0(institution, "\n N = ", n),
+        institution_facet_name = paste0(institution, "\nN = ", n),
         Condition = condition %>%
           factor(.,
             levels = c(
@@ -641,8 +644,24 @@ setup <- function() {
       # plot.background = element_blank(),
       plot.title.position = "plot",
       plot.caption.position = "plot",
-      legend.title = element_blank(),
-      legend.position = "bottom"
+      # legend.title = element_blank(),
+      legend.position = "bottom",
+      panel.grid.major = element_line(size = 0.2),
+      panel.grid = element_line(size = 0.2),
+
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(size = 0.2, color = "grey40"),
+      panel.background = element_blank(),
+      plot.background = element_rect(fill = NA, color = NA),
+      plot.title = element_text(face = "bold"),
+      axis.title = element_text(face = "bold"),
+      axis.ticks = element_blank(),
+      # axis.ticks = element_line(color = "grey40"),
+      strip.text = element_text(
+        # face = "bold",
+        size = rel(0.95), hjust = 0),
+      strip.background = element_rect(fill = NA, color = NA),
+      legend.title = element_text(face = "bold")
     ))
 
   formals(plasma)$end <- 0.8
