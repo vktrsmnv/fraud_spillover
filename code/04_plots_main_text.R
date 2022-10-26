@@ -9,8 +9,14 @@ pp_pol <-
                 model = "condition",
                 BF = TRUE,
                 ci = 0.95
-                )
-
+  )
+pp_pol_83 <-
+  prep_plotting(path = "output/ol_main_pol.rds",
+                output = "diffs",
+                model = "condition",
+                BF = FALSE,
+                ci = 0.83
+  )
 # main_pol_collapsed
 pp <-
   prep_plotting(path = "output/ol_main_pol_collapsed.rds",
@@ -113,9 +119,9 @@ plt_pol <- pp_pol$plotting %>%
   mutate(type = case_when(institution %in% levels(pp_pol$plotting$institution)[1:4] ~ "Institutions Related to Legislative Elections",
                           institution %in% levels(pp_pol$plotting$institution)[5:9] ~ "No Direct Relationship to Legislative Elections",
                           # institution %in% levels(pp$plotting$institution)[4:6] ~ "",
-                          ) %>%
-           as_factor(),
-         questnnr = questnnr %>% str_to_title()
+  ) %>%
+    as_factor(),
+  # questnnr = questnnr %>% str_to_title()
   ) %>%
   ggplot(aes(
     x = median,
@@ -134,6 +140,30 @@ plt_pol <- pp_pol$plotting %>%
     ),
     position = position_dodge(1),
     size = 0.4
+  ) +
+  geom_linerange(data = pp_pol_83$plotting %>%
+                   filter(
+                     condition == "Control",
+                     institution %in% levels(pp_pol$plotting$institution)[2:9],
+                   ) %>%
+                   mutate( institution = droplevels(institution)) %>%
+                   mutate(type = case_when(institution %in% levels(pp_pol$plotting$institution)[1:4] ~ "Institutions Related to Legislative Elections",
+                                           institution %in% levels(pp_pol$plotting$institution)[5:9] ~ "No Direct Relationship to Legislative Elections",
+                                           # institution %in% levels(pp$plotting$institution)[4:6] ~ "",
+                   ) %>%
+                     as_factor(),
+                   ),
+                 aes(
+                   x = median,
+                   xmin = lower,
+                   xmax = upper,
+                   y = category,
+                   color = condition,
+                   # shape = condition,
+                   alpha = significant
+                 ),
+                 position = position_dodge(1),
+                 size = 0.8
   ) +
   facet_manual(
     vars(type, institution_facet_name),
@@ -175,7 +205,7 @@ plt_pol <- pp_pol$plotting %>%
     # alpha =
   ) +
   guides(
-    # color = "none",
+    color = "none",
     alpha = "none",
     shape = "none"
   ) +
@@ -245,28 +275,6 @@ pp_npol <-
                 BF = TRUE,
                 ci = 0.95
   )
-# pp <-
-#   prep_plotting(path = "output/ol_main_ru_npol_1215.rds",
-#                 output = "diffs",
-#                 model = "condition",
-#                 BF = TRUE,
-#                 ci = 0.95
-#   )
-
-# arrows <- data.frame(
-#   x1 = 0.19,
-#   x2 = 0.1,
-#   y1 = 1.55,
-#   y2 = 1.2,
-#   Condition = c("Control"),
-#   institution_facet_name = levels(pp[[1]]$institution_facet_name)[1]
-# ) %>%
-#   mutate(
-#     institution_facet_name = as_factor(institution_facet_name) %>%
-#       fct_expand(
-#         levels(pp[[1]]$institution_facet_name)
-#       )
-#   )
 
 plt_npol <- pp_npol$plotting %>%
   filter(
@@ -292,23 +300,17 @@ plt_npol <- pp_npol$plotting %>%
     size = 0.4
   ) +
   facet_manual(
-    vars(institution_facet_name),
+    vars("", institution_facet_name),
     strip = nested_settings,
     axes = "margins",
     remove_labels = "none",
     design = c(
       "
-      ABC
-      DFG
+      ABC##
+      DFG##
       "
     )
   ) +
-  # facet_wrap(
-  #   . ~ institution_facet_name,
-  #   # cols = vars(institution_facet_name),
-  #   # rows = vars(condition),
-  #   ncol = 3
-  # ) +
   scale_color_viridis(
     discrete = T,
     option = "C",
@@ -329,75 +331,14 @@ plt_npol <- pp_npol$plotting %>%
   geom_vline(
     xintercept = 0,
     color = "grey50"
-    ) +
+  ) +
   guides(
     color = "none",
     alpha = "none",
     shape = "none"
   ) +
   xlim(-0.2, 0.2)
-  # geom_curve(
-  #   data = arrows,
-  #   aes(
-  #     x = x1,
-  #     y = y1,
-  #     xend = x2,
-  #     yend = y2
-  #   ),
-  #   arrow = arrow(length = unit(0.08, "inch")),
-  #   size = 0.5,
-  #   alpha = 0.3,
-  #   color = "grey20",
-  #   curvature = -0.3
-  # # ) +
-  # geom_abline(
-  #   intercept = 2.5,
-  #   slope = -15,
-  #   size = 0.5,
-  #   alpha = 0.3,
-  #   linetype = 2,
-  #   color = "grey20",
-  # )
-#
-#   geom_text(
-#     data = data.frame(
-#       median = 0.2,
-#       category = "Not very\nmuch",
-#       condition = c("Control"),
-#       institution_facet_name = levels(pp$plotting$institution_facet_name)[1]
-#     ) %>%
-#       mutate(
-#         institution_facet_name = as_factor(institution_facet_name) %>%
-#           fct_expand(
-#             levels(pp$plotting$institution_facet_name)
-#           ),
-#         category = as.factor(category) %>%
-#           fct_expand(levels(pp$plotting$category))
-#       ),
-#     label = "fraud\ndecreases\ntrust",
-#     size = 2.7,
-#     nudge_y = 0.1,
-#     color = "grey20",
-#   )
-# xlim(-0.25, 0.25)
-  # geom_label(
-  #   aes(
-  #     x = -0.25,
-  #     # label = paste0(bf_b_condition_control %>%
-  #     #                  str_replace("evidence ", "evidence\n"), " H1"),
-  #     label = paste0(bf_b_condition_control %>%
-  #                      str_replace(":\n.*", ""), ""),
-  #     y = "None\nat all"
-  #   ),
-  #   size = 2.7,
-  #   nudge_y = -0.15,
-  #   label.size = 0.05,
-  #   lineheight = 0.8,
-  #   alpha = 0.2,
-  #   hjust = 0
-  # )
 
-plt_npol
 
 ggsave(plt_npol,
        filename = paste0("figs/diffs_ol_main_npol.png"),
@@ -492,24 +433,24 @@ plt_conditional <- pp_conditional$plotting %>%
   # geom_abline(
   #   intercept = 2.5,
   #   slope = -15,
-  #   size = 0.5,
-  #   linetype = 3,
-  #   color = plasma(3)[2],
-  #   alpha = 0.7
-  # ) +
-  geom_pointrange(
-    aes(
-      x = median,
-      xmin = lower,
-      xmax = upper,
-      y = category,
-      color = condition,
-      shape = opponent,
-      alpha = significant
-    ),
-    position = position_dodge(1),
-    size = 0.4
-  ) +
+#   size = 0.5,
+#   linetype = 3,
+#   color = plasma(3)[2],
+#   alpha = 0.7
+# ) +
+geom_pointrange(
+  aes(
+    x = median,
+    xmin = lower,
+    xmax = upper,
+    y = category,
+    color = condition,
+    shape = opponent,
+    alpha = significant
+  ),
+  position = position_dodge(1),
+  size = 0.4
+) +
   facet_manual(
     vars(type, institution_facet_name),
     strip = nested_settings,
@@ -567,21 +508,26 @@ plt_conditional <- pp_conditional$plotting %>%
   #     mutate(
   #       institution_facet_name = as_factor(.$institution_facet_name) %>%
   #         fct_expand(
-  #           levels(pp[[1]]$institution_facet_name)
-  #         )
-  #     ),
-  #   label = c(
-  #     "Punishment\ndecreases\ntrust",
-  #     "Punishment\nincreases\ntrust"
-  #   ),
-  #   size = 2,
-  #   color = c("black", plasma(3)[2]),
-  #   alpha = 0.7
-  # ) +
-  # xlim(-0.55, 0.55) +
-  # scale_color_manual(values = plasma(4, end = 0.8)[c(4, 2)]) +
-  scale_shape_manual(values = c(15, 17, 8)) +
-  scale_alpha_manual(values = c(0.4, 1))
+#           levels(pp[[1]]$institution_facet_name)
+#         )
+#     ),
+#   label = c(
+#     "Punishment\ndecreases\ntrust",
+#     "Punishment\nincreases\ntrust"
+#   ),
+#   size = 2,
+#   color = c("black", plasma(3)[2]),
+#   alpha = 0.7
+# ) +
+# xlim(-0.55, 0.55) +
+# scale_color_manual(values = plasma(4, end = 0.8)[c(4, 2)]) +
+scale_shape_manual(values = c(15, 17, 8)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  theme(
+    legend.position = c(0.8, 0.8), # c(0,0) bottom left, c(1,1) top-right.
+    legend.background = element_rect(fill = NA, colour = NA)
+  )
+
 plt_conditional
 
 ggsave(plt_conditional,
@@ -1122,19 +1068,19 @@ plt_conditional_correct <- pp_conditional_correct$plotting %>%
     x = median,
     y = category
   )) +
-geom_pointrange(
-  aes(
-    x = median,
-    xmin = lower,
-    xmax = upper,
-    y = category,
-    color = condition,
-    shape = opponent,
-    alpha = significant
-  ),
-  position = position_dodge(1),
-  size = 0.4
-) +
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = condition,
+      shape = opponent,
+      alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
   facet_manual(
     vars(type, institution_facet_name),
     strip = nested_settings,
@@ -1168,7 +1114,7 @@ geom_pointrange(
     alpha = "none",
     # shape = "none"
   ) +
-scale_shape_manual(values = c(15, 17, 8)) +
+  scale_shape_manual(values = c(15, 17, 8)) +
   scale_alpha_manual(values = c(0.4, 1))
 plt_conditional_correct
 ggsave(plt_conditional_correct,
