@@ -1367,60 +1367,6 @@ ggsave(plt_pol_la,
 
 # Interaction with Questionnaire ####
 
-pp <-
-  prep_plotting("output/ol_main_pol_int.rds",
-                output = "probs",
-                model = "condition + questnnr",
-                BF = FALSE
-  )
-
-
-plt <- pp[[1]] %>%
-  filter(condition %in% c("Fraud", "Control")) %>%
-  mutate(questnnr = str_to_title(questnnr)) %>%
-  ggplot() +
-  geom_pointrange(
-    aes(
-      x = median,
-      xmin = lower,
-      xmax = upper,
-      y = category,
-      color = condition,
-    ),
-    position = position_dodge(1),
-    size = 0.4
-  ) +
-  facet_nested(
-    cols = vars(institution_facet_name),
-    rows = vars(questnnr),
-    # ncol = 4
-  ) +
-  scale_color_manual(values = plasma(4, end = 0.8)[c(3, 1)]) +
-  scale_shape_manual(values = c(16, 15, 17, 8)) +
-  scale_alpha_manual(values = c(0.4, 1)) +
-  labs(
-    y = "Confidence",
-    x = paste0(
-      "Probability(Category)"
-    ),
-    shape = "",
-    color = "",
-    title = ""
-  ) +
-  guides(
-    # color = "none",
-    alpha = "none",
-    shape = "none"
-  )
-
-plt
-ggsave(plt,
-       filename = paste0("figs/probs_ol_main_pol_control_int.png"),
-       height = 6,
-       width = 10
-)
-
-## Differences for pooled data ####
 
 pp_int <-
   prep_plotting("output/ol_main_pol_int.rds",
@@ -1549,6 +1495,115 @@ ggsave(plt,
        width = 10
 )
 
+### Interaction with Questionnaire #####
+
+pp_int_correct <-
+  prep_plotting("output/ol_main_pol_int_correct.rds",
+                output = "diffs",
+                model = "condition + questnnr",
+                BF = FALSE,
+                ci = 0.95
+  )
+
+
+arrows <- data.frame(
+  x1 = 0.15,
+  x2 = 0.1,
+  y1 = 2.1,
+  y2 = 1.2,
+  Condition = c("Control"),
+  type = "Institutions Related to Legislative Elections",
+  institution_facet_name = levels(pp_int_correct$plotting$institution_facet_name)[2]
+) %>%
+  mutate(
+    institution_facet_name = as_factor(institution_facet_name) %>%
+      fct_expand(
+        levels(pp_int_correct$plotting$institution_facet_name)
+      )
+  )
+
+plt_int_correct <- pp_int_correct$plotting %>%
+  filter(
+    condition == "Control",
+    institution %in% levels(pp_int_correct$plotting$institution)[2:9],
+  ) %>%
+  mutate( institution = droplevels(institution)) %>%
+  mutate(type = case_when(institution %in% levels(pp_int_correct$plotting$institution)[5:9] ~ "No Direct Relationship to Legislative Elections",
+                          # institution %in% levels(pp$plotting$institution)[4:6] ~ "",
+                          institution %in% levels(pp_int_correct$plotting$institution)[1:4] ~ "Institutions Related to Legislative Elections") %>%
+           as_factor(),
+         questnnr = questnnr %>% str_to_title()
+  ) %>%
+  arrange(institution, type) %>%
+  ggplot(aes(
+    x = median,
+    y = category
+  )) +
+  # tidybayes::stat_pointinterval(
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = questnnr,
+      shape = condition,
+      alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
+  theme(
+    legend.position = c(0.8, 0.8), # c(0,0) bottom left, c(1,1) top-right.
+    legend.background = element_rect(fill = "white", colour = NA)
+  ) +
+  theme(plot.background = element_rect(fill = "white")) +
+  facet_manual(
+    vars(type, institution_facet_name),
+    strip = nested_settings,
+    axes = "margins",
+    trim_blank = F,
+    remove_labels = "none",
+    design = c(
+      "
+      ABC##
+      DEFGH
+      "
+    )
+  ) +
+  scale_color_viridis(
+    discrete = T,
+    option = "C",
+    end = 0.8
+  ) +
+  # theme(strip.text.x = element_text(size = 12)) +
+  scale_shape_manual(values = c(16, 15, 17, 8)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category|Fraud) - Probability(Category|Control)"
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  geom_vline(
+    xintercept = 0, color = "grey50"
+    # alpha =
+  ) +
+  guides(
+    # color = "none",
+    alpha = "none",
+    shape = "none"
+  )
+
+plt_int_correct
+ggsave(plt_int_correct,
+       filename = paste0("figs/diffs_ol_pol_int_correct.png"),
+       height = 6,
+       width = 10
+)
 
 ## Conditional effect:  PPs for pooled data ####
 
