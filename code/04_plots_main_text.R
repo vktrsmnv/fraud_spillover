@@ -169,13 +169,8 @@ plt_pol <- pp_pol$plotting %>%
     vars(type, institution_facet_name),
     strip = nested_settings,
     axes = "margins",
+    trim_blank = FALSE,
     remove_labels = "none",
-    # design = c(
-    #   "
-    #   ###AAAAABBBBBCCCCC######
-    #   DDDDEEEEEFFFFFGGGGGHHHHH
-    #   "
-    # )
     design = c(
       "
       AAAAABBBBBCCCCC##########
@@ -304,10 +299,11 @@ plt_npol <- pp_npol$plotting %>%
     strip = nested_settings,
     axes = "margins",
     remove_labels = "none",
+    trim_blank = FALSE,
     design = c(
       "
-      ABC##
-      DFG##
+      #ABC#
+      #DFG#
       "
     )
   ) +
@@ -338,7 +334,7 @@ plt_npol <- pp_npol$plotting %>%
     shape = "none"
   ) +
   xlim(-0.2, 0.2)
-
+plt_npol
 
 ggsave(plt_npol,
        filename = paste0("figs/diffs_ol_main_npol.png"),
