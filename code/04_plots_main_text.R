@@ -1,8 +1,9 @@
 source("code/functions.R")
 
-# Main Paper Plots: Pooled Data ####
-## Differences for pooled data ####
-
+# Main Paper Plots ####
+## Spillover effect: pooled sample ####
+### Political: Fraud vs Control ####
+# for 95 CIs
 pp_pol <-
   prep_plotting(path = "output/ol_main_pol.rds",
                 output = "diffs",
@@ -10,6 +11,8 @@ pp_pol <-
                 BF = TRUE,
                 ci = 0.95
   )
+
+# for 83 CIs
 pp_pol_83 <-
   prep_plotting(path = "output/ol_main_pol.rds",
                 output = "diffs",
@@ -17,75 +20,17 @@ pp_pol_83 <-
                 BF = FALSE,
                 ci = 0.83
   )
-# main_pol_collapsed
-pp <-
-  prep_plotting(path = "output/ol_main_pol_collapsed.rds",
-                output = "diffs",
-                model = "condition",
-                BF = TRUE,
-                ci = 0.95
-  )
 
-pp <-
-  prep_plotting(path = "output/ol_main_la_pol_872.rds",
-                output = "diffs",
-                model = "condition",
-                BF = TRUE,
-                ci = 0.95
-  )
-
-pp <- # makes no difference
-  prep_plotting(path = "output/ol_main_la_pol_collapsed.rds",
-                output = "diffs",
-                model = "condition",
-                BF = TRUE,
-                ci = 0.95
-  )
-
-pp <-
-  prep_plotting(path = "output/ol_main_pol_la_fe.rds",
-                output = "diffs",
-                model = "condition + questnnr",
-                BF = TRUE,
-                ci = 0.95
-  )
-
-pp <-
-  prep_plotting(path = "output/ol_main_pol_la_int.rds",
-                output = "diffs",
-                model = "condition + questnnr",
-                BF = TRUE,
-                ci = 0.95
-  )
-
-pp <-
-  prep_plotting(path = "output/ol_main_ru_pol_1215.rds",
-                output = "diffs",
-                model = "condition",
-                BF = TRUE,
-                ci = 0.95
-  )
-
-pp <-
-  prep_plotting(path = "output/ol_main_ru_pol_667.rds",
-                output = "diffs",
-                model = "condition",
-                BF = FALSE,
-                ci = 0.95
-  )
-
-
+# settings for the facet style
 nested_settings <- strip_nested(
   text_x = list(element_text(face = "bold",
                              size = rel(1.2)), NULL),
-  # bleed = TRUE,
   background_x = list(element_rect(fill = NA), NULL),
   size = "variable",
   by_layer_x = TRUE
-  # by_layer_x = TRUE
 )
 
-
+# data for annotating the plot
 arrows <- data.frame(
   x1 = 0.15,
   x2 = 0.1,
@@ -102,6 +47,7 @@ arrows <- data.frame(
       )
   )
 
+
 plt_pol <- pp_pol$plotting %>%
   filter(
     condition == "Control",
@@ -113,13 +59,11 @@ plt_pol <- pp_pol$plotting %>%
                           # institution %in% levels(pp$plotting$institution)[4:6] ~ "",
   ) %>%
     as_factor(),
-  # questnnr = questnnr %>% str_to_title()
   ) %>%
   ggplot(aes(
     x = median,
     y = category
   )) +
-  # tidybayes::stat_pointinterval(
   geom_pointrange(
     aes(
       x = median,
@@ -141,7 +85,6 @@ plt_pol <- pp_pol$plotting %>%
                    mutate( institution = droplevels(institution)) %>%
                    mutate(type = case_when(institution %in% levels(pp_pol$plotting$institution)[1:4] ~ "Institutions Related to Legislative Elections",
                                            institution %in% levels(pp_pol$plotting$institution)[5:9] ~ "No Direct Relationship to Legislative Elections",
-                                           # institution %in% levels(pp$plotting$institution)[4:6] ~ "",
                    ) %>%
                      as_factor(),
                    ),
@@ -151,7 +94,6 @@ plt_pol <- pp_pol$plotting %>%
                    xmax = upper,
                    y = category,
                    color = condition,
-                   # shape = condition,
                    alpha = significant
                  ),
                  position = position_dodge(1),
@@ -165,8 +107,8 @@ plt_pol <- pp_pol$plotting %>%
     remove_labels = "none",
     design = c(
       "
-      AAAAABBBBBCCCCC##########
-      DDDDDEEEEEFFFFFGGGGGHHHHH
+      ABC##
+      DEFGH
       "
     )
   ) +
@@ -175,7 +117,6 @@ plt_pol <- pp_pol$plotting %>%
     option = "C",
     end = 0.8
   ) +
-  # theme(strip.text.x = element_text(size = 12)) +
   scale_shape_manual(values = c(16, 15, 17, 8)) +
   scale_alpha_manual(values = c(0.4, 1)) +
   labs(
@@ -188,8 +129,8 @@ plt_pol <- pp_pol$plotting %>%
     title = ""
   ) +
   geom_vline(
-    xintercept = 0, color = "grey50"
-    # alpha =
+    xintercept = 0,
+    color = "grey50"
   ) +
   guides(
     color = "none",
@@ -237,7 +178,6 @@ plt_pol <- pp_pol$plotting %>%
     label = "fraud\ndecreases\ntrust",
     size = 2.7,
     nudge_y = 0.1,
-    # color = plasma(1, 0.9)
     color = "grey20"
   )
 
@@ -252,8 +192,7 @@ ggsave(plt_pol,
 
 
 
-## Non-political Institutions ####
-
+### Non-political: Fraud vs Control ####
 
 pp_npol <-
   prep_plotting(path = "output/ol_main_npol.rds",
@@ -280,7 +219,6 @@ plt_npol <- pp_npol$plotting %>%
       y = category,
       color = condition,
       shape = condition,
-      # shape = questnnr,
       alpha = significant
     ),
     position = position_dodge(1),
@@ -295,7 +233,7 @@ plt_npol <- pp_npol$plotting %>%
     design = c(
       "
       ABC##
-      DFG##
+      DEF##
       "
     )
   ) +
@@ -335,8 +273,10 @@ ggsave(plt_npol,
 )
 
 
-## Conditional effect:  diffs for pooled data ####
-### Judicial Punishment vs Fraud ####
+## Conditional effect: diffs for pooled data ####
+### Fraud vs Response ####
+# (for main text, two punishments on pooled data)
+# spillover is larger or smaller (hypotheses 2)
 
 pp_conditional <-
   prep_plotting(
@@ -348,30 +288,12 @@ pp_conditional <-
     ci = 0.95
   )
 
-
-pp_conditional$plotting <- pp_conditional$plotting %>%
-  mutate(condition = fct_recode(condition,
-                                "Judicial\nPunishment" = "Judicial Punishment"))
-
-# pp <-
-#   prep_plotting("output/ol_cond_pol_correct.rds",
-#                 output = "diffs",
-#                 model = "condition + opponent",
-#                 BF = FALSE,
-#                 PD = FALSE,
-#                 ci = 0.95
-#   )
-#
-# pp$plotting <- pp$plotting %>%
-#   mutate(condition = fct_recode(condition, "Judicial\nPunishment" = "Judicial Punishment"))
-#
-
 arrows <- data.frame(
   x1 = 0.19,
   x2 = 0.1,
   y1 = 1.55,
   y2 = 1.2,
-  condition = c("Judicial\nPunishment"),
+  condition = c("Judicial Punishment"),
   opponent = "Opponent",
   institution_facet_name = levels(pp_conditional$plotting$institution_facet_name)[2]
 ) %>%
@@ -386,38 +308,133 @@ plt_conditional <- pp_conditional$plotting %>%
     condition != "Control",
     # condition == "Control",
     condition != "Fraud",
-    condition != "Punishment",
+    # condition != "Punishment",
     institution %in% levels(pp_conditional$plotting$institution)[2:9]
   ) %>%
   mutate( institution = droplevels(institution)) %>%
   mutate(type = case_when(institution %in% levels(pp_pol$plotting$institution)[1:4] ~ "Institutions Related to Legislative Elections",
                           institution %in% levels(pp_pol$plotting$institution)[5:9] ~ "No Direct Relationship to Legislative Elections",
-                          # institution %in% levels(pp$plotting$institution)[4:6] ~ "",
   ) %>%
     as_factor()
   ) %>%
-  # mutate(condition = fct_rev(condition)) %>%
   ggplot(aes(
     x = median,
     y = category
   )) +
-  # geom_abline(
-  #   intercept = 2.5,
-  #   slope = 15,
-  #   size = 0.5,
-  #   linetype = 2,
-  #   color = "black",
-  #   alpha = 0.7
-  # ) +
-  # geom_abline(
-  #   intercept = 2.5,
-  #   slope = -15,
-#   size = 0.5,
-#   linetype = 3,
-#   color = plasma(3)[2],
-#   alpha = 0.7
-# ) +
 geom_pointrange(
+  aes(
+    x = median,
+    xmin = lower,
+    xmax = upper,
+    y = category,
+    color = condition,
+    shape = opponent,
+    alpha = significant
+  ),
+  position = position_dodge(1),
+  size = 0.4
+) +
+  facet_manual(
+    vars(type, institution_facet_name),
+    strip = nested_settings,
+    axes = "margins",
+    remove_labels = "none",
+    design = c(
+      "
+      AAAAABBBBBCCCCC##########
+      DDDDDEEEEEFFFFFGGGGGHHHHH
+      "
+    )
+  ) +
+  scale_color_manual(values = plasma(4, end = 0.8)[c(2, 4)]) +
+  # scale_shape_manual(values = c(15, 17)) +
+  # scale_alpha_manual(values = c(0.4, 1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category|Fraud) - Probability(Category|Response)"
+      # "Probability(Category|Control) - Probability(Category|Punishment)"
+
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  geom_vline(
+    xintercept = 0,
+    alpha = 0.5
+  ) +
+  guides(
+    # color = "none",
+    alpha = "none",
+    # shape = "none"
+  ) +
+scale_color_manual(values = plasma(4, end = 0.8)[c(4, 2)]) +
+scale_shape_manual(values = c(15, 17, 8)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  theme(
+    legend.position = c(0.8, 0.85), # c(0,0) bottom left, c(1,1) top-right.
+    legend.background = element_rect(fill = "white", colour = NA)
+  ) +
+  theme(plot.background = element_rect(fill = "white"))
+
+plt_conditional
+
+ggsave(plt_conditional,
+       filename = paste0("figs/diffs_pooled_cond_punishment.png"),
+       height = 6,
+       width = 10
+)
+
+### Fraud vs Response (correct) ####
+
+pp_conditional_correct <-
+  prep_plotting(
+    "output/ol_cond_pol_correct.rds",
+    output = "diffs",
+    model = "condition + opponent",
+    BF = FALSE,
+    PD = FALSE,
+    ci = 0.95
+  )
+
+# #
+# pp_conditional_correct$plotting <- pp_conditional_correct$plotting %>%
+#   mutate(condition = fct_recode(condition,
+#                                 "Judicial Punishment" = "Judicial\nPunishment"))
+
+# pp <-
+#   prep_plotting("output/ol_cond_pol_correct.rds",
+#                 output = "diffs",
+#                 model = "condition + opponent",
+#                 BF = FALSE,
+#                 PD = FALSE,
+#                 ci = 0.95
+#   )
+#
+# pp$plotting <- pp$plotting %>%
+#   mutate(condition = fct_recode(condition, "Judicial\nPunishment" = "Judicial Punishment"))
+#
+
+plt_conditional_correct <- pp_conditional_correct$plotting %>%
+  filter(
+    condition != "Control",
+    # condition == "Control",
+    condition != "Fraud",
+    # condition != "Punishment",
+    institution %in% levels(pp_conditional_control$plotting$institution)[2:9]
+  ) %>%
+  mutate(institution = droplevels(institution)) %>%
+  mutate(type = case_when(institution %in% levels(pp_conditional_control$plotting$institution)[1:4] ~ "Institutions Related to Legislative Elections",
+                          institution %in% levels(pp_conditional_control$plotting$institution)[5:9] ~ "No Direct Relationship to Legislative Elections",
+  ) %>%
+    as_factor()
+  ) %>%
+  ggplot(aes(
+    x = median,
+    y = category
+  )) +
+  geom_pointrange(
   aes(
     x = median,
     xmin = lower,
@@ -459,7 +476,7 @@ geom_pointrange(
   labs(
     y = "Confidence",
     x = paste0(
-      "Probability(Category|Fraud) - Probability(Category|Judicial Punishment)"
+      "Probability(Category|Fraud) - Probability(Category|Response)"
       # "Probability(Category|Control) - Probability(Category|Punishment)"
 
     ),
@@ -472,51 +489,29 @@ geom_pointrange(
     alpha = 0.5
   ) +
   guides(
-    color = "none",
+    # color = "none",
     alpha = "none",
     # shape = "none"
   ) +
-  # geom_text(
-  #   data = data.frame(
-  #     median = c(0.2, -0.2),
-  #     category = c(3.5, 3.5),
-  #     opponent = "Opponent",
-  #     condition = levels(pp[[1]]$condition)[4],
-  #     institution_facet_name = levels(pp[[1]]$institution_facet_name)[1]
-  #   ) %>%
-  #     mutate(
-  #       institution_facet_name = as_factor(.$institution_facet_name) %>%
-  #         fct_expand(
-#           levels(pp[[1]]$institution_facet_name)
-#         )
-#     ),
-#   label = c(
-#     "Punishment\ndecreases\ntrust",
-#     "Punishment\nincreases\ntrust"
-#   ),
-#   size = 2,
-#   color = c("black", plasma(3)[2]),
-#   alpha = 0.7
-# ) +
-# xlim(-0.55, 0.55) +
-# scale_color_manual(values = plasma(4, end = 0.8)[c(4, 2)]) +
+ scale_color_manual(values = plasma(4, end = 0.8)[c(4, 2)]) +
 scale_shape_manual(values = c(15, 17, 8)) +
   scale_alpha_manual(values = c(0.4, 1)) +
   theme(
-    legend.position = c(0.8, 0.8), # c(0,0) bottom left, c(1,1) top-right.
+    legend.position = c(0.8, 0.85), # c(0,0) bottom left, c(1,1) top-right.
     legend.background = element_rect(fill = "white", colour = NA)
   ) +
   theme(plot.background = element_rect(fill = "white"))
 
-plt_conditional
+plt_conditional_correct
 
-ggsave(plt_conditional,
-       filename = paste0("figs/diffs_pooled_cond_punishment_1.png"),
+ggsave(plt_conditional_correct,
+       filename = paste0("figs/diffs_pooled_cond_punishment_correct.png"),
        height = 6,
        width = 10
 )
 
-###Fraud vs Control ####
+### Fraud vs Control ####
+# (for appendix, strongeer effects among supporters)
 plt_cond_control <- pp_conditional$plotting %>%
   filter(
     condition == "Control",
@@ -769,7 +764,9 @@ ggsave(plt_conditional_control,
 #   )
 
 
-## Main effects for the correct summaries subgroup ####
+# Appendix plots ####
+## Spillover effect ####
+### Correct only, pooled sample) ####
 pp_pol_correct <-
   prep_plotting(path = "output/ol_main_pol_correct.rds",
                 output = "diffs",
@@ -918,7 +915,7 @@ ggsave(plt_pol_correct,
 )
 
 
-## Main effect: only Russia ####
+### Russia ####
 
 pp_pol_ru <-
   prep_plotting(path = "output/ol_main_ru_pol_1215.rds",
@@ -942,15 +939,6 @@ pp_pol_ru_correct <-
                 BF = TRUE,
                 ci = 0.95
   )
-
-nested_settings <- strip_nested(
-  text_x = list(element_text(face = "bold",
-                             size = rel(1.2)), NULL),
-  background_x = list(element_rect(fill = NA), NULL),
-  size = "variable",
-  by_layer_x = TRUE
-)
-
 
 arrows <- data.frame(
   x1 = 0.15,
@@ -1111,6 +1099,7 @@ ggsave(plt_pol_ru,
        width = 10
 )
 
+### Russia (correct only) ####
 
 plt_pol_ru_correct <- pp_pol_ru_correct$plotting %>%
   filter(
@@ -1187,7 +1176,7 @@ ggsave(plt_pol_ru_correct,
        width = 10
 )
 
-## Main effect: only Latin America ####
+### Latin America ####
 
 pp_pol_la <-
   prep_plotting(path = "output/ol_main_la_pol_872.rds",
@@ -1365,9 +1354,7 @@ ggsave(plt_pol_la,
 )
 
 
-# Interaction with Questionnaire ####
-
-
+### Int. Questionnaire ####
 pp_int <-
   prep_plotting("output/ol_main_pol_int.rds",
                 output = "diffs",
@@ -1495,7 +1482,7 @@ ggsave(plt,
        width = 10
 )
 
-### Interaction with Questionnaire #####
+### Int. Questionnaire (correct only) #####
 
 pp_int_correct <-
   prep_plotting("output/ol_main_pol_int_correct.rds",
@@ -1605,6 +1592,7 @@ ggsave(plt_int_correct,
        width = 10
 )
 
+# OTHER ####
 ## Conditional effect:  PPs for pooled data ####
 
 pp <-
