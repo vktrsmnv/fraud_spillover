@@ -302,8 +302,8 @@ plt_npol <- pp_npol$plotting %>%
     trim_blank = FALSE,
     design = c(
       "
-      #ABC#
-      #DFG#
+      ABC##
+      DFG##
       "
     )
   ) +
@@ -333,7 +333,7 @@ plt_npol <- pp_npol$plotting %>%
     alpha = "none",
     shape = "none"
   ) +
-  xlim(-0.2, 0.2)
+  xlim(-0.15, 0.15)
 plt_npol
 
 ggsave(plt_npol,
