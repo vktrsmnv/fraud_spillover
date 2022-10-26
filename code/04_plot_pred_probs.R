@@ -136,11 +136,8 @@ for (s in unique(model_files$sample)){
   )
 }
 
-## Pooled Sample ####
-### Political ####
-
 ## Pooled Sample (Full) ####
-### Political ####
+### Political  ####
 pp <-
   prep_plotting("output/ol_main_pol.rds",
                 output = "probs",
@@ -193,16 +190,12 @@ plt <- pp %>%
 
 plt
 ggsave(plt,
-       filename = paste0("figs/probs_pooled.png"),
-       height = 5,
+       filename = paste0("figs/probs_ol_main_pol_control.png"),
+       height = 6,
        width = 10
 )
 
 
-pp <-
-  prep_plotting("output/ol_main_pol.rds",
-                output = "probs",
-                model = "condition")
 
 plt <- pp %>%
   ggplot() +
@@ -245,8 +238,9 @@ plt <- pp %>%
       # ) +
       guides(color = "none", alpha = "none",
              shape = "none")
+plt
 ggsave(plt,
-         filename = paste0("figs/probs_all.png"),
+         filename = paste0("figs/probs_ol_main_pol.png"),
          height = 12,
          width = 10
   )
