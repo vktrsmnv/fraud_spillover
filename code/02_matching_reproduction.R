@@ -144,21 +144,26 @@ set.seed(54321)
 # make sure to include all controls
 print(contr)
 
-# calculate PS model
-ps_model <- brm(
-  formula = as.formula("fraud1d ~ polint + gentrust + sex + log(age) + edu_three +
+if (file.exists("output/ps_model.RDS")) {
+  ps_model <- readRDS("output/ps_model.RDS")
+} else {
+  # calculate PS model
+  ps_model <- brm(
+    formula = as.formula("fraud1d ~ polint + gentrust + sex + log(age) + edu_three +
               emplstat + savings + rural + polcorup + vdem_elections + year"),
-  data = wvs_vdem,
-  family = bernoulli(link = "logit"),
-  warmup = 2000,
-  iter = 2250,
-  chains = 4,
-  inits = "0",
-  cores = 4,
-  seed = 12345
-)
+    data = wvs_vdem,
+    family = bernoulli(link = "logit"),
+    warmup = 2000,
+    iter = 2250,
+    chains = 4,
+    inits = "0",
+    cores = 4,
+    seed = 12345
+  )
 
-saveRDS("output/ps_model.RDS", object = ps_model)
+  saveRDS("output/ps_model.RDS", object = ps_model)
+}
+
 # get all posterior samples from first chain
 post_samples <- as.data.frame(as.mcmc(ps_model, combine_chains = T))
 
@@ -185,7 +190,14 @@ post_samples <- post_samples %>%
 cnts <- list()
 models <- list()
 
-for (sample in 1:3) {
+# calculate ATE
+y_vars <- c(
+  "inst_armed", "inst_police", "inst_courts", "inst_parl",
+  "inst_gov", "inst_parties", "inst_comp", "inst_UN", "inst_banks",
+  "inst_wto", "inst_wb"
+)
+
+for (sample in 1:1000) {
   if (sample > 1) {
     ps_data <- ps_data[, -ncol(ps_data)]
   }
@@ -211,13 +223,6 @@ for (sample in 1:3) {
   ))
   cnts[[sample]] <- which(matched_cases$cnts == 1)
 
-  # calculate ATE
-  y_vars <- c(
-    "inst_armed", "inst_police", "inst_courts", "inst_parl",
-    "inst_gov", "inst_parties", "inst_comp", "inst_UN", "inst_banks",
-    "inst_wto", "inst_wb"
-  )
-
   for (y_var in y_vars) {
 
     # # linear regression
@@ -235,12 +240,18 @@ for (sample in 1:3) {
       coef(model_ord)[4]
   }
 
-  models <- list(models, model_ord)
+  models <- rlist::list.append(models, model_ord)
 
   # store att_data to folder
   saveRDS(att_data, file = "output/att_data.rds")
   saveRDS(cnts, file = "output/cnts.rds")
-  saveRDS(models, file = "output/models.RDS")
+  saveRDS(models, file = paste0("output/models", ".RDS"))
+
+  if (sample %% 10){
+    saveRDS(models, file = paste0("output/models_", sample, ".RDS"))
+    rm(models)
+    models <- list()
+  }
 
   print(str_c("NN matching, sample ", sample, " of ", nrow(post_samples), " done at ", Sys.time()))
 }
