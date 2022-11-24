@@ -72,7 +72,7 @@ stargazer(wvs_vdem,
   summary = T
 )
 
-## 2.1. Institutions: real spillover ###########################################
+## 2.1 Institutions: real spillover ###########################################
 
 y_spill <- c("inst_armed", "inst_police", "inst_courts")
 m_spill <- list()
@@ -158,6 +158,7 @@ ps_model <- brm(
   seed = 12345
 )
 
+saveRDS("output/ps_model.RDS", object = ps_model)
 # get all posterior samples from first chain
 post_samples <- as.data.frame(as.mcmc(ps_model, combine_chains = T))
 
@@ -174,7 +175,7 @@ ps_data <- ps_data %>%
   )
 
 post_samples <- post_samples %>%
-  dplyr::select(-lp__)
+  dplyr::select(-lprior)
 
 ### iterate over rows in ps_data, construct ps for each case based on first posterior sample
 ### construct a matched data set using matching-function of arm package (below)
@@ -182,9 +183,9 @@ post_samples <- post_samples %>%
 
 # object to save case selection for matching for reproduction
 cnts <- list()
+models <- list()
 
-
-for (sample in 1:nrow(post_samples)) {
+for (sample in 1:3) {
   if (sample > 1) {
     ps_data <- ps_data[, -ncol(ps_data)]
   }
@@ -219,22 +220,29 @@ for (sample in 1:nrow(post_samples)) {
 
   for (y_var in y_vars) {
 
-    # linear regression
-    model_lin <- lmer(as.formula(paste(y_var, "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
-    att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_lin[sample] <-
-      mean(coef(model_lin)$cntry[, 2])
+    # # linear regression
+    # model_lin <- lmer(as.formula(paste(y_var, "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
+    # att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_lin[sample] <-
+    #   mean(coef(model_lin)$cntry[, 2])
 
     # ordinal regression
-    model_ord <- clmm(as.formula(paste(str_c("as.factor(", y_var, ")"), "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
-    att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_ord[sample] <-
+    model_ord <-
+      clmm(as.formula(paste(
+        str_c("as.factor(", y_var, ")"), "fraud1d + (1|cntry)", sep = "~"
+      )), data = data_nearest)
+    att_data[att_data$y_var == y_var &
+               att_data$algorithm == "nearest",]$att_ord[sample] <-
       coef(model_ord)[4]
   }
 
-  # store att_data to folder
-  saveRDS(att_data, file = "att_data.rds")
-  saveRDS(cnts, file = "cnts.rds")
+  models <- list(models, model_ord)
 
-  print(str_c("NN matching, sample ", sample, " of ", nrow(post_samples), " done."))
+  # store att_data to folder
+  saveRDS(att_data, file = "output/att_data.rds")
+  saveRDS(cnts, file = "output/cnts.rds")
+  saveRDS(models, file = "output/models.RDS")
+
+  print(str_c("NN matching, sample ", sample, " of ", nrow(post_samples), " done at ", Sys.time()))
 }
 
 
