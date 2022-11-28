@@ -724,8 +724,8 @@ geom_pointrange(
   labs(
     y = "Confidence",
     x = paste0(
-      # "Probability(Category|Fraud) - Probability(Category|Judicial Punishment)"
-      "Probability(Category|Control) - Probability(Category|Punishment)"
+      "Probability(Category|Fraud) - Probability(Category|Judicial Punishment)"
+      # "Probability(Category|Control) - Probability(Category|Punishment)"
     ),
     shape = "",
     color = "",

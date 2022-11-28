@@ -235,22 +235,24 @@ for (sample in 1:1000) {
       clmm(as.formula(paste(
         str_c("as.factor(", y_var, ")"), "fraud1d + (1|cntry)", sep = "~"
       )), data = data_nearest)
+
     att_data[att_data$y_var == y_var &
                att_data$algorithm == "nearest",]$att_ord[sample] <-
       coef(model_ord)[4]
-  }
 
-  models <- rlist::list.append(models, model_ord)
+    models <- rlist::list.append(models, model_ord)
 
-  # store att_data to folder
-  saveRDS(att_data, file = "output/att_data.rds")
-  saveRDS(cnts, file = "output/cnts.rds")
-  saveRDS(models, file = paste0("output/models", ".RDS"))
+    # # store att_data to folder
+    # saveRDS(att_data, file = "output/att_data.rds")
+    # saveRDS(cnts, file = "output/cnts.rds")
+    saveRDS(models, file = paste0("output/models_", y_var, ".RDS"))
 
-  if (sample %% 10){
-    saveRDS(models, file = paste0("output/models_", sample, ".RDS"))
-    rm(models)
-    models <- list()
+    if (sample %% 100 == 0){
+      saveRDS(models, file = paste0("output/models_", y_var, "_", sample, ".RDS"))
+      rm(models)
+      models <- list()
+    }
+
   }
 
   print(str_c("NN matching, sample ", sample, " of ", nrow(post_samples), " done at ", Sys.time()))
@@ -286,17 +288,17 @@ for (depvar in y_vars) {
   iter <- iter + 1
 
   # based on exact matching, linear model
-  model_lin <- brm(
-    formula = as.formula(paste(depvar, "fraud1d + (1|cntry)", sep = "~")),
-    data = data_exact,
-    family = gaussian(link = "identity"),
-    warmup = warmup,
-    iter = n_post_samples,
-    chains = 1,
-    inits = "0",
-    cores = 2,
-    seed = 12345
-  )
+  # model_lin <- brm(
+  #   formula = as.formula(paste(depvar, "fraud1d + (1|cntry)", sep = "~")),
+  #   data = data_exact,
+  #   family = gaussian(link = "identity"),
+  #   warmup = warmup,
+  #   iter = n_post_samples,
+  #   chains = 1,
+  #   inits = "0",
+  #   cores = 2,
+  #   seed = 12345
+  # )
 
   samples_exact <- as.mcmc(model_lin)[[1]]
   att_data[att_data$y_var == depvar & att_data$algorithm == "exact", "att_lin"] <-
