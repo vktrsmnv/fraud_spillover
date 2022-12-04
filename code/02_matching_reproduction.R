@@ -5,6 +5,7 @@
 setup <- function() {
   p_needed <- c(
     "tidyverse",
+    "rlist",
     "rstudioapi",
     "janitor",
     "cobalt",
@@ -192,9 +193,16 @@ models <- list()
 
 # calculate ATE
 y_vars <- c(
-  "inst_armed", "inst_police", "inst_courts", "inst_parl",
-  "inst_gov", "inst_parties", "inst_comp", "inst_UN", "inst_banks",
-  "inst_wto", "inst_wb"
+  # "inst_police"
+  # "inst_courts"
+  # "inst_parl"
+  # "inst_gov"
+  # "inst_parties"
+  # "inst_comp"
+  # "inst_UN"
+  # "inst_banks"
+  "inst_wto"
+  # "inst_wb",  "inst_armed"
 )
 
 for (sample in 1:1000) {
@@ -225,20 +233,11 @@ for (sample in 1:1000) {
 
   for (y_var in y_vars) {
 
-    # # linear regression
-    # model_lin <- lmer(as.formula(paste(y_var, "fraud1d + (1|cntry)", sep = "~")), data = data_nearest)
-    # att_data[att_data$y_var == y_var & att_data$algorithm == "nearest", ]$att_lin[sample] <-
-    #   mean(coef(model_lin)$cntry[, 2])
-
     # ordinal regression
     model_ord <-
       clmm(as.formula(paste(
         str_c("as.factor(", y_var, ")"), "fraud1d + (1|cntry)", sep = "~"
       )), data = data_nearest)
-
-    att_data[att_data$y_var == y_var &
-               att_data$algorithm == "nearest",]$att_ord[sample] <-
-      coef(model_ord)[4]
 
     models <- rlist::list.append(models, model_ord)
 
@@ -250,12 +249,13 @@ for (sample in 1:1000) {
     if (sample %% 100 == 0){
       saveRDS(models, file = paste0("output/models_", y_var, "_", sample, ".RDS"))
       rm(models)
+      gc()
       models <- list()
     }
 
   }
 
-  print(str_c("NN matching, sample ", sample, " of ", nrow(post_samples), " done at ", Sys.time()))
+  print(str_c("NN matching, sample ", sample, "for ", y_var, " of ", nrow(post_samples), " done at ", Sys.time()))
 }
 
 

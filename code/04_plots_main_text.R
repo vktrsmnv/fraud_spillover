@@ -674,14 +674,14 @@ arrows <- data.frame(
   mutate(
     institution_facet_name = as_factor(institution_facet_name) %>%
       fct_expand(
-        levels(pp_conditional$plotting$institution_facet_name)
+        levels(pp_conditional_control$plotting$institution_facet_name)
       )
   )
 plt_conditional_control <- pp_conditional_control$plotting %>%
   filter(
     condition != "Control",
     condition != "Fraud",
-    condition != "Punishment",
+    condition != "Judicial Punishment",
     institution %in% levels(pp_conditional_control$plotting$institution)[2:9]
   ) %>%
   mutate( institution = droplevels(institution)) %>%
