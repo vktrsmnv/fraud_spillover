@@ -111,6 +111,8 @@ for (inst in y_vars){
 
 }
 
+plotting_nn <- plotting
+
 # N = 29758
 # settings for the facet style
 nested_settings <- strip_nested(
@@ -187,7 +189,7 @@ ggsave(
 
 
 ### cem ######
-
+ci <- 0.95
 baseline <- 0 # fraud1d == 0
 plotting <- tibble()
 cem <- readRDS("output/models_cem.RDS")
@@ -231,6 +233,9 @@ for (inst in 1:length(y_vars)) {
     }
     plotting <- bind_rows(plotting, plot_categories)
 }
+
+plotting_cem <- plotting %>%
+  filter(fraud1d != baseline)
 
 plotting  %>%
   janitor::clean_names() %>%
@@ -377,7 +382,10 @@ for (inst in 1:length(y_vars)) {
   plotting <- bind_rows(plotting, plot_categories)
 }
 
-plotting  %>%
+plotting_exact <- plotting %>%
+  filter(fraud1d != baseline)
+
+plotting %>%
   janitor::clean_names() %>%
   mutate(significant = ifelse(lower < 0 &
                                 upper > 0, "no", "yes")) %>%
@@ -471,6 +479,124 @@ plotting  %>%
 
 ggsave(
   filename = paste0("figs/matching_exact.png"),
+  height = 6,
+  width = 10
+)
+
+## all matching together
+
+
+plotting_all <-
+  bind_cols(plotting_nn, type = "Nearest Neighbour") %>%
+  bind_rows(
+    plotting_cem %>%
+      mutate(
+        category = case_when(
+          category == 1 ~ "None\nat all",
+          category == 2 ~ "Not very\nmuch",
+          category == 3 ~ "Quite\na Lot",
+          category == 4 ~ "A Great\nDeal",
+        )
+      ) %>% bind_cols(., type = "Coarsened Exact")
+  ) %>%
+  bind_rows(plotting_exact %>%
+              mutate(
+                category = case_when(
+                  category == 1 ~ "None\nat all",
+                  category == 2 ~ "Not very\nmuch",
+                  category == 3 ~ "Quite\na Lot",
+                  category == 4 ~ "A Great\nDeal",
+                )
+              ) %>% bind_cols(., type = "Exact")) %>%
+  janitor::clean_names() %>%
+  mutate(significant = ifelse(lower < 0 &
+                                upper > 0, "no", "yes")) %>%
+  mutate(
+    institution = case_when(
+      institution == "inst_comp" ~ "Companies",
+      institution == "inst_banks" ~ "Banks",
+      institution == "inst_env" ~ "Environmental Organizations",
+      institution == "inst_UN" ~ "United Nations",
+      institution == "inst_wb" ~ "World Bank",
+      institution == "inst_wto" ~ "WTO",
+      institution == "inst_pres" ~ "President",
+      institution == "inst_police" ~ "Police",
+      institution == "inst_gov" ~ "Government",
+      institution == "inst_parties" ~ "Political Parties",
+      institution == "inst_parl" ~ "Parliament",
+      institution == "inst_courts" ~ "Courts",
+      institution == "inst_armed" ~ "Armed Forces",
+      TRUE  ~ institution
+    ),
+    institution_facet_name = paste0(institution) %>%  fct_inorder(),
+    category = category %>%
+      fct_inorder()
+  ) %>%
+  arrange(institution) %>%
+  mutate(institution = as_factor(institution) %>%
+           fct_inorder(),
+         type = as_factor(type) %>% fct_inorder())
+
+plotting_all %>%
+  ggplot(aes(
+    x = median,
+    y = category
+  )) +
+  geom_pointrange(
+    aes(
+      x = median,
+      xmin = lower,
+      xmax = upper,
+      y = category,
+      color = type,
+      shape = type,
+      alpha = significant
+    ),
+    position = position_dodge(1),
+    size = 0.4
+  ) +
+  ggh4x::facet_manual(
+    vars(institution),
+    strip = nested_settings,
+    axes = "margins",
+    trim_blank = FALSE,
+    remove_labels = "none",
+    design = c(
+      "
+      HEFDGA
+      BCIJK#
+      "
+    )
+  ) +
+  scale_color_viridis(
+    discrete = T,
+    option = "C",
+    end = 0.8
+  ) +
+  # scale_shape_manual(values = c(16, 15, 17, 8)) +
+  scale_alpha_manual(values = c(0.4, 1)) +
+  labs(
+    y = "Confidence",
+    x = paste0(
+      "Probability(Category|Fraud) - Probability(Category|No Fraud)"
+    ),
+    shape = "",
+    color = "",
+    title = ""
+  ) +
+  geom_vline(
+    xintercept = 0,
+    color = "grey50"
+  ) +
+  guides(
+    # color = "none",
+    alpha = "none",
+    # shape = "none"
+  )
+
+
+ggsave(
+  filename = paste0("figs/matching_all.png"),
   height = 6,
   width = 10
 )
